@@ -1,0 +1,50 @@
+[
+  {
+    "file": "roses.jpg",
+    "title": "Roses",
+    "artist": "Vincent van Gogh",
+    "source": "https://www.metmuseum.org/art/collection/search/436534",
+    "license": "CC0 / The Metropolitan Museum of Art Open Access",
+    "bytes": 128833
+  },
+  {
+    "file": "irises.jpg",
+    "title": "Irises",
+    "artist": "Vincent van Gogh",
+    "source": "https://www.metmuseum.org/art/collection/search/436528",
+    "license": "CC0 / The Metropolitan Museum of Art Open Access",
+    "bytes": 128794
+  },
+  {
+    "file": "cypresses.jpg",
+    "title": "Wheat Field with Cypresses",
+    "artist": "Vincent van Gogh",
+    "source": "https://www.metmuseum.org/art/collection/search/436535",
+    "license": "CC0 / The Metropolitan Museum of Art Open Access",
+    "bytes": 221383
+  },
+  {
+    "file": "oleanders.jpg",
+    "title": "Oleanders",
+    "artist": "Vincent van Gogh",
+    "source": "https://www.metmuseum.org/art/collection/search/436530",
+    "license": "CC0 / The Metropolitan Museum of Art Open Access",
+    "bytes": 129656
+  },
+  {
+    "file": "olives.jpg",
+    "title": "Women Picking Olives",
+    "artist": "Vincent van Gogh",
+    "source": "https://www.metmuseum.org/art/collection/search/436536",
+    "license": "CC0 / The Metropolitan Museum of Art Open Access",
+    "bytes": 206706
+  },
+  {
+    "file": "venice.jpg",
+    "title": "Venice, from the Porch of Madonna della Salute",
+    "artist": "Joseph Mallord William Turner",
+    "source": "https://www.metmuseum.org/art/collection/search/437853",
+    "license": "CC0 / The Metropolitan Museum of Art Open Access",
+    "bytes": 250496
+  }
+]

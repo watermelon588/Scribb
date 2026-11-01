@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.reference-analysis/
+test-results/
+playwright-report/
+.vite/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+*.log
+/From Klickpin.com-*.mp4
