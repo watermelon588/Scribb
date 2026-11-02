@@ -6,7 +6,7 @@ import { sql } from './db.js'
 import { media } from './media.js'
 import { people } from './people.js'
 
-/** The Scribb core API. Vercel runs it as one function behind /api (api/index.ts); dev.ts runs it locally. */
+/** The Express service keeps its /api prefix: Vercel forwards the original request path. */
 const app = express()
 app.disable('x-powered-by')
 // Private account and journal responses must never be stored by a shared cache.

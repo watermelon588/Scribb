@@ -90,3 +90,13 @@ Scope: journals only. Sketchbooks are unchanged. Do not start this again.
 - [x] Build and validate locally: 16 API tests and 20 Python tests passed. The full browser run passed 47/50 including all four new page tests; the two timed-out existing journal/theme checks passed focused reruns. The remaining elastic check passed after its immediate SVG assertion became an awaited poll of the same expected value. No renderer or gesture code changed.
 
 AI checks used mocks and local test storage; no journal content was sent to a live provider. Streaming needs the updated AI service deployed with the app; the client also supports the older JSON response. Media provenance is in public/media/README.md; surface design and maintenance are in docs/PUBLIC-PAGES.md.
+
+### Hosting services and direct installation — 3 November 2026
+
+- Prepared three-service Vercel draft: app public catch-all, api public /api/*,
+  scribb-ai internal; api -> scribb-ai runtime AI_URL binding. Owner confirmed
+  these names, paths, binding and Singapore region on 3 November 2026.
+- Browser AI calls move behind authenticated same-origin streaming API.
+- Website installation uses PWA manifest/icons and a shared footer Install app
+  button with platform instructions. No offline/private API cache is added.
+- The isolated hosting worktree does not include the other chat's creator work.

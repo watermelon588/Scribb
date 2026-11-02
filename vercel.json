@@ -1,12 +1,39 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "vite",
-  "installCommand": "npm ci --include=dev",
-  "buildCommand": "npm run check:deploy -- vercel && npm run build",
-  "outputDirectory": "dist",
+  "services": {
+    "app": {
+      "root": ".",
+      "framework": "vite",
+      "installCommand": "npm ci --include=dev",
+      "buildCommand": "npm run build:web",
+      "devCommand": "node scripts/dev-web.mjs",
+      "outputDirectory": "dist"
+    },
+    "api": {
+      "root": ".",
+      "framework": "express",
+      "entrypoint": "server/app.ts",
+      "installCommand": "npm ci --include=dev",
+      "buildCommand": "npm run check:deploy -- vercel && npm run build:api",
+      "devCommand": "npm run dev:api",
+      "functions": { "server/app.ts": { "maxDuration": 60 } },
+      "bindings": [
+        { "type": "service", "service": "scribb-ai", "format": "url", "env": "AI_URL" }
+      ]
+    },
+    "scribb-ai": {
+      "root": "ai",
+      "framework": "fastapi",
+      "entrypoint": "scribb_ai.main:app",
+      "buildCommand": "pip install -r requirements.txt && python -m scribb_ai.check_config",
+      "functions": { "**/*.py": { "maxDuration": 60 } }
+    }
+  },
   "regions": ["sin1"],
-  "functions": { "api/index.ts": { "maxDuration": 60 } },
-  "rewrites": [{ "source": "/api/:path*", "destination": "/api" }],
+  "rewrites": [
+    { "source": "/api/:path*", "destination": { "service": "api" } },
+    { "source": "/(.*)", "destination": { "service": "app" } }
+  ],
   "headers": [
     { "source": "/(.*)", "headers": [
       { "key": "X-Content-Type-Options", "value": "nosniff" },

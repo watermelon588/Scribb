@@ -14,7 +14,7 @@ replacing the incumbent product or design documents.
 | `/#terms` | Terms | The same reading layout, hierarchy and return link as Privacy. |
 | `/#ask` | Ask my journal | A centered introduction followed by consent or a linear journal conversation and composer. |
 
-The footer links to Ask my journal, Privacy and Terms. Account creation also links
+The footer offers Install app and links to Ask my journal, Privacy and Terms. Account creation also links
 to the information pages. These routes share the existing appearance and style
 preferences; they do not create another studio, profile style or palette.
 
@@ -86,3 +86,13 @@ about frontend-only storage, removed studies/styles and earlier feed layouts.
 They were preserved for this ordinary extension. Use the current project contract
 and implementation for those later milestones until a separately authorized
 documentation reconciliation.
+
+
+## Private AI routing and installation (3 November 2026)
+
+The browser uses only `/api/ai/status`, `/api/ai/health` and `/api/ai/ask`.
+The API service calls internal FastAPI with the runtime `AI_URL` binding and a
+server-only ticket. This replaces direct-browser AI URLs and tickets.
+The shared footer offers Install app with a browser prompt or platform
+instructions. Manifest installation needs HTTPS in production. It adds no
+private caches and does not promise offline accounts or cloud access.

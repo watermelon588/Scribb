@@ -1,5 +1,8 @@
 .env*
 .git/
+.vercel/
+ai/.vercel/
+**/__pycache__/
 .claude/
 .codex/
 .data/
@@ -8,7 +11,9 @@
 test-results/
 playwright-report/
 graphify-out/
-ai/
+ai/.venv/
+ai/.pytest_cache/
+ai/tests/
 tests/
 docs/
 journal inspiration/

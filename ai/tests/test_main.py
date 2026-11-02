@@ -15,8 +15,8 @@ def test_ask_without_a_ticket_is_refused():
     assert reply.json()["error"]["code"] == "bad_ticket"
 
 
-def test_only_scribb_origins_get_cors_headers():
+def test_private_service_does_not_offer_browser_cors_access():
     ok = client.options("/ask", headers={"origin": "http://localhost:5173", "access-control-request-method": "POST"})
-    assert ok.headers.get("access-control-allow-origin") == "http://localhost:5173"
+    assert "access-control-allow-origin" not in ok.headers
     other = client.options("/ask", headers={"origin": "https://evil.example", "access-control-request-method": "POST"})
     assert "access-control-allow-origin" not in other.headers

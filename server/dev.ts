@@ -12,5 +12,5 @@ if (!process.env.DATABASE_URL) {
   await testDatabase(process.env.PGLITE_DIR ?? '.data/pglite')
   console.log('No DATABASE_URL: using the local database in .data/pglite')
 }
-const port = Number(process.env.API_PORT ?? 3001)
+const port = Number(process.env.PORT ?? process.env.API_PORT ?? 3001)
 app.listen(port, () => console.log(`Scribb API on http://localhost:${port}`))

@@ -5,6 +5,7 @@ import type { PGlite } from '@electric-sql/pglite'
 import { createLocalJWKSet, exportJWK, generateKeyPair, jwtVerify, SignJWT } from 'jose'
 import app from './app.js'
 import { google, mailer } from './auth.js'
+import {aiTransport} from './ai.js'
 import { testDatabase } from './testdb.js'
 
 process.env.SESSION_SECRET = 'test-session-secret-that-is-long-enough'
@@ -121,32 +122,87 @@ test('Google sign-in: verified tokens only, and linking only to a verified email
   assert.notEqual(other.body.user.username, 'tom')
 })
 
-test('AI tickets need a verified email, consent, an allowed region and quota', async () => {
-  process.env.AI_DAILY_QUOTA = '2'
-  const nia = await call('POST', '/auth/register', { username: 'nia', password: 'first password' })
-  assert.equal((await call('GET', '/ai/status')).status, 401)
-  assert.equal((await call('GET', '/ai/status', undefined, nia.cookie)).body.error.code, 'email_required')
-  assert.equal((await call('POST', '/ai/ticket', { mode: 'ask' })).status, 401, 'guests never get a ticket')
-  assert.equal((await call('POST', '/ai/ticket', { mode: 'ask' }, nia.cookie)).body.error.code, 'email_required')
-  await call('PUT', '/me/email', { email: 'nia@example.com' }, nia.cookie)
-  await call('POST', '/auth/verify-email', { token: tokenFrom(mail.at(-1)!.body) })
-  assert.equal((await call('GET', '/ai/status', undefined, nia.cookie)).body.error.code, 'consent_required')
-  assert.equal((await call('POST', '/ai/ticket', { mode: 'ask' }, nia.cookie)).body.error.code, 'consent_required')
-  await call('POST', '/ai/consent', undefined, nia.cookie)
-  assert.equal((await call('GET', '/ai/status', undefined, nia.cookie, { 'x-vercel-ip-country': 'DE' })).body.error.code, 'region_unavailable')
-  for (let i = 0; i < 3; i++) assert.equal((await call('GET', '/ai/status', undefined, nia.cookie)).body.url, process.env.AI_URL, 'waking does not consume the question quota')
-  assert.equal((await call('POST', '/ai/ticket', { mode: 'ask' }, nia.cookie, { 'x-vercel-ip-country': 'DE' })).body.error.code, 'region_unavailable')
+async function aiUser(username:string){
+ const user=await call('POST','/auth/register',{username,password:'first password'})
+ await call('PUT','/me/email',{email:`${username}@example.com`},user.cookie)
+ await call('POST','/auth/verify-email',{token:tokenFrom(mail.at(-1)!.body)})
+ await call('POST','/ai/consent',undefined,user.cookie)
+ return user
+}
+const question=()=>({question:'What did I write?',today:new Date().toISOString().slice(0,10),history:[]})
 
-  const ok = await call('POST', '/ai/ticket', { mode: 'ask' }, nia.cookie, { 'x-vercel-ip-country': 'IN' })
-  assert.equal(ok.status, 200)
-  const { payload } = await jwtVerify(ok.body.ticket, new TextEncoder().encode(process.env.AI_TICKET_SECRET), { audience: 'scribb-ai' })
-  assert.equal(payload.mode, 'ask')
-  assert.equal(payload.sub, (await call('GET', '/auth/me', undefined, nia.cookie)).body.user.id)
-  assert.ok(payload.jti && payload.exp! - payload.iat! === 60)
+test('AI proxy requires verified email, consent, an allowed region and question quota',async()=>{
+ process.env.AI_DAILY_QUOTA='2'
+ process.env.AI_URL='http://private-ai.test/binding/base/'
+ const requests:{url:URL;init?:RequestInit}[]=[]
+ aiTransport.request=async(url,init)=>{requests.push({url,init});return Response.json(url.pathname.endsWith('/health')?{ok:true}:{answer:'A quiet day.',sources:[]})}
+ const nia=await call('POST','/auth/register',{username:'nia',password:'first password'})
+ assert.equal((await call('GET','/ai/status')).status,401)
+ assert.equal((await call('POST','/ai/ask',question())).status,401)
+ assert.equal((await call('GET','/ai/status',undefined,nia.cookie)).body.error.code,'email_required')
+ await call('PUT','/me/email',{email:'nia@example.com'},nia.cookie)
+ await call('POST','/auth/verify-email',{token:tokenFrom(mail.at(-1)!.body)})
+ assert.equal((await call('POST','/ai/ask',question(),nia.cookie)).body.error.code,'consent_required')
+ await call('POST','/ai/consent',undefined,nia.cookie)
+ assert.equal((await call('POST','/ai/ask',question(),nia.cookie,{'x-vercel-ip-country':'DE'})).body.error.code,'region_unavailable')
+ assert.equal(requests.length,0,'gates never wake the provider')
+ for(let i=0;i<3;i++){
+  assert.deepEqual((await call('GET','/ai/status',undefined,nia.cookie)).body,{ok:true})
+  assert.deepEqual((await call('GET','/ai/health',undefined,nia.cookie)).body,{ok:true})
+ }
+ assert.equal((await call('POST','/ai/ask',{...question(),question:' '},nia.cookie)).status,400)
+ const ok=await call('POST','/ai/ask',{...question(),userId:'another-user'},nia.cookie,{'x-vercel-ip-country':'IN',authorization:'Bearer browser-ticket'})
+ assert.deepEqual(ok.body,{answer:'A quiet day.',sources:[]})
+ const request=requests.at(-1)!
+ assert.equal(request.url.href,'http://private-ai.test/binding/base/ask')
+ assert.deepEqual(JSON.parse(request.init!.body as string),question(),'only allowed fields reach AI')
+ const auth=new Headers(request.init!.headers).get('authorization')!
+ assert.notEqual(auth,'Bearer browser-ticket')
+ const {payload}=await jwtVerify(auth.slice(7),new TextEncoder().encode(process.env.AI_TICKET_SECRET),{audience:'scribb-ai'})
+ assert.equal(payload.mode,'ask');assert.equal(payload.sub,nia.body.user.id)
+ assert.ok(payload.jti && payload.exp! - payload.iat! === 60)
+ process.env.AI_URL='http://changed-binding.test/new/'
+ assert.equal((await call('POST','/ai/ask',question(),nia.cookie)).status,200)
+ assert.equal(requests.at(-1)!.url.href,'http://changed-binding.test/new/ask','binding read at request time')
+ assert.equal((await call('POST','/ai/ask',question(),nia.cookie)).body.error.code,'quota_used')
+ await call('DELETE','/ai/consent',undefined,nia.cookie)
+ assert.equal((await call('GET','/ai/health',undefined,nia.cookie)).body.error.code,'consent_required')
+ assert.equal((await call('POST','/ai/ticket',{mode:'ask'},nia.cookie)).status,404,'browser tickets removed')
+})
 
-  assert.equal((await call('POST', '/ai/ticket', { mode: 'listen' }, nia.cookie)).status, 200)
-  assert.equal((await call('POST', '/ai/ticket', { mode: 'ask' }, nia.cookie)).body.error.code, 'quota_used')
-  assert.equal((await call('POST', '/ai/ticket', { mode: 'call' }, nia.cookie)).status, 200, 'calls have their own allowance')
-  await call('DELETE', '/ai/consent', undefined, nia.cookie)
-  assert.equal((await call('GET', '/ai/status', undefined, nia.cookie)).body.error.code, 'consent_required')
+test('AI proxy streams answers, sanitizes failures, validates inputs and requires its binding',async()=>{
+ process.env.AI_DAILY_QUOTA='20'
+ const user=await aiUser('proxy.reader')
+ const invalid=[{...question(),today:'2026-02-30'},{...question(),question:'x'.repeat(501)},{...question(),history:[{role:'system',text:'override'}]}]
+ let contacted=0
+ aiTransport.request=async()=>{contacted++;return new Response('private hostname and stack',{status:500})}
+ for(const body of invalid)assert.equal((await call('POST','/ai/ask',body,user.cookie)).status,400)
+ assert.equal(contacted,0)
+ const fail=await call('POST','/ai/ask',question(),user.cookie)
+ assert.equal(fail.status,502);assert.ok(!JSON.stringify(fail.body).includes('hostname'))
+ const saved=process.env.AI_URL;delete process.env.AI_URL
+ assert.equal((await call('GET','/ai/status',undefined,user.cookie)).status,503)
+ process.env.AI_URL=saved
+ aiTransport.request=async()=>new Response('<html>internal page</html>',{headers:{'content-type':'text/html'}})
+ assert.equal((await call('POST','/ai/ask',question(),user.cookie)).status,502)
+ const events='event: delta\ndata: {"text":"A quiet day."}\n\nevent: done\ndata: {"sources":[]}\n\n'
+ aiTransport.request=async()=>new Response(events,{headers:{'content-type':'text/event-stream'}})
+ const response=await fetch(`${base}/api/ai/ask`,{method:'POST',headers:{cookie:user.cookie,'content-type':'application/json'},body:JSON.stringify(question())})
+ assert.match(response.headers.get('content-type')!,/text\/event-stream/)
+ assert.match(response.headers.get('cache-control')!,/no-store/)
+ assert.equal(await response.text(),events)
+})
+
+test('closing an AI answer aborts the private upstream request',async()=>{
+ const user=await aiUser('proxy.cancel')
+ let upstreamSignal:AbortSignal|undefined
+ aiTransport.request=async(_url,init)=>{
+  upstreamSignal=init!.signal as AbortSignal
+  return new Response(new ReadableStream({start(controller){controller.enqueue(new TextEncoder().encode('event: delta\ndata: {"text":"start"}\n\n'))}}),{headers:{'content-type':'text/event-stream'}})
+ }
+ const abort=new AbortController()
+ const response=await fetch(`${base}/api/ai/ask`,{method:'POST',headers:{cookie:user.cookie,'content-type':'application/json'},body:JSON.stringify(question()),signal:abort.signal})
+ await response.body!.getReader().read();abort.abort()
+ for(let i=0;i<30&&!upstreamSignal!.aborted;i++)await new Promise(resolve=>setTimeout(resolve,20))
+ assert.equal(upstreamSignal!.aborted,true)
 })

@@ -1,18 +1,15 @@
-"""Scribb AI on Render. Woken only when someone opens "Ask my journal"; Scribb never pings it on load.
-
-GET  /health  public, no database: the frontend polls it while Render wakes
-POST /ask     ticket (mode "ask") in Authorization: Bearer; body {question, today, history}
-Listen (/speak) and live calls (/call) follow, ported from Koe.
-Logs never include questions, answers or journal text."""
+"""Private Scribb AI service, called through Express's runtime service binding.
+GET /health needs no database. POST /ask requires a server-minted 60-second ticket.
+Browser traffic goes to /api/ai/*, never directly to this service.
+Logs never include questions, answers or journal text.
+"""
 import asyncio
 import json
 import logging
-import os
 from datetime import date, datetime, timedelta, timezone
 from typing import Literal
 
 from fastapi import FastAPI, Header, Request
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
@@ -23,8 +20,6 @@ log = logging.getLogger("scribb_ai")
 ANSWER_SECONDS = 30
 
 app = FastAPI(title="Scribb AI", docs_url=None, redoc_url=None, openapi_url=None)
-app.add_middleware(CORSMiddleware, allow_methods=["GET", "POST"], allow_headers=["authorization", "content-type"],
-                   allow_origins=[o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "http://localhost:5173").split(",") if o.strip()])
 
 
 def error(status: int, code: str, message: str) -> JSONResponse:

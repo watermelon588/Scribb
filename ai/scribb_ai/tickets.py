@@ -10,8 +10,9 @@ class TicketError(Exception):
     pass
 
 
-# ponytail: used ticket ids live in memory. Fine for one Render instance; a restart forgets them,
-# but every ticket expires within 60 seconds anyway. Move to Postgres if this ever runs on several instances.
+# Replay defense within a warm instance. Tickets are never given to the browser;
+# the authenticated API signs a fresh nonce for each private service request.
+# This cache is not a cross-instance replay store. Tickets expire after 60 seconds.
 _used: dict[str, float] = {}
 
 

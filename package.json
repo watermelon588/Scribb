@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 5173 --strictPort",
     "build": "tsc -b tsconfig.json server/tsconfig.json && vite build",
+    "build:web": "tsc -b tsconfig.json && vite build",
+    "build:api": "tsc -p server/tsconfig.json",
+    "dev:services": "vercel dev --local --listen 5173",
     "preview": "vite preview --host 0.0.0.0 --port 4173",
     "test": "npm run test:api && playwright test",
     "postinstall": "node scripts/patch-page-flip.mjs",
@@ -50,6 +53,7 @@
     "@vitejs/plugin-react": "^6.0.1",
     "tsx": "^4.23.15",
     "typescript": "~5.9.3",
+    "vercel": "65.9.0",
     "vite": "^8.3.5"
   },
   "engines": {

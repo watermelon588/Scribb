@@ -2,7 +2,7 @@ from scribb_ai.check_config import problems
 
 
 def ready():
-    return {"AI_TICKET_SECRET": "test-ticket-value-with-at-least-32-characters", "AI_DATABASE_URL": "postgresql://scribb_ai:test@database.example/app?sslmode=require", "GEMINI_API_KEY": "test-key", "ALLOWED_ORIGINS": "https://scribb.example"}
+    return {"AI_TICKET_SECRET": "test-ticket-value-with-at-least-32-characters", "AI_DATABASE_URL": "postgresql://scribb_ai:test@database.example/app?sslmode=require", "GEMINI_API_KEY": "test-key"}
 
 
 def test_valid_hosting_config_does_not_contact_providers():
@@ -15,6 +15,6 @@ def test_database_owner_is_refused():
     assert "private-value" not in "".join(errors)
 
 
-def test_tls_and_exact_cors_origins_are_required():
-    errors = problems({**ready(), "AI_DATABASE_URL": "postgresql://scribb_ai:test@database.example/app", "ALLOWED_ORIGINS": "https://*.example"})
-    assert len(errors) == 2
+def test_database_tls_is_required():
+    errors = problems({**ready(), "AI_DATABASE_URL": "postgresql://scribb_ai:test@database.example/app"})
+    assert len(errors) == 1

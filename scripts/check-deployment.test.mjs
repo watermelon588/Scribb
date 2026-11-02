@@ -11,14 +11,21 @@ test('unsafe production settings and public secrets are refused without leaking 
  assert.equal(problems.length,5)
  assert.ok(!problems.join('').includes('private-value'))
 })
-test('enabling AI needs distinct shared secret, HTTPS service and email delivery',()=>{
+test('enabling AI needs distinct shared secret and email delivery; binding is runtime only',()=>{
  const env={...ready(),AI_ENABLED:'true',AI_TICKET_SECRET:ready().SESSION_SECRET,AI_URL:'http://localhost:8000'}
- assert.equal(deploymentProblems(env).length,3)
- assert.deepEqual(deploymentProblems({...env,AI_TICKET_SECRET:'test-ai-ticket-value-with-at-least-32-characters',AI_URL:'https://scribb-ai.onrender.com',RESEND_API_KEY:'test-email-key',MAIL_FROM:'Scribb <hello@example.com>'}),[])
+ assert.equal(deploymentProblems(env).length,2)
+ assert.deepEqual(deploymentProblems({...env,AI_TICKET_SECRET:'test-ai-ticket-value-with-at-least-32-characters',AI_URL:'http://private-ai.internal/service/base/',RESEND_API_KEY:'test-email-key',MAIL_FROM:'Scribb <hello@example.com>'}),[])
+})
+
+test('a missing binding is valid at build time and fails runtime validation',()=>{
+ const env={...ready(),AI_ENABLED:'true',AI_TICKET_SECRET:'test-ai-ticket-value-with-at-least-32-characters',RESEND_API_KEY:'mail-key',MAIL_FROM:'Scribb <hello@example.com>'}
+ assert.deepEqual(deploymentProblems(env),[])
+ assert.match(deploymentProblems(env,{runtime:true})[0],/binding at runtime/)
+ assert.deepEqual(deploymentProblems({...env,AI_URL:'http://private-ai.internal/service/base/'},{runtime:true}),[])
 })
 test('Google sign-in cannot be half configured',()=>assert.match(deploymentProblems({...ready(),GOOGLE_CLIENT_ID:'public-id'})[0],/both Google client IDs/))
 test('verified Google accounts can use AI without requiring a mail provider',()=>{
- assert.deepEqual(deploymentProblems({...ready(),AI_ENABLED:'true',AI_TICKET_SECRET:'test-ai-ticket-value-with-at-least-32-characters',AI_URL:'https://scribb-ai.onrender.com',GOOGLE_CLIENT_ID:'public-client-id',VITE_GOOGLE_CLIENT_ID:'public-client-id'}),[])
+ assert.deepEqual(deploymentProblems({...ready(),AI_ENABLED:'true',AI_TICKET_SECRET:'test-ai-ticket-value-with-at-least-32-characters',AI_URL:'http://private-ai.internal/service/base/',GOOGLE_CLIENT_ID:'public-client-id',VITE_GOOGLE_CLIENT_ID:'public-client-id'}),[])
 })
 test('bundled cover metadata matches the preserved public asset records',()=>{
  for(const kind of ['sketchbook','journal']){

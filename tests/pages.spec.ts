@@ -1,5 +1,4 @@
 import {test,expect} from './fixtures'
-const cors={'access-control-allow-origin':'*','access-control-allow-headers':'authorization,content-type','access-control-allow-methods':'GET,POST,OPTIONS'}
 
 test('guest animation loops silently, account opens and legal pages retain appearance on phones',async({page})=>{
  await page.request.post('/api/auth/logout')
@@ -54,24 +53,24 @@ test('Ask my journal respects email and consent gates without waking the AI',asy
 
 test('Ask my journal handles wake-up, streamed answers, retry and withdrawal',async({page})=>{
  await page.route('**/api/auth/me',async route=>{const res=await route.fetch();const data=await res.json();await route.fulfill({json:{...data,user:{...data.user,emailVerified:true}}})})
- let tickets=0,asks=0
- await page.route('**/api/ai/status',route=>route.fulfill({json:{url:'https://journal-ai.test'}}))
- await page.route('https://journal-ai.test/health',async route=>{await new Promise(resolve=>setTimeout(resolve,450));await route.fulfill({headers:cors,json:{ok:true}})})
- await page.route('**/api/ai/ticket',route=>{tickets++;return route.fulfill({json:{url:'https://journal-ai.test',ticket:'test-ticket'}})})
- await page.route('https://journal-ai.test/ask',async route=>{
+ let asks=0
+ await page.route('**/api/ai/status',route=>route.fulfill({json:{ok:true}}))
+ await page.route('**/api/ai/health',async route=>{await new Promise(resolve=>setTimeout(resolve,450));await route.fulfill({json:{ok:true}})})
+ await page.route('**/api/ai/ask',async route=>{
   asks++
+  expect(route.request().headers().authorization).toBeUndefined()
   const body=route.request().postDataJSON()
   expect(body.question).toBe('What did I write about last month?')
   expect(body.history).toEqual([])
   expect(body.today).toMatch(/^\d{4}-\d{2}-\d{2}$/)
-  if(asks===1)return route.fulfill({headers:cors,status:503,json:{error:{message:'Scribb AI is resting right now. Please try again.'}}})
-  return route.fulfill({headers:cors,contentType:'text/event-stream',body:'event: delta\ndata: {"text":"You wrote about "}\n\nevent: delta\ndata: {"text":"drawing <b>outside</b>."}\n\nevent: done\ndata: {"sources":[{"entryId":"e1","date":"2026-10-12"}]}\n\n'})
+  if(asks===1)return route.fulfill({status:503,json:{error:{message:'Scribb AI is resting right now. Please try again.'}}})
+  return route.fulfill({contentType:'text/event-stream',body:'event: delta\ndata: {"text":"You wrote about "}\n\nevent: delta\ndata: {"text":"drawing <b>outside</b>."}\n\nevent: done\ndata: {"sources":[{"entryId":"e1","date":"2026-10-12"}]}\n\n'})
  })
  await page.goto('/#ask')
  await page.getByRole('checkbox').check()
  await page.getByRole('button',{name:'Turn on Ask my journal'}).click()
  await expect(page.getByRole('button',{name:'Turn off AI'})).toBeVisible()
- expect(tickets).toBe(0)
+ expect(asks).toBe(0)
  await page.getByRole('button',{name:'What did I write about last month?'}).click()
  await page.getByRole('button',{name:'Send question'}).click()
  await expect(page.getByRole('status')).toContainText('Waking up')
@@ -81,7 +80,7 @@ test('Ask my journal handles wake-up, streamed answers, retry and withdrawal',as
  await expect(page.locator('.ask-answer b')).toHaveCount(0)
  await expect(page.locator('.ask-sources time')).toHaveAttribute('datetime','2026-10-12')
  await expect(page.locator('.ask-turn')).toHaveCount(1)
- expect(tickets).toBe(2)
+ expect(asks).toBe(2)
  await page.screenshot({path:'.impeccable/review/ask-desktop.png',fullPage:true})
  await page.getByRole('button',{name:'editorial style'}).click()
  await page.getByRole('button',{name:'Switch to dark theme'}).click()
@@ -99,13 +98,13 @@ test('Ask my journal handles wake-up, streamed answers, retry and withdrawal',as
  expect((await (await page.request.get('/api/auth/me')).json()).user.aiConsent).toBe(false)
 })
 
-test('stopping a wake-up cancels it before a ticket is requested',async({page})=>{
+test('stopping a wake-up cancels it before a question is sent',async({page})=>{
  await page.request.post('/api/ai/consent')
  await page.route('**/api/auth/me',async route=>{const res=await route.fetch();const data=await res.json();await route.fulfill({json:{...data,user:{...data.user,emailVerified:true}}})})
- await page.route('**/api/ai/status',route=>route.fulfill({json:{url:'https://journal-ai.test'}}))
- await page.route('https://journal-ai.test/health',async route=>{await new Promise(resolve=>setTimeout(resolve,700));await route.fulfill({headers:cors,json:{ok:true}}).catch(()=>{})})
- let tickets=0
- await page.route('**/api/ai/ticket',route=>{tickets++;return route.fulfill({status:503,json:{error:{message:'Unexpected ticket'}}})})
+ await page.route('**/api/ai/status',route=>route.fulfill({json:{ok:true}}))
+ await page.route('**/api/ai/health',async route=>{await new Promise(resolve=>setTimeout(resolve,700));await route.fulfill({json:{ok:true}}).catch(()=>{})})
+ let asks=0
+ await page.route('**/api/ai/ask',route=>{asks++;return route.fulfill({status:503,json:{error:{message:'Unexpected question'}}})})
  await page.goto('/#ask')
  await page.getByRole('textbox',{name:'Ask about your journal'}).fill('What did I write yesterday?')
  await page.getByRole('button',{name:'Send question'}).click()
@@ -114,5 +113,5 @@ test('stopping a wake-up cancels it before a ticket is requested',async({page})=
  await expect(page.getByRole('button',{name:'Retry question'})).toBeVisible()
  await page.getByRole('link',{name:'Privacy',exact:true}).click()
  await expect(page.getByRole('heading',{name:'Your privacy.'})).toBeVisible()
- expect(tickets).toBe(0)
+ expect(asks).toBe(0)
 })

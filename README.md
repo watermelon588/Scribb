@@ -6,6 +6,21 @@ A design prototype for an artist portfolio built around tactile digital
 sketchbooks. **Untitled is a temporary name.** This milestone explores the book;
 the future feed and artist profiles are deliberately deferred.
 
+## Hosting and installing
+
+Deploy the `codex/hosting-ready` branch as one Vercel project with three services:
+`app` (Vite website), `api` (Express at `/api/*`) and internal `scribb-ai` (FastAPI).
+Only `api` calls the AI through the runtime `AI_URL` binding. Do not set that
+variable manually. The complete dashboard-only setup and environment-variable
+list are in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
+The website's **Install app** button installs Scribb on supported phones and
+desktops. iPhone/iPad users get Safari Add to Home Screen instructions. No app
+store, APK or desktop installer is needed. An internet connection is still
+required for accounts, cloud books and AI. This release does not cache private
+API responses or provide offline cloud access. Local drafts may be separate
+between a browser and its installed app; save work to your account before moving.
+
 ## Run locally
 
 Requires Node.js 22.12+ and npm.
@@ -105,7 +120,7 @@ captures are ignored in `.reference-analysis/`. The current backend and hosting 
 
 ## Hosting
 
-Deploy the `codex/hosting-ready` branch. Follow [the exact Vercel, Neon, Cloudinary, Resend and Render setup](docs/DEPLOYMENT.md). Vercel serves the UI and Express API together; Render serves only optional Python AI. No secrets belong in GitHub.
+Deploy the `codex/hosting-ready` branch. Follow [the exact Vercel, Neon, Cloudinary, Resend and Vercel setup](docs/DEPLOYMENT.md). Vercel serves the UI and Express API together; Vercel serves only optional Python AI. No secrets belong in GitHub.
 
 ## Current application
 - `/` or `/#portfolio`: your artist profile and account-backed sketchbooks and journals. Guests see a centered silent welcome animation and account prompt.
@@ -181,10 +196,12 @@ the current media-deletion limitation and Gemini free-tier processing rather tha
 promising complete deletion or confidential AI processing.
 
 `/#ask` opens Ask my journal. A verified email and explicit AI consent are required.
-`GET /api/ai/status` checks access and returns the configured service URL without
-spending a turn. On submission the client polls `/health` for up to 90 seconds,
-then mints a fresh, one-time 60-second ticket. No AI service is contacted on ordinary
-app loads or while merely reading the consent notice. AI is disabled in local-only tests.
+`GET /api/ai/status` checks access without spending a turn or exposing an
+internal URL. On submission the client polls `/api/ai/health` for up to 90 seconds,
+then posts to `/api/ai/ask`. Express signs a fresh 60-second server-only ticket
+and streams the bound private service's response. No AI service is contacted on
+ordinary app loads or while reading the consent notice. AI is disabled in
+local-only tests.
 
 The AI `/ask` endpoint retains JSON compatibility and accepts
 `Accept: text/event-stream` for real Gemini chunks (`delta`, `done` with journal source
