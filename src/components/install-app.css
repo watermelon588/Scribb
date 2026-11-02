@@ -1,0 +1,16 @@
+.install-app-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer}
+.site-footer nav{align-items:center}
+.install-app-button:hover{color:var(--app-ink)}
+.install-app-dialog{box-sizing:border-box;width:min(480px,calc(100vw - 32px));max-height:calc(100dvh - 48px);overflow:auto;border:1px solid var(--app-line);border-radius:4px;padding:40px 32px 28px;background:var(--app-bg);color:var(--app-ink);font:400 14px/1.8 'Manrope Variable',sans-serif;text-align:left}
+.install-app-dialog::backdrop{background:#181c1a66}
+.install-app-dialog h2{margin:24px 0 16px;font-size:30px;font-weight:400;line-height:1.25;letter-spacing:-.04em}
+.install-app-dialog p,.install-app-dialog ol{margin:16px 0}
+.install-app-dialog ol{padding-left:20px}
+.install-app-dialog li{padding:4px 0 4px 4px}
+.install-app-dialog strong{font-weight:600}
+.install-app-dialog .eyebrow{font-size:10px;letter-spacing:.16em}
+.install-app-dialog .install-note{border-top:1px solid var(--app-line);padding-top:16px;font-size:12px;opacity:.8}
+.install-close{position:absolute;right:12px;top:12px;display:grid;place-items:center;width:44px;height:44px;background:none;border:0;color:inherit;cursor:pointer}
+.install-app-button:focus-visible,.install-close:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+html[data-theme=dark] .install-app-dialog{background:#202521;color:#e5e7dd;border-color:#465044}
+@media(max-width:390px){.install-app-dialog{padding:40px 24px 24px}.install-app-dialog h2{font-size:26px}}

@@ -1,0 +1,17 @@
+{
+  "id": "/",
+  "name": "Scribb — Sketchbooks & journals",
+  "short_name": "Scribb",
+  "description": "A space for your sketchbooks, journals and the things you want to keep.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#faf9f6",
+  "theme_color": "#43533b",
+  "prefer_related_applications": false,
+  "icons": [
+    {"src": "/icons/app-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "/icons/app-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "/icons/app-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

@@ -1,5 +1,6 @@
+import InstallApp from './InstallApp'
 const geminiTerms='https://ai.google.dev/gemini-api/terms'
-export function SiteFooter(){return <footer className="site-footer"><span>A space of your own.</span><nav aria-label="Information"><a href="#ask">Ask my journal</a><a href="#privacy">Privacy</a><a href="#terms">Terms</a></nav></footer>}
+export function SiteFooter(){return <footer className="site-footer"><span>A space of your own.</span><nav aria-label="Information"><InstallApp/><a href="#ask">Ask my journal</a><a href="#privacy">Privacy</a><a href="#terms">Terms</a></nav></footer>}
 
 export default function Legal({page}:{page:'privacy'|'terms'}){
  const privacy=page==='privacy'
