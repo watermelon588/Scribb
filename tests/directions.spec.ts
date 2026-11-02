@@ -1,7 +1,7 @@
-import {test,expect} from '@playwright/test'
+import {test,expect,seedShelf} from './fixtures'
 
 test('two coordinated styles share profile and draft, including the reference bookshelf',async({page})=>{
- await page.goto('/');
+ await seedShelf(page.request);await page.goto('/');
  for(const style of ['gallery','editorial']){
   await page.getByRole('button',{name:`${style} style`,exact:true}).click();await expect(page.locator('.portfolio-app')).toHaveClass(new RegExp(`style-${style}`));
   await page.screenshot({path:`.reference-analysis/style-${style}-profile.png`,fullPage:true});
@@ -27,7 +27,8 @@ test('caption and applied crop persist in the notebook',async({page})=>{
  const cropped=await page.getByRole('group',{name:'Position artwork'}).locator('img').getAttribute('src');expect(cropped).toMatch(/^data:image\/webp/);
  await page.getByRole('button',{name:'Preview book',exact:true}).first().click();await page.getByRole('button',{name:'Save sketchbook',exact:true}).click();await expect(page.getByRole('status')).toContainText('saved');
  await page.goto('/');await page.getByRole('button',{name:'Open Cropped observations'}).click();await expect(page.locator('.book-mount .cover-phrase')).toHaveText('A quieter kind of seeing.');await expect(page.locator('.book-mount .back-cover .cover-phrase')).toHaveCount(0);
- await expect(page.locator('.book-mount .art-image-frame img')).toHaveAttribute('src',cropped!);
+ // The crop is uploaded on save, so the book now draws the stored file.
+ await expect(page.locator('.book-mount .art-image-frame img')).toHaveAttribute('src',/^\/api\/media\/[0-9a-f-]+\.webp$/);
 });
 
 test('rejects renamed active content, oversized files and oversized pixel dimensions',async({page})=>{

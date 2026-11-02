@@ -30,7 +30,7 @@ function srcsSafe(value: unknown): boolean {
 
 const bookJson = (b: Row, withPages: boolean) => ({
   id: b.id, kind: b.kind, title: b.title, visibility: b.visibility, category: b.category, design: b.design,
-  ...(withPages ? { pages: b.pages } : {}),
+  ...(withPages || b.pages ? { pages: b.pages } : {}), ...(b.latest ? { latest: entryJson(b.latest) } : {}),
   likeCount: b.like_count, saveCount: b.save_count, version: b.version, publishedAt: b.published_at, updatedAt: b.updated_at,
   owner: { username: b.handle, displayName: b.display_name, avatar: b.avatar }, liked: b.liked, saved: b.saved,
 })
@@ -107,6 +107,12 @@ books.get('/feed', async (req, res) => {
   const rows = await sql()`
     select b.id, b.kind, b.title, b.visibility, b.category, b.design, b.like_count, b.save_count, b.version, b.published_at, b.updated_at,
            b.published_at::text as at, p.handle, p.display_name, p.avatar,
+           -- Cards open on the newest post: all of a sketchbook's pages, or a journal's newest entry with something on it (the one the book opens at).
+           case when b.kind = 'sketchbook' then b.pages end as pages,
+           (select to_jsonb(e) from (select id, book_id, entry_date::text as date, layout, texts, images, extras, version from journal_entries j
+              where j.book_id = b.id and (j.images <> '{}' or jsonb_array_length(coalesce(j.extras->'scribbles', '[]')) > 0 or jsonb_array_length(coalesce(j.extras->'stickers', '[]')) > 0
+                or exists (select 1 from jsonb_each_text(j.texts) t where regexp_replace(t.value, '<[^>]*>', '', 'g') ~ '[^[:space:]]'))
+              order by entry_date desc, id desc limit 1) e) as latest,
            exists (select 1 from likes where user_id = ${user}::uuid and book_id = b.id) as liked,
            exists (select 1 from saves where user_id = ${user}::uuid and book_id = b.id) as saved
     from books b join profiles p on p.user_id = b.user_id
@@ -144,6 +150,12 @@ books.get('/me/saved', requireUser, async (req, res) => {
   const rows = await sql()`
     select b.id, b.kind, b.title, b.visibility, b.category, b.design, b.like_count, b.save_count, b.version, b.published_at, b.updated_at,
            s.created_at::text as at, p.handle, p.display_name, p.avatar,
+           -- Cards open on the newest post: all of a sketchbook's pages, or a journal's newest entry with something on it (the one the book opens at).
+           case when b.kind = 'sketchbook' then b.pages end as pages,
+           (select to_jsonb(e) from (select id, book_id, entry_date::text as date, layout, texts, images, extras, version from journal_entries j
+              where j.book_id = b.id and (j.images <> '{}' or jsonb_array_length(coalesce(j.extras->'scribbles', '[]')) > 0 or jsonb_array_length(coalesce(j.extras->'stickers', '[]')) > 0
+                or exists (select 1 from jsonb_each_text(j.texts) t where regexp_replace(t.value, '<[^>]*>', '', 'g') ~ '[^[:space:]]'))
+              order by entry_date desc, id desc limit 1) e) as latest,
            exists (select 1 from likes where user_id = ${user} and book_id = b.id) as liked, true as saved
     from saves s join books b on b.id = s.book_id join profiles p on p.user_id = b.user_id
     where s.user_id = ${user} and (b.visibility = 'public' or b.user_id = ${user})

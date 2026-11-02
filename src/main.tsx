@@ -21,6 +21,7 @@ import Profile from './Profile'
 import './styles.css'
 import './theme.css'
 import './journal.css'
+import './system.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode><Profile /></React.StrictMode>,

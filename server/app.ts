@@ -3,6 +3,7 @@ import { ai } from './ai.js'
 import { auth, fail } from './auth.js'
 import { books } from './books.js'
 import { sql } from './db.js'
+import { media } from './media.js'
 import { people } from './people.js'
 
 /** The Scribb core API. Vercel runs it as one function behind /api (api/index.ts); dev.ts runs it locally. */
@@ -31,7 +32,7 @@ app.get('/api/health', async (_req, res) => {
     res.status(503).json({ ok: false, db: 'down' })
   }
 })
-app.use('/api', auth, people, books, ai)
+app.use('/api', auth, people, books, media, ai)
 
 app.use((_req, res) => fail(res, 404, 'not_found', 'No such endpoint.'))
 

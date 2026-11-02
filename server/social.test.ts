@@ -44,6 +44,39 @@ test('profiles: preset avatars, links, username changes', async () => {
   assert.equal((await call('PATCH', '/me/profile', { bio: 'hi' })).status, 401)
 })
 
+test('creator profile picture and badge require the verified owner email', async () => {
+  const ordinary = await signup('ordinary.artist'), claimant = await signup('creator.claim'), owner = await signup('true.creator')
+  assert.equal((await call('GET', '/auth/me', undefined, ordinary)).body.user.isCreator, false)
+  assert.equal((await call('PATCH', '/me/profile', { avatar: 'mine', isCreator: true }, ordinary)).status, 403)
+  assert.equal((await call('PATCH', '/me/profile', { isCreator: true }, ordinary)).body.profile.isCreator, false, 'a client cannot grant the badge')
+  assert.equal((await call('PATCH', '/me/profile', { avatar: '/avatars/mine.png' }, ordinary)).status, 400)
+  assert.equal((await call('PATCH', '/me/profile', { avatar: { id: 'mine' } }, ordinary)).status, 400)
+
+  await pg.query(`update users set email = $1 where id = (select user_id from profiles where handle = $2)`, ['maityrohit021@gmail.com', 'creator.claim'])
+  assert.equal((await call('GET', '/auth/me', undefined, claimant)).body.user.isCreator, false, 'an unverified email is not ownership')
+  assert.equal((await call('PATCH', '/me/profile', { avatar: 'mine' }, claimant)).status, 403)
+
+  await pg.query(`update users set email = $1, email_verified_at = now() where id = (select user_id from profiles where handle = $2)`, ['maityrohit021@gmail.com', 'true.creator'])
+  const creator = (await call('GET', '/auth/me', undefined, owner)).body.user
+  assert.equal(creator.isCreator, true)
+  assert.equal(creator.avatar, 'mine', 'the verified creator gets the reserved default PFP')
+  const publicProfile = (await call('GET', '/users/true.creator')).body.profile
+  assert.equal(publicProfile.isCreator, true)
+  assert.equal(publicProfile.avatar, 'mine')
+  assert.equal(publicProfile.email, undefined, 'the creator email stays private')
+  assert.equal((await call('PATCH', '/me/profile', { avatar: 'mine' }, owner)).status, 200)
+  assert.equal((await call('PATCH', '/me/profile', { avatar: 'a07' }, owner)).body.profile.avatar, 'a07', 'the creator can still choose a public PFP')
+  await call('PATCH', '/me/profile', { avatar: 'mine' }, owner)
+
+  await pg.query(`update users set email_verified_at = null where id = $1`, [creator.id])
+  const revoked = (await call('GET', '/auth/me', undefined, owner)).body.user
+  assert.equal(revoked.isCreator, false)
+  assert.equal(revoked.avatar, 'a01', 'losing verified ownership removes the reserved avatar')
+  assert.equal((await call('GET', '/users/true.creator')).body.profile.isCreator, false)
+  assert.equal((await call('GET', '/users/true.creator')).body.profile.avatar, 'a01')
+  assert.equal((await call('PATCH', '/me/profile', { avatar: 'mine' }, owner)).status, 403)
+})
+
 test('books: private by default, versions, safe images', async () => {
   const ana = await signup('ana'), ben = await signup('ben'), id = randomUUID()
   assert.equal((await call('PUT', `/books/${id}`, sketchbook(), ana)).status, 201)
@@ -114,7 +147,7 @@ test('feed, likes, saves, follows and notifications', async () => {
   const feed = await call('GET', '/feed')
   assert.ok(feed.body.books.length >= 3)
   assert.ok(!feed.body.books.some((b: { id: string }) => b.id === hidden), 'private books never reach the feed')
-  assert.equal(feed.body.books[0].pages, undefined, 'cards leave pages out')
+  assert.equal(feed.body.books[0].pages.length, 1, 'sketchbook cards carry their pages, to open at the newest one')
   assert.equal((await call('GET', '/feed?cursor=nonsense')).body.error.code, 'bad_cursor')
   assert.equal((await call('GET', '/feed?tab=following')).status, 401)
   assert.equal((await call('GET', '/feed?tab=following', undefined, max)).body.books.length, 0)
@@ -183,4 +216,41 @@ test('deleting an account removes its data and uncounts its likes', async () => 
   assert.equal(left.saveCount, 0)
   assert.equal((await call('GET', '/users/owen')).body.profile.followers, 0)
   assert.equal((await call('GET', '/notifications', undefined, owner)).body.notifications.length, 0, 'their notifications go too')
+})
+
+test('image upload checks the real file type, the size and the quota', async () => {
+  const cookie = await signup('uma')
+  const send = (body: Buffer, kind = 'artwork', type = 'image/webp') => fetch(`${base}/api/media?kind=${kind}`, { method: 'POST', headers: { 'content-type': type, cookie }, body: new Uint8Array(body) })
+  const webp = Buffer.concat([Buffer.from('RIFF    WEBPVP8 '), Buffer.alloc(64)])
+  assert.equal((await fetch(`${base}/api/media?kind=artwork`, { method: 'POST', headers: { 'content-type': 'image/webp' }, body: new Uint8Array(webp) })).status, 401)
+  assert.equal((await send(Buffer.from('<svg onload=alert(1)>'))).status, 400, 'a renamed non-image is refused')
+  assert.equal((await send(Buffer.concat([webp, Buffer.alloc(300 * 1024)]), 'journal')).status, 413, 'journal pictures stay under 200 KB')
+  assert.equal((await send(Buffer.concat([webp, Buffer.alloc(1100 * 1024)]))).status, 413)
+  const ok = await send(webp)
+  assert.equal(ok.status, 201)
+  const { url } = await ok.json() as { url: string }
+  assert.match(url, /^\/api\/media\/[0-9a-f-]{36}\.webp$/)
+  assert.deepEqual(Buffer.from(await (await fetch(`${base}${url}`)).arrayBuffer()), webp, 'development serves the stored file')
+  assert.equal((await call('PUT', `/books/${randomUUID()}`, sketchbook({ pages: [{ src: url }] }), cookie)).status, 201, 'books accept uploaded images')
+})
+
+test('feed cards carry the newest post: sketchbook pages and the newest written journal entry', async () => {
+  const noor = await signup('noor')
+  const book = randomUUID(), journal = randomUUID()
+  assert.equal((await call('PUT', `/books/${book}`, { ...sketchbook({ visibility: 'public' }), version: 0 }, noor)).status, 201)
+  assert.equal((await call('PUT', `/books/${journal}`, { kind: 'journal', title: 'Days', visibility: 'public', design: { journal: { font: 'book' } }, pages: [], version: 0 }, noor)).status, 201)
+  const entry = (date: string, texts: Record<string, string>) => call('PUT', `/entries/${randomUUID()}`, { bookId: journal, date, layout: 'writing', texts, images: {}, version: 0 }, noor)
+  assert.equal((await entry('2026-01-02', { p0: '<b>Rain</b> on the window' })).status, 201)
+  assert.equal((await entry('2026-01-01', { p0: 'Older' })).status, 201)
+  assert.equal((await entry('2026-01-03', { p0: '<b> </b>' })).status, 201, 'an empty newer entry is not the newest post')
+
+  const cards = (await call('GET', '/feed')).body.books as { id: string; pages?: unknown[]; latest?: { date: string; texts: Record<string, string>; bookId: string } }[]
+  const sketch = cards.find(c => c.id === book)!, days = cards.find(c => c.id === journal)!
+  assert.equal(sketch.pages?.length, 1)
+  assert.equal(sketch.latest, undefined)
+  assert.equal(days.pages, undefined, 'journal cards do not carry pages')
+  assert.equal(days.latest?.date, '2026-01-02')
+  assert.match(days.latest!.texts.p0, /Rain/)
+  await call('PUT', `/books/${journal}/save`, undefined, noor)
+  assert.equal((await call('GET', '/me/saved', undefined, noor)).body.books[0].latest.date, '2026-01-02', 'saved cards open the same way')
 })

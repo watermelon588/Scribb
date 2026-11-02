@@ -1,25 +1,27 @@
 import { Router, type Request } from 'express'
 import { currentUser, endSession, fail, requireUser, text, validUsername, verifyPassword } from './auth.js'
 import { decodeCursor, encodeCursor, limit, pgCode, sql, type Row } from './db.js'
+import { isCreator, profileAvatar } from './creator.js'
 
 /** Profiles, preset avatars, follows, notifications and account deletion. */
 export const people = Router()
 
-// Preset avatars only (no uploads): a01 to a12, drawn by the frontend from public/avatars.
+// Public cutout presets a01 to a12; the reserved mine portrait requires verified creator ownership.
 const AVATAR = /^a(0[1-9]|1[0-2])$/
-const LINKS = ['instagram', 'behance', 'cara', 'website'] as const
+// Keep in step with LINK_KINDS in src/lib/api.ts.
+const LINKS = ['website', 'instagram', 'behance', 'cara', 'x', 'youtube', 'pinterest', 'dribbble', 'tiktok', 'linkedin'] as const
 const handleOf = (req: Request) => String(req.params.handle).toLowerCase()
 
 async function profile(handle: string, viewer: string | null) {
   const [p] = await sql()`
-    select p.user_id, p.handle, p.display_name, p.bio, p.city, p.avatar, p.links, p.created_at,
+    select p.user_id, p.handle, p.display_name, p.bio, p.city, p.avatar, p.links, p.created_at, u.email, u.email_verified_at,
            (select count(*)::int from follows where followee_id = p.user_id) as followers,
            (select count(*)::int from follows where follower_id = p.user_id) as following,
            (select count(*)::int from books where user_id = p.user_id and visibility = 'public') as public_books,
            exists (select 1 from follows where follower_id = ${viewer}::uuid and followee_id = p.user_id) as followed
-    from profiles p where p.handle = ${handle}`
+    from profiles p join users u on u.id = p.user_id where p.handle = ${handle}`
   return p && {
-    username: p.handle, displayName: p.display_name, bio: p.bio, city: p.city, avatar: p.avatar, links: p.links, joinedAt: p.created_at,
+    username: p.handle, displayName: p.display_name, bio: p.bio, city: p.city, avatar: profileAvatar(p), isCreator: isCreator(p), links: p.links, joinedAt: p.created_at,
     followers: p.followers, following: p.following, books: p.public_books, followed: p.followed, own: p.user_id === viewer,
   }
 }
@@ -38,7 +40,8 @@ people.patch('/me/profile', requireUser, async (req, res) => {
   const username = b.username === undefined ? null : text(b.username).toLowerCase(), avatar = b.avatar ?? null
   if ((displayName?.length ?? 0) > 60 || (bio?.length ?? 0) > 300 || (city?.length ?? 0) > 60) return fail(res, 400, 'too_long', 'Names and cities are up to 60 characters, bios up to 300.')
   if (username !== null && !validUsername(username)) return fail(res, 400, 'bad_username', 'Usernames are 3 to 30 lowercase letters, numbers, dots or underscores.')
-  if (avatar !== null && !AVATAR.test(avatar)) return fail(res, 400, 'bad_avatar', 'Choose one of the profile pictures.')
+  if (avatar !== null && (typeof avatar !== 'string' || (!AVATAR.test(avatar) && avatar !== 'mine'))) return fail(res, 400, 'bad_avatar', 'Choose one of the profile pictures.')
+  if (avatar === 'mine' && !isCreator(user)) return fail(res, 403, 'reserved_avatar', 'This profile picture is reserved for the application creator.')
   let links: Record<string, string> | null = null
   if (b.links !== undefined) {
     links = {}

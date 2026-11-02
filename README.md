@@ -1,9 +1,9 @@
 > Revision: books stay straight, with no presentation rotation or tilt. Current designs: Linen, Spiral (visible wire loops), and Watercolor (elastic closure). Float is removed. Five muted and five bright cover colors; four original reference textures plus a dotted pattern. This revision supersedes earlier preset/motion descriptions below.
 
-# Untitled — the sketchbook studio
+# Scribb — sketchbooks and journals
 
 A design prototype for an artist portfolio built around tactile digital
-sketchbooks. **Untitled is a temporary name.** This milestone explores the book;
+sketchbooks. **Scribb** is the product name; its mark is the companion's hand-drawn face (public/brand/). This milestone explores the book;
 the future feed and artist profiles are deliberately deferred.
 
 ## Run locally
@@ -161,3 +161,34 @@ The plan is in `backend-plan.md`. Copy `.env.example` to `.env` and fill in the 
 - `npm run test:api` runs the API tests against an in-process Postgres, so no database is needed.
 - AI service: `cd ai`, `py -3 -m venv .venv`, `.venv/Scripts/pip install -r requirements.txt pytest`, then `.venv/Scripts/python -m pytest` or `.venv/Scripts/uvicorn scribb_ai.main:app --port 8000`.
 - After the first migration, give the AI role a password once: `alter role scribb_ai login password '...'`, and use it in `AI_DATABASE_URL`.
+
+## Welcome, information and journal questions
+
+Guests see a centered animation and account prompt on `/`. The original supplied
+GIF is preserved. `public/media/welcome-light.mp4` and `welcome-dark.mp4` are silent,
+looping H.264 conversions with a background matched to each appearance; WebP stills
+serve as posters. The animation pauses for reduced motion and has a play/pause button.
+
+`/#privacy` and `/#terms` use the shared olive theme and Gallery/Editorial typography.
+Links appear in the footer and account creation form. The privacy page documents
+the current media-deletion limitation and Gemini free-tier processing rather than
+promising complete deletion or confidential AI processing.
+
+`/#ask` opens Ask my journal. A verified email and explicit AI consent are required.
+`GET /api/ai/status` checks access and returns the configured service URL without
+spending a turn. On submission the client polls `/health` for up to 90 seconds,
+then mints a fresh, one-time 60-second ticket. No AI service is contacted on ordinary
+app loads or while merely reading the consent notice. AI is disabled in local-only tests.
+
+The AI `/ask` endpoint retains JSON compatibility and accepts
+`Accept: text/event-stream` for real Gemini chunks (`delta`, `done` with journal source
+dates, and `error`). Disconnecting cancels the generation task. Conversations live
+only in page memory; retry, cancellation, consent withdrawal and route changes
+do not write them into journal entries or device storage. Deploy the updated AI
+service alongside the app to enable streamed answers; older services still return JSON.
+
+Gemini data-use wording was checked against https://ai.google.dev/gemini-api/terms
+on 2 November 2026. Operator-specific legal details and a provider change need a
+content review before a public launch. `tests/pages.spec.ts` checks the new flows
+with mocked AI responses; `ai/tests/test_streaming.py` tests the streaming boundary
+without external model calls.

@@ -1,10 +1,10 @@
-import {test,expect} from '@playwright/test'
+import {test,expect} from './fixtures'
 
 test('new studio uses visual controls, prepared covers and plain backs',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/#studio');await expect(page.getByLabel('Sketchbook name')).toBeVisible();
  await expect(page.locator('select')).toHaveCount(0);await expect(page.getByText('Original',{exact:true})).toHaveCount(0);
- await expect(page.locator('.cover-choice')).toHaveCount(21);
+ await expect(page.locator('.cover-choice')).toHaveCount(20);
  await expect(page.locator('.book-mount .cover-art-image')).toHaveCount(1);
  await expect(page.locator('.book-mount .back-cover img')).toHaveCount(0);
  for(const format of ['1:1','16:9','4:3','3:4']){await page.getByRole('button',{name:`${format} format`,exact:true}).click();await expect(page.getByRole('button',{name:`${format} format`,exact:true})).toHaveAttribute('aria-pressed','true')}
@@ -17,7 +17,7 @@ test('elastic recoils and disappears when opening completes, then recloses',asyn
  await page.goto('/#studio');const band=page.getByRole('button',{name:'Release elastic band',exact:true});await band.hover();
  const box=(await band.boundingBox())!;const ribbon=band.locator('svg > path').first();
  await page.mouse.move(box.x+7,box.y+box.height*.25);await page.mouse.down();await page.mouse.move(box.x+32,box.y+box.height*.25,{steps:10});
- expect(await ribbon.getAttribute('d')).toContain('32.5');await page.mouse.up();await expect(band).toBeEnabled();
+ await expect.poll(()=>ribbon.getAttribute('d')).toContain('32.5');await page.mouse.up();await expect(band).toBeEnabled();
  await expect.poll(async()=>await ribbon.getAttribute('d')).not.toContain('32.5');
  await page.getByRole('button',{name:'Release band',exact:true}).click();
  await expect(page.locator('.book-stage')).not.toHaveClass(/is-closed/);
@@ -48,10 +48,12 @@ test('mobile visual controls and reduced motion navigation',async({page})=>{
  await page.screenshot({path:'.reference-analysis/revised-mobile.png',fullPage:true});
 });
 
-test('back cover stays plain and the elastic releases from either end',async({page})=>{
+test('back cover stays plain, shows only the elastic anchors and turns back to the front',async({page})=>{
  await page.emulateMedia({reducedMotion:'reduce'});await page.goto('/#new');await page.getByRole('button',{name:'Release band',exact:true}).click();
  await page.getByRole('button',{name:'Next pages'}).click();await expect(page.locator('.book-stage')).toHaveClass(/is-back/);
  await expect(page.locator('.book-mount .back-cover')).toBeVisible();await expect(page.locator('.book-mount .back-cover img')).toHaveCount(0);
- await page.getByRole('button',{name:'Release band',exact:true}).click();await expect(page.locator('.book-stage')).not.toHaveClass(/is-closed/);
- await expect(page.getByRole('button',{name:'Attached elastic loop'})).toHaveCount(0);
+ await expect(page.locator('.book-stage .elastic-anchors')).toHaveCount(1);await expect(page.locator('.book-stage .elastic-band')).toHaveCount(0);
+ await page.getByRole('button',{name:'Pages',exact:true}).click();await expect(page.locator('.page-rail-count')).toHaveText(/^\d+ artworks?$/);await page.getByRole('button',{name:'Pages',exact:true}).click()
+ await page.getByRole('button',{name:'Back to start'}).click();await expect(page.locator('.book-stage')).not.toHaveClass(/is-back/);
+ await expect(page.locator('.book-stage .elastic-anchors')).toHaveCount(0);await expect(page.getByRole('button',{name:'Release band',exact:true})).toBeVisible();
 });

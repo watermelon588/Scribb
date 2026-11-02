@@ -59,7 +59,7 @@ export default function ElasticBand({ height, reduced, releasing, released, colo
   }, { scope: button, dependencies: [releasing], revertOnUpdate: true })
 
   return <button ref={button} className={`elastic-band elastic-ribbon ${released ? 'is-released' : ''}`} aria-label={released ? 'Attached elastic loop' : 'Release elastic band'}
-    title="Pull the band to the right to release; a small pull springs back"
+    data-hint="Pull right"
     disabled={releasing || released}
     onClick={event => { if (event.detail === 0 && !releasing) onReleaseRequest() }}
     onPointerDown={event => {
@@ -99,4 +99,21 @@ export default function ElasticBand({ height, reduced, releasing, released, colo
       <path fill="none" stroke={`url(#${weaveId})`} strokeLinecap="butt" opacity=".72" />
     </svg>
   </button>
+}
+
+/** Back cover: the elastic runs around the front, so only its two anchored ends show at the outer edge. */
+export function ElasticAnchors({ height, color }: { height: number; color: string }) {
+  const weaveId = useId()
+  const stub = Math.max(12, height * .06)
+  const path = `M 7.5 0 V ${stub} M 7.5 ${height - stub} V ${height}`
+  return <span className="elastic-anchors elastic-ribbon" aria-hidden="true">
+    <svg width="15" height={height} viewBox={`0 0 15 ${height}`}>
+      <defs><pattern id={weaveId} width="3" height="3" patternUnits="userSpaceOnUse"><rect width="3" height="3" fill={color}/><path d="M0 0H3 M0 2H3" stroke="#ffffff" opacity=".32" strokeWidth=".45"/><path d="M1 0V3" stroke="#000000" opacity=".28" strokeWidth=".8"/></pattern></defs>
+      <path d={path} fill="none" stroke="#13161c" strokeWidth="14" />
+      <path d={path} fill="none" stroke={color} strokeWidth="11" />
+      <path d={path} fill="none" stroke="#ffffff" opacity=".22" strokeWidth="1.4" />
+      <path d={path} fill="none" stroke={`url(#${weaveId})`} opacity=".72" strokeWidth="11" />
+      <path d={`M 1 ${stub} H 14 M 1 ${height - stub} H 14`} stroke="#000000" opacity=".35" strokeWidth="1.5" />
+    </svg>
+  </span>
 }

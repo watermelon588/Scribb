@@ -2,6 +2,7 @@ import { createHash, randomBytes, scrypt, timingSafeEqual } from 'node:crypto'
 import { Router, type NextFunction, type Request, type Response } from 'express'
 import { createRemoteJWKSet, jwtVerify, SignJWT, type JWTVerifyGetKey } from 'jose'
 import { limit, pgCode, sql, type Row } from './db.js'
+import { isCreator, profileAvatar } from './creator.js'
 
 /** Minimal accounts: username + password or Google. Email is optional and only unlocks password reset (and AI). */
 export const auth = Router()
@@ -60,7 +61,7 @@ async function loadUser(id: string, tokenVersion?: number) {
   return user as Row | undefined
 }
 export const publicUser = (u: Row) => ({
-  id: u.id, username: u.handle, displayName: u.display_name, avatar: u.avatar,
+  id: u.id, username: u.handle, displayName: u.display_name, avatar: profileAvatar(u), isCreator: isCreator(u),
   email: u.email, emailVerified: Boolean(u.email_verified_at), hasPassword: u.has_password, aiConsent: Boolean(u.ai_consent_at),
 })
 

@@ -111,7 +111,6 @@
 .journal-about input:focus{border-color:var(--app-accent)}
 @media(max-width:600px){label.journal-about textarea,label.journal-about input{font-size:16px}}
 .cover-picture-row{display:flex;gap:6px;align-items:center}
-.cover-picture-row .quiet-button{display:inline-flex;align-items:center;gap:8px;font-size:12px}
 
 /* 3D view: the book turns as one flat object over a slab with real page edges and a plain back. */
 .book-orbit{position:relative;transform-style:preserve-3d}
@@ -121,7 +120,7 @@
 .is-orbit .book-centering{backface-visibility:hidden}
 .is-orbit .book-ground-shadow{opacity:.1}
 .stage-topline:has(.orbit-toggle){justify-content:flex-end;gap:4px}
-.orbit-toggle[aria-pressed=true]{background:var(--app-selected,#e4e9dc);color:var(--app-ink,#2b302a)}
+
 .book-slab{position:absolute;left:50%;top:0;transform:translateX(-50%);transform-style:preserve-3d;pointer-events:none}
 .book-slab>i{position:absolute;display:block}
 .slab-back{inset:0;border-radius:4px;background:var(--cover);transform:translateZ(calc(var(--depth)*-1))}
@@ -175,11 +174,11 @@
 .journal-tools{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-top:-8px}
 .journal-tools .journal-mic{margin-left:auto}
 .journal-tools small{flex-basis:100%;order:1}
-.journal-tool{display:grid;place-items:center;width:36px;height:36px;padding:0;border:0;border-radius:3px;background:none;color:var(--app-muted);transition:background-color 160ms ease,color 160ms ease,transform 160ms ease}
-.journal-tool[aria-pressed=true]{background:var(--app-selected);color:var(--app-ink)}
-.journal-tool:active{transform:scale(.96)}
-.journal-tool:disabled{opacity:.35}
-@media(hover:hover) and (pointer:fine){.journal-tool:not(:disabled):hover{background:var(--app-panel);color:var(--app-ink)}}
+
+
+
+
+
 .journal-link{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-top:-10px}
 .journal-link input{flex:1;min-width:0;padding:8px 0;border:0;border-bottom:1px solid var(--app-line);border-radius:0;outline:0;background:none;color:var(--app-ink);font:inherit;font-size:16px}
 .journal-link input:focus{border-color:var(--app-accent)}
@@ -200,12 +199,12 @@
 .j-scribble-size::after{content:'';width:8px;height:8px;border-right:2px solid;border-bottom:2px solid}
 .j-scribble-remove{top:0;right:0;transform-origin:100% 0;margin:calc(-14px/var(--sheet-scale,1)) calc(-14px/var(--sheet-scale,1)) 0 0;background:var(--app-ink);color:var(--app-bg)}
 .journal-tools small{color:var(--app-muted);font-size:12px;line-height:1.45}
-.journal-mic{position:relative;display:grid;place-items:center;flex:none;width:40px;height:40px;padding:0;border:1px solid var(--app-line);border-radius:50%;background:none;color:var(--app-ink);transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease,transform 160ms ease}
+.journal-mic{position:relative;flex:none}
 .journal-mic:active{transform:scale(.96)}
-.journal-mic.is-on{border-color:var(--app-accent);background:var(--app-accent);color:#fff}
-.journal-mic.is-on::after{content:'';position:absolute;inset:-1px;border:1px solid var(--app-accent);border-radius:50%;animation:journal-listen 1.6s cubic-bezier(.23,1,.32,1) infinite;pointer-events:none}
+.journal-mic.is-on[aria-pressed]{background:var(--app-button);color:var(--app-button-ink)}
+.journal-mic.is-on::after{content:'';position:absolute;inset:-1px;border:1px solid var(--app-accent);border-radius:var(--radius);animation:journal-listen 1.6s cubic-bezier(.23,1,.32,1) infinite;pointer-events:none}
 @keyframes journal-listen{from{opacity:.7;transform:scale(1)}to{opacity:0;transform:scale(1.45)}}
-@media(hover:hover) and (pointer:fine){.journal-mic:not(.is-on):hover{background:var(--app-panel)}}
+
 .journal-field[contenteditable=false]{cursor:default}
 .journal-status{display:flex;justify-content:space-between;min-height:18px;margin-top:-10px;color:var(--app-muted);font-size:12px}
 .journal-tray{display:flex;flex-wrap:wrap;gap:8px}
@@ -258,9 +257,9 @@
 .journal-page-open:active{transform:scale(.98)}
 .journal-thumb{position:relative;display:block;overflow:hidden;border-radius:2px;background:#f6f3e9;box-shadow:0 0 0 1px #2a2a2414,0 6px 16px #2a2a2414}
 .journal-page-tools{display:flex;justify-content:center;gap:2px}
-.journal-page-tools button{display:grid;place-items:center;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:none;color:var(--app-muted);transition:color 160ms ease,background-color 160ms ease}
-.journal-page-tools button:disabled{opacity:.3}
-@media(hover:hover) and (pointer:fine){.journal-page-tools button:not(:disabled):hover{background:var(--app-panel);color:var(--app-ink)}}
+
+
+
 
 @media(max-width:700px){
  .kind-switch-large button{font-size:22px}
@@ -271,17 +270,17 @@
  .journal-canvas-page{width:100%}
  .journal-field{font-size:17px;min-height:180px}
 }
-@media(prefers-reduced-motion:reduce){.journal-tool,.journal-scribbles button{transition:none}.journal-ghost,.journal-mic.is-on::after{animation:none}.journal-mic,.j-slot,.j-edge::after,.journal-tray button,.kind-switch button::after,.journal-page-open,.journal-fonts button,.journal-row button,.journal-layouts button,.journal-inks button,.cover-layouts button{transition:none}}
+@media(prefers-reduced-motion:reduce){.journal-scribbles button{transition:none}.journal-ghost,.journal-mic.is-on::after{animation:none}.journal-mic,.j-slot,.j-edge::after,.journal-tray button,.kind-switch button::after,.journal-page-open,.journal-fonts button,.journal-row button,.journal-layouts button,.journal-inks button,.cover-layouts button{transition:none}}
 
 /* Underlined fields show focus with their underline. The global offset outline cut through the label above. */
-.creation-controls :is(.book-name-input,.caption-field input,.journal-about input,.journal-about textarea):focus-visible{outline:none;border-color:var(--app-accent)}
+
 /* page-flip hides pages it is not showing; .endpaper's forced flex drew a hidden blank page as a 2px dot. */
 .stf__item.endpaper[style*="display: none"]{display:none!important}
 /* One row of book controls: previous, cover, next, evenly sized and centred under the book. */
 .book-stage .stage-bottomline{display:flex;justify-content:center}
 .book-stage .page-navigation{gap:8px}
-.book-stage .page-navigation>button{display:grid;place-items:center;width:40px;height:40px;min-width:40px;padding:0;border:0;border-radius:50%;background:none;justify-self:auto}
-@media(hover:hover) and (pointer:fine){.book-stage .page-navigation>button:not(:disabled):hover{background:var(--app-panel,#0000000a)}}
+.book-stage .page-navigation>button{justify-self:auto}
+
 .portfolio-dialog .book-stage{height:min(640px,calc(94dvh - 150px))}
 .dialog-edit{position:absolute;top:24px;right:72px;z-index:5;display:inline-flex;align-items:center;gap:8px}
 @media(max-width:600px){.dialog-edit{top:12px;right:60px;min-height:44px}}
@@ -336,5 +335,5 @@
 .j-position{position:absolute;inset:0;z-index:2;display:grid;place-items:center;color:#fff;background:#1f241f1a;cursor:move;touch-action:none;outline:calc(1.5px/var(--sheet-scale,1)) solid var(--app-accent);outline-offset:calc(-1.5px/var(--sheet-scale,1))}
 .j-position svg{width:calc(40px/var(--sheet-scale,1));height:calc(40px/var(--sheet-scale,1));padding:calc(9px/var(--sheet-scale,1));border-radius:50%;background:#1f241f73;pointer-events:none}
 .j-position:focus-visible{outline-width:calc(2.5px/var(--sheet-scale,1))}
-.journal-picture-actions .quiet-button[aria-pressed=true]{background:var(--app-panel);color:var(--app-ink)}
+
 .journal-align{display:flex;gap:4px;padding-left:8px;margin-left:4px;border-left:1px solid var(--app-line)}

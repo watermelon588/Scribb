@@ -64,8 +64,8 @@ export function StickerLayer({stickers,edit}:{stickers:PlacedSticker[];edit?:Sti
    const chosen=edit?.selected===s.id
    return <div key={s.id} data-sticker={s.id} className={`sticker ${chosen?'is-chosen':''}`} style={{left:`${s.x}%`,top:`${s.y}%`,width:`${s.size}%`,transform:`translate(-50%,-50%) rotate(${s.rotate}deg)`}}>
     <img className="sticker-art" src={s.src} alt="" draggable={false}/>
-    {edit&&<button type="button" className="sticker-hit" title="Drag to move" aria-label={`${s.name} sticker`} aria-pressed={chosen} onPointerDown={e=>drag(e,s,'move')} onFocus={()=>edit.onSelect(s.id)} onKeyDown={e=>key(e,s)}/>}
-    {edit&&chosen&&<><button type="button" className="sticker-turn" title="Drag to resize and turn" aria-label="Resize and turn sticker" onPointerDown={e=>drag(e,s,'turn')}><ArrowClockwise size={14} weight="bold"/></button><button type="button" className="sticker-remove" title="Remove" aria-label="Remove sticker" onClick={()=>remove(s.id)}><X size={14} weight="bold"/></button></>}
+    {edit&&<button type="button" className="sticker-hit" data-hint="Move" aria-label={`${s.name} sticker`} aria-pressed={chosen} onPointerDown={e=>drag(e,s,'move')} onFocus={()=>edit.onSelect(s.id)} onKeyDown={e=>key(e,s)}/>}
+    {edit&&chosen&&<><button type="button" className="sticker-turn" data-hint="Resize" aria-label="Resize and turn sticker" onPointerDown={e=>drag(e,s,'turn')}><ArrowClockwise size={14} weight="bold"/></button><button type="button" className="sticker-remove" data-hint="Remove" aria-label="Remove sticker" onClick={()=>remove(s.id)}><X size={14} weight="bold"/></button></>}
    </div>
   })}
  </div>
@@ -101,10 +101,10 @@ export function StickerTray({used,max,onAdd,onStart}:{used:number;max:number;onA
  return <div className="sticker-tray">
   <div className="sticker-vibes" role="group" aria-label="Sticker vibes">{[{id:'all' as const,name:'All stickers'},...stickerVibes].map(v=>{
    const Glyph=v.id==='all'?SquaresFour:vibeIcons[v.id]
-   return <button key={v.id} type="button" title={v.name} aria-label={v.name} aria-pressed={vibe===v.id} onClick={()=>setVibe(v.id)}><Glyph size={18} weight="light"/></button>
+   return <button key={v.id} type="button" data-hint={v.name} aria-label={v.name} aria-pressed={vibe===v.id} onClick={()=>setVibe(v.id)}><Glyph size={18} weight="light"/></button>
   })}</div>
-  {failed?<div className="sticker-failed" role="alert"><span>Stickers could not load.</span><button type="button" className="journal-tool" title="Try again" aria-label="Load stickers again" onClick={()=>setAttempt(a=>a+1)}><ArrowClockwise size={16}/></button></div>
-  :<div className="sticker-grid" data-lenis-prevent="" aria-busy={!shown}>{shown?shown.map(item=><button key={item.id} type="button" className="sticker-pick" title={full?`Up to ${max} stickers here`:item.name} aria-label={`Add ${item.name} sticker`} disabled={full} onPointerDown={e=>drag(e,item)} onClick={()=>{if(!dropped.current)onAdd(item)}}><img src={item.src} alt="" loading="lazy" draggable={false}/></button>)
+  {failed?<div className="sticker-failed" role="alert"><span>Stickers could not load.</span><button type="button" className="button-icon" data-hint="Try again" aria-label="Load stickers again" onClick={()=>setAttempt(a=>a+1)}><ArrowClockwise size={16}/></button></div>
+  :<div className="sticker-grid" data-lenis-prevent="" aria-busy={!shown}>{shown?shown.map(item=><button key={item.id} type="button" className="sticker-pick" data-hint={full?`Up to ${max} stickers here`:item.name} aria-label={`Add ${item.name} sticker`} disabled={full} onPointerDown={e=>drag(e,item)} onClick={()=>{if(!dropped.current)onAdd(item)}}><img src={item.src} alt="" loading="lazy" draggable={false}/></button>)
    :Array.from({length:12},(_,i)=><i key={i} className="sticker-pick is-loading"/>)}</div>}
  </div>
 }

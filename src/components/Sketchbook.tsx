@@ -1,4 +1,4 @@
-import ElasticBand from './ElasticBand'
+import ElasticBand, { ElasticAnchors } from './ElasticBand'
 import {placementStyle} from './PlacementEditor'
 import type {Placement} from '../data/presets'
 import { createPortal } from 'react-dom'
@@ -69,7 +69,7 @@ export function Cover({ preset, title, count, caption, back = false, coverImage,
   </div>
 }
 
-function ArtworkPage({ artwork, index }: { artwork: Artwork; index: number }) {
+export function ArtworkPage({ artwork, index }: { artwork: Artwork; index: number }) {
   if (artwork.blank) return <div className="book-page endpaper" />
   return <div className={`book-page art-page ${index % 2 === 0 ? 'page-left' : 'page-right'}`}>
     <div className="page-inner">
@@ -81,6 +81,18 @@ function ArtworkPage({ artwork, index }: { artwork: Artwork; index: number }) {
       <div className="page-number">{String(index + 1).padStart(2, '0')}</div>
     </div>
   </div>
+}
+
+/** One leaf per page: a spread becomes a left and a right half, after a blank when it would start on a right page. */
+export function artworkPages(artworks: Artwork[]) {
+  const pages: Artwork[] = []
+  artworks.forEach(art => {
+    if (art.layout === 'spread') {
+      if (pages.length % 2) pages.push({...art, id: art.id+'-blank', blank: true})
+      pages.push({...art, id: art.id+'-left', spreadSide: 'left'}, {...art, id: art.id+'-right', spreadSide: 'right'})
+    } else pages.push(art)
+  })
+  return pages
 }
 
 /** The only book renderer. PageFlip owns cloned DOM; React owns the source pages.
@@ -111,20 +123,12 @@ export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle,
   const [turning, setTurning] = useState(false)
   const [size, setSize] = useState({ width: 0, height: 0 })
   const [reduced, setReduced] = useState(false)
-  const pageArtworks = useMemo(() => {
-    const pages: Artwork[] = []
-    artworks.forEach(art => {
-      if (art.layout === 'spread') {
-        if (pages.length % 2) pages.push({...art, id: art.id+'-blank', blank: true})
-        pages.push({...art, id: art.id+'-left', spreadSide: 'left'}, {...art, id: art.id+'-right', spreadSide: 'right'})
-      } else pages.push(art)
-    })
-    return pages
-  }, [artworks])
+  const pageArtworks = useMemo(() => artworkPages(artworks), [artworks])
   const leafCount = pages?.length ?? pageArtworks.length
   const lastPage = leafCount + (leafCount % 2) + 1
   const closed = page === 0 || page === lastPage
-  const bandLocked = preset.id === 'watercolor' && closed && !bandReleased
+  // The elastic wraps the front cover; the back only shows where its ends are anchored.
+  const bandLocked = preset.id === 'watercolor' && page === 0 && !bandReleased
   // Prepared pages stay readable on phones by showing one page at a time.
   const portrait = Boolean(pages) && size.width > 0 && size.width < 640
   const pageWidth = Math.max(90, Math.floor(Math.min(portrait ? size.width - 24 : (size.width - 68) / 2, (size.height - 64) * aspectRatio, maxPage)))
@@ -347,7 +351,7 @@ export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle,
   const sheets = [
     <Cover key="cover-front" preset={preset} title={title} caption={caption} count={leafCount} coverImage={coverImage} coverPlacement={coverPlacement} kicker={kicker} face={front} overlay={overlay} />,
     ...(pages ?? pageArtworks.map((artwork, i) => <ArtworkPage key={artwork.id} artwork={artwork} index={i} />)),
-    leafCount % 2 === 1 && <div key="filler" className="book-page endpaper"><span>To be continued.</span></div>,
+    leafCount % 2 === 1 && <div key="filler" className="book-page endpaper" />,
     <Cover key="cover-back" preset={preset} title={title} caption={caption} count={leafCount} coverImage={coverImage} coverPlacement={coverPlacement} back face={back} />,
   ].filter(Boolean)
   // Page i is showing: alone in portrait, otherwise beside its partner in the spread (1-2, 3-4, …).
@@ -356,11 +360,11 @@ export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle,
   const visibleEnd = Math.min(page + 1, leafCount)
   return <div ref={stage} className={`book-stage preset-${preset.id} ${pages ? 'is-journal' : ''} ${portrait ? 'is-portrait' : ''} ${texture ? 'textured' : ''} ${closed ? 'is-closed' : ''} ${page === lastPage ? 'is-back' : ''} ${bandLocked ? 'band-locked' : ''} ${orbit ? 'is-orbit' : ''} ${rail ? 'has-rail' : ''}`}
     style={{ '--band-color': bandColor, '--paper-image': `url("${paper}")`, '--cover': coverColor, '--cover-ink': coverInk, '--page-width': `${pageWidth}px`, '--sheet-scale': sheetWidth ? pageWidth / sheetWidth : undefined, '--title-scale': Math.max(.58, Math.min(1, 20 / title.length)) } as CSSProperties}>
-    <div className="stage-topline">{pages && <button className="icon-button" aria-label="Pages" aria-pressed={rail} title={rail ? 'Hide pages' : 'Show pages'} onClick={() => setRail(!rail)}><SidebarSimple weight="light" size={18} /></button>}{pages && <button className="icon-button orbit-toggle" aria-label="3D view" aria-pressed={orbit} title={orbit ? 'Back to flat view' : '3D view: drag to turn, Shift-drag or two fingers to twist'} onClick={toggleOrbit}><Cube weight="light" size={18} /></button>}<button className="icon-button" aria-label="Enter fullscreen preview" onClick={() => {
+    <div className="stage-topline"><button className="button-icon" aria-label="Pages" aria-pressed={rail} data-hint={rail ? 'Hide pages' : 'Pages'} onClick={() => setRail(!rail)}><SidebarSimple weight="light" size={18} /></button>{pages && <button className="button-icon orbit-toggle" aria-label="3D view" aria-pressed={orbit} data-hint={orbit ? 'Flat view' : '3D view'} onClick={toggleOrbit}><Cube weight="light" size={18} /></button>}<button className="button-icon" aria-label="Enter fullscreen preview" data-hint="Fullscreen" onClick={() => {
       if (document.fullscreenElement) void document.exitFullscreen()
       else void stage.current?.requestFullscreen().catch(() => {})
     }}><CornersOut weight="light" size={18} /></button></div>
-    <div className="book-area" ref={area} tabIndex={0} role="region" aria-label={orbit ? 'Journal in 3D. Use arrow keys to turn it and Shift with left or right to twist it. Turn pages with the buttons.' : `Interactive ${pages ? 'journal' : 'sketchbook'}. Use left and right arrow keys to turn pages.`} onKeyDown={onKeyDown}
+    <div className="book-area" ref={area} tabIndex={0} data-hint={orbit ? 'Drag to tilt' : bandLocked ? 'Pull the band' : closed ? 'Drag to open' : 'Drag a corner'} role="region" aria-label={orbit ? 'Journal in 3D. Use arrow keys to turn it and Shift with left or right to twist it. Turn pages with the buttons.' : `Interactive ${pages ? 'journal' : 'sketchbook'}. Use left and right arrow keys to turn pages.`} onKeyDown={onKeyDown}
       // While locked or turned in 3D, the page-turn engine never sees the gesture; its maths assume a flat page.
       onMouseDownCapture={e=>{if(bandLocked||orbit)e.stopPropagation()}} onMouseMoveCapture={e=>{if(bandLocked||orbit)e.stopPropagation()}} onTouchStartCapture={e=>{if(orbit)e.stopPropagation()}} onTouchMoveCapture={e=>{if(orbit)e.stopPropagation()}}
       // A native image drag would cancel the pointer and stop the turn.
@@ -371,10 +375,11 @@ export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle,
         <div ref={center} className="book-centering">
           <div ref={mount} className="book-mount" style={{ width: pageWidth * (portrait ? 1 : 2), height: pageHeight }} />
           {preset.id === 'spiral' && bindingHost && createPortal(<div className={`spiral-binding ${closed ? 'binding-closed' : ''}`}>{Array.from({length: 13}, (_,i) => <i key={i} />)}</div>, bindingHost)}
-          {preset.id === 'watercolor' && (closed || bandOpening || bandBusy) && <ElasticBand
-            height={pageHeight + 6} reduced={reduced} releasing={bandBusy} released={bandReleased || !closed} color={bandColor} edgeOffset={pageWidth * .12}
+          {preset.id === 'watercolor' && page === lastPage && !bandOpening && <ElasticAnchors height={pageHeight + 6} color={bandColor} />}
+          {preset.id === 'watercolor' && (page === 0 || bandOpening || bandBusy) && <ElasticBand
+            height={pageHeight + 6} reduced={reduced} releasing={bandBusy} released={bandReleased || page !== 0} color={bandColor} edgeOffset={pageWidth * .12}
             onReleaseRequest={() => setBandBusy(true)}
-            onReleased={() => { setBandOpening(!reduced); setBandReleased(true); setBandBusy(false); if (page === 0) { if (reduced) flip.current?.turnToNextPage(); else flip.current?.flipNext('bottom') } else { if (reduced) flip.current?.turnToPrevPage(); else flip.current?.flipPrev('bottom') } }} />}
+            onReleased={() => { setBandOpening(!reduced); setBandReleased(true); setBandBusy(false); if (reduced) flip.current?.turnToNextPage(); else flip.current?.flipNext('bottom') }} />}
 
 
         </div>
@@ -384,18 +389,19 @@ export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle,
     </div>
     <div hidden ref={source} aria-hidden="true">{sheets}</div>
     {rail && <nav className="page-rail" aria-label="Pages" data-lenis-prevent ref={node => { node?.querySelector('[aria-current]')?.scrollIntoView({ block: 'nearest' }) }}>
+      {!pages && (n => <p className="page-rail-count">{n} {n === 1 ? 'artwork' : 'artworks'}</p>)(artworks.filter(a => !a.blank).length)}
       {sheets.map((sheet, i) => <button key={i} className="page-thumb" aria-label={i === 0 ? 'Front cover' : i === lastPage ? 'Back cover' : `Page ${i}`} aria-current={showing(i) || undefined} onClick={() => goTo(i)}
         style={{ width: THUMB, aspectRatio, '--sheet-scale': sheetWidth ? THUMB / sheetWidth : undefined } as CSSProperties}>{sheet}</button>)}
     </nav>}
     <div className="stage-bottomline">
       
       <div className="page-navigation">
-        <button className="icon-button" aria-label="Previous pages" disabled={page === 0 || turning || bandLocked || bandBusy} onClick={() => navigate('previous')}><ArrowLeft size={18} weight="light" /></button>
+        <button className="button-icon" aria-label="Previous pages" data-hint="Previous" disabled={page === 0 || turning || bandLocked || bandBusy} onClick={() => navigate('previous')}><ArrowLeft size={18} weight="light" /></button>
         <span className="sr-only" aria-live="polite" aria-atomic="true">{closed ? page === 0 ? 'COVER' : 'THE END' : `${String(visibleStart).padStart(2, '0')}—${String(visibleEnd).padStart(2, '0')}`}<small> / {String(leafCount).padStart(2, '0')}</small></span>
-        <button className="cover-toggle" aria-label={bandLocked ? 'Release band' : closed ? 'Open book' : 'View cover'} title={bandLocked ? 'Release band' : closed ? 'Open book' : 'Close book'} onClick={toggleCover} disabled={(turning && !bandLocked) || bandBusy}>{closed ? <ArrowUpRight size={20} /> : <BookOpen size={20} weight="light" />}</button>
-        {pages && page === lastPage
-          ? <button className="icon-button" aria-label="Back to start" title="Back to start" disabled={turning} onClick={backToStart}><ArrowCounterClockwise size={18} weight="light" /></button>
-          : <button className="icon-button" aria-label="Next pages" disabled={page === lastPage || turning || bandLocked || bandBusy} onClick={() => navigate('next')}><ArrowRight size={18} weight="light" /></button>}
+        <button className="button-secondary button-icon cover-toggle" aria-label={bandLocked ? 'Release band' : closed ? 'Open book' : 'View cover'} data-hint={bandLocked ? 'Release band' : closed ? 'Open' : 'Cover'} onClick={toggleCover} disabled={(turning && !bandLocked) || bandBusy}>{closed ? <ArrowUpRight size={20} /> : <BookOpen size={20} weight="light" />}</button>
+        {page === lastPage
+          ? <button className="button-icon" aria-label="Back to start" data-hint="Start" disabled={turning} onClick={backToStart}><ArrowCounterClockwise size={18} weight="light" /></button>
+          : <button className="button-icon" aria-label="Next pages" data-hint="Next" disabled={page === lastPage || turning || bandLocked || bandBusy} onClick={() => navigate('next')}><ArrowRight size={18} weight="light" /></button>}
       </div>
     </div>
   </div>

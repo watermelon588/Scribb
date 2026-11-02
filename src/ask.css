@@ -1,0 +1,109 @@
+/* Ask my journal and its companion. The persona is a die-cut sticker: a paper edge and a soft shadow on every face. */
+.portfolio-app{--sticker-edge:drop-shadow(1.5px 0 0 #fffdf6) drop-shadow(-1.5px 0 0 #fffdf6) drop-shadow(0 1.5px 0 #fffdf6) drop-shadow(0 -1.5px 0 #fffdf6) drop-shadow(0 6px 9px #1a221c2e)}
+.persona{position:relative;display:block}
+.persona img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;filter:var(--sticker-edge);transition:opacity .35s ease;user-select:none}
+.persona img.on{opacity:1}
+
+/* Floating companion */
+.companion{position:fixed;right:clamp(16px,3vw,36px);bottom:clamp(16px,3vw,32px);z-index:30;display:grid;justify-items:center;width:76px;color:var(--app-ink)}
+.companion[hidden]{display:none}
+.companion-body{position:relative;display:block;width:68px;height:68px;animation:persona-float 4.6s ease-in-out infinite;transition:scale .3s cubic-bezier(.2,.8,.2,1)}
+.companion .persona{width:100%;height:100%}
+.companion-star{position:absolute;width:18px;top:-4px;right:-6px;filter:var(--sticker-edge);animation:sticker-twinkle 3.2s ease-in-out infinite}
+.companion-shadow{width:42px;height:8px;margin-top:6px;border-radius:50%;background:radial-gradient(closest-side,#1a221c47,transparent);animation:shadow-breathe 4.6s ease-in-out infinite}
+.companion-bubble{position:absolute;right:calc(100% + 4px);top:14px;padding:8px 13px;border-radius:14px 14px 4px 14px;background:var(--app-ink);color:var(--app-bg);font-size:12px;line-height:1.2;white-space:nowrap;pointer-events:none;opacity:0;translate:6px 0;scale:.96;transform-origin:right bottom;transition:opacity .2s ease,translate .25s cubic-bezier(.2,.8,.2,1),scale .25s cubic-bezier(.2,.8,.2,1);animation:bubble-peek 3.6s ease 1.4s}
+.companion:hover .companion-body,.companion:focus-visible .companion-body{scale:1.08}
+.companion:hover .companion-bubble,.companion:focus-visible .companion-bubble{opacity:1;translate:0 0;scale:1;animation:none}
+.portfolio-app .companion:focus-visible{outline:0}
+.companion:focus-visible .companion-body{outline:2px solid var(--app-accent);outline-offset:6px;border-radius:50%}
+.companion:active .companion-body{scale:.96}
+
+/* Page */
+.ask-page{max-width:720px}
+.ask-hero{text-align:center;margin-bottom:40px}
+.ask-persona{position:relative;width:128px;height:128px;margin:0 auto 22px}
+.ask-persona .persona{width:100%;height:100%;animation:persona-float 5s ease-in-out infinite}
+.ask-sticker{position:absolute;pointer-events:none;user-select:none;filter:var(--sticker-edge)}
+.sticker-spiral{width:26px;left:-34px;top:22px;rotate:-12deg;animation:sticker-drift 7s ease-in-out infinite}
+.sticker-star{width:22px;right:-12px;top:-2px;animation:sticker-twinkle 3.6s ease-in-out infinite}
+.sticker-walker{width:44px;right:-58px;bottom:0;rotate:8deg;animation:sticker-drift 6s ease-in-out infinite reverse}
+.ask-hero h1{font-size:clamp(34px,4.5vw,46px);font-weight:350;line-height:1.1;letter-spacing:-.035em;margin:0 0 14px;text-wrap:balance}
+.ask-hero p{max-width:420px;margin:0 auto;font-size:15px;line-height:1.75;color:var(--page-muted)}
+.ask-page.is-talking .ask-hero{margin-bottom:28px}
+.ask-page.is-talking .ask-persona{width:88px;height:88px;margin-bottom:16px}
+.ask-page.is-talking .ask-hero h1{font-size:28px}
+
+.ai-consent{padding:28px 30px;border-radius:18px;background:var(--app-panel);font-size:14px;line-height:1.75}
+.ai-consent p{margin:0 0 16px}
+.consent-check{display:flex;align-items:flex-start;gap:12px;margin:24px 0 20px;cursor:pointer;line-height:1.6}
+.consent-check input{appearance:auto;flex:0 0 auto;width:18px;height:18px;margin:3px 0 0;accent-color:var(--app-button)}
+.ask-gate,.email-gate{text-align:center;font-size:14px;line-height:1.7}
+.ask-gate .button-primary{margin:24px auto}
+.email-gate{padding-top:24px}.email-gate .button-secondary{margin:4px auto 0}
+
+.ask-starters{margin:4px 0 28px}
+.ask-starters>p{margin:0 0 14px;text-align:center;font-size:12px;color:var(--page-muted)}
+.ask-starters>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.ask-starters button{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;gap:20px;min-height:116px;padding:16px;text-align:left;border:1px solid var(--app-line);border-radius:14px;font-size:14px;line-height:1.5;color:var(--app-ink);transition:border-color .2s ease,background-color .2s ease,translate .25s cubic-bezier(.2,.8,.2,1)}
+.ask-starters button svg{align-self:flex-end;flex-shrink:0;color:var(--page-muted);rotate:45deg}
+.ask-starters button:hover{border-color:var(--app-accent);background:var(--app-selected);translate:0 -2px}
+.ask-starters button:hover svg{color:var(--app-accent)}
+
+.ask-conversation{display:flex;flex-direction:column;gap:30px}
+.ask-turn{display:flex;flex-direction:column;gap:16px}
+.ask-turn h2{align-self:flex-end;max-width:min(82%,520px);margin:0;padding:11px 16px;border-radius:18px 18px 4px 18px;background:var(--app-selected);font-family:inherit;font-size:15px;font-weight:400;line-height:1.55;letter-spacing:0;overflow-wrap:anywhere}
+.ask-reply{display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;align-items:start}
+.persona-small{width:40px;height:40px}
+.ask-answer{margin:7px 0 0;white-space:pre-wrap;font-size:15px;line-height:1.85;overflow-wrap:anywhere}
+.ask-typing{display:inline-flex;gap:5px;padding-top:18px}
+.ask-typing i{width:6px;height:6px;border-radius:50%;background:var(--page-muted);animation:typing 1.2s ease-in-out infinite}
+.ask-typing i:nth-child(2){animation-delay:.15s}.ask-typing i:nth-child(3){animation-delay:.3s}
+.ask-sources{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:14px;font-size:11px;color:var(--page-muted)}
+.ask-sources span{margin-right:4px}
+.ask-sources time{padding:3px 9px;border:1px solid var(--app-line);border-radius:999px;font-variant-numeric:tabular-nums}
+.partial-answer{display:block;margin-top:12px;font-size:12px;color:var(--page-muted)}
+.ask-status{min-height:20px;margin:16px 0 12px;text-align:center;font-size:12px;line-height:1.7;color:var(--page-muted)}
+.ask-error{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 16px;margin-bottom:18px;text-align:center}
+.ask-error .button-secondary{display:inline-flex;align-items:center;gap:8px}
+
+.ask-composer{position:sticky;bottom:20px;z-index:2;padding:14px 12px 10px 20px;border:1px solid var(--app-line);border-radius:22px;background:var(--app-bg);box-shadow:0 12px 32px #1a221c14;transition:border-color .2s ease}
+.ask-composer:focus-within{border-color:var(--app-accent)}
+.ask-composer textarea{display:block;width:100%;min-height:52px;max-height:200px;padding:0;border:0;background:transparent;color:var(--app-ink);font:inherit;font-size:16px;line-height:1.65;resize:none;field-sizing:content;outline:0;caret-color:var(--app-accent)}
+.ask-composer textarea::placeholder{color:var(--page-muted)}
+.composer-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:6px}
+.composer-bottom>span{font-size:11px;color:var(--page-muted);font-variant-numeric:tabular-nums}
+.ask-send{display:grid;place-items:center;flex-shrink:0;width:40px;height:40px;border-radius:50%;background:var(--app-button);color:var(--app-button-ink);transition:scale .15s ease,opacity .2s ease}
+.ask-send:active:not(:disabled){scale:.94}
+.ask-send:disabled{opacity:.4;cursor:default}
+.ask-footnote{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;margin-top:16px;font-size:11px;line-height:1.6;color:var(--page-muted)}
+.ask-footnote p{margin:0;max-width:440px}
+.ask-footnote a{color:var(--app-accent);text-decoration:underline;text-underline-offset:3px}
+.ask-footnote>div{display:flex;gap:16px}.ask-footnote .button-link{font-size:11px}
+
+@keyframes persona-float{0%,100%{translate:0 0;rotate:-2deg}50%{translate:0 -7px;rotate:2deg}}
+@keyframes shadow-breathe{0%,100%{scale:1;opacity:.6}50%{scale:.76;opacity:.35}}
+@keyframes sticker-twinkle{0%,100%{scale:1;rotate:0deg}50%{scale:.78;rotate:24deg}}
+@keyframes sticker-drift{0%,100%{translate:0 0}50%{translate:0 -5px}}
+@keyframes typing{0%,60%,100%{opacity:.3;translate:0 0}30%{opacity:1;translate:0 -3px}}
+@keyframes bubble-peek{0%{opacity:0;translate:6px 0}10%,85%{opacity:1;translate:0 0;scale:1}100%{opacity:0}}
+
+@media(max-width:700px){
+ .companion{right:12px;bottom:calc(92px + env(safe-area-inset-bottom));width:64px}
+ .companion-body{width:56px;height:56px}
+ .ask-hero{margin-bottom:30px}
+ .ask-persona{width:104px;height:104px}
+ .sticker-walker{width:36px;right:-44px}.sticker-spiral{left:-28px}
+ .ask-hero p{font-size:14px}
+ .ai-consent{padding:22px 20px}.ai-consent h2{font-size:20px}
+ .ask-starters>div{grid-template-columns:1fr}
+ .ask-starters button{flex-direction:row;align-items:center;min-height:0;padding:14px 16px}
+ .ask-starters button svg{align-self:center}
+ .ask-composer{bottom:calc(96px + env(safe-area-inset-bottom));padding:12px 10px 8px 16px}
+ .composer-bottom>span{font-size:10px}
+ .ask-turn h2{max-width:90%}
+ .ask-reply{grid-template-columns:32px minmax(0,1fr);gap:12px}.persona-small{width:32px;height:32px}
+}
+@media(prefers-reduced-motion:reduce){
+ .companion-body,.companion-star,.companion-shadow,.companion-bubble,.ask-persona .persona,.ask-sticker,.ask-typing i{animation:none}
+ .persona img{transition:none}
+}

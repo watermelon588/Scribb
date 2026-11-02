@@ -10,7 +10,10 @@ playwright-report/
 !.env.example
 *.log
 /From Klickpin.com-*.mp4
+/From Klickpin.com-*.gif
 graphify-out/
 ai/.venv/
 __pycache__/
 .pytest_cache/
+.data/
+.impeccable/review/

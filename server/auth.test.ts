@@ -124,12 +124,17 @@ test('Google sign-in: verified tokens only, and linking only to a verified email
 test('AI tickets need a verified email, consent, an allowed region and quota', async () => {
   process.env.AI_DAILY_QUOTA = '2'
   const nia = await call('POST', '/auth/register', { username: 'nia', password: 'first password' })
+  assert.equal((await call('GET', '/ai/status')).status, 401)
+  assert.equal((await call('GET', '/ai/status', undefined, nia.cookie)).body.error.code, 'email_required')
   assert.equal((await call('POST', '/ai/ticket', { mode: 'ask' })).status, 401, 'guests never get a ticket')
   assert.equal((await call('POST', '/ai/ticket', { mode: 'ask' }, nia.cookie)).body.error.code, 'email_required')
   await call('PUT', '/me/email', { email: 'nia@example.com' }, nia.cookie)
   await call('POST', '/auth/verify-email', { token: tokenFrom(mail.at(-1)!.body) })
+  assert.equal((await call('GET', '/ai/status', undefined, nia.cookie)).body.error.code, 'consent_required')
   assert.equal((await call('POST', '/ai/ticket', { mode: 'ask' }, nia.cookie)).body.error.code, 'consent_required')
   await call('POST', '/ai/consent', undefined, nia.cookie)
+  assert.equal((await call('GET', '/ai/status', undefined, nia.cookie, { 'x-vercel-ip-country': 'DE' })).body.error.code, 'region_unavailable')
+  for (let i = 0; i < 3; i++) assert.equal((await call('GET', '/ai/status', undefined, nia.cookie)).body.url, process.env.AI_URL, 'waking does not consume the question quota')
   assert.equal((await call('POST', '/ai/ticket', { mode: 'ask' }, nia.cookie, { 'x-vercel-ip-country': 'DE' })).body.error.code, 'region_unavailable')
 
   const ok = await call('POST', '/ai/ticket', { mode: 'ask' }, nia.cookie, { 'x-vercel-ip-country': 'IN' })
@@ -142,4 +147,6 @@ test('AI tickets need a verified email, consent, an allowed region and quota', a
   assert.equal((await call('POST', '/ai/ticket', { mode: 'listen' }, nia.cookie)).status, 200)
   assert.equal((await call('POST', '/ai/ticket', { mode: 'ask' }, nia.cookie)).body.error.code, 'quota_used')
   assert.equal((await call('POST', '/ai/ticket', { mode: 'call' }, nia.cookie)).status, 200, 'calls have their own allowance')
+  await call('DELETE', '/ai/consent', undefined, nia.cookie)
+  assert.equal((await call('GET', '/ai/status', undefined, nia.cookie)).body.error.code, 'consent_required')
 })

@@ -1,0 +1,132 @@
+[
+  {
+    "id": "a01",
+    "name": "Party fish",
+    "adminOnly": false,
+    "src": "/avatars/a01.png",
+    "reference": "C:\\Users\\Rohit Maity\\Desktop\\coding\\Webdev\\project\\New folder\\journal inspiration\\stickers\\pfp\\180120b6c83618e9e0f0ba98bd6c2b23.jpg",
+    "editedOutput": "C:\\Users\\Rohit Maity\\.codex\\generated_images\\01a19b3d-5f00-7f90-9b7e-d38dbe638c35\\exec-d46608a1-a8d8-4a9c-b5c8-5d6014929d2e.png",
+    "prompt": "Use case: background-extraction. The attached image is the EDIT TARGET. This is faithful foreground extraction and cleanup, not a redesign. Preserve the actual original character, face, colors, proportions, drawing texture and expression as closely as possible. Improve edge clarity and remove JPEG fuzz without smoothing away line/paint texture. Output ONE high-quality square transparent PNG sticker / profile-picture cutout. Actual alpha transparency outside the silhouette, including gaps between limbs/accessories. Keep the subject's white skin/clothing/eyes opaque. Center the entire selected silhouette with generous transparent margins (about 15% on every side) so it fits a round profile picture without clipping. No backdrop, paper rectangle, cast shadow, fake checkerboard, sticker border, added text or watermark. Cut out the ONE blue fish-hood character, including its original pink mouth, droopy fish eyes, girl's face, little yellow hair flower, striped party blower and pink party hat. Keep the same shapes, facial expression, colors and black outlines. Omit detached confetti/stars and the plain white background; retain all attached details.",
+    "tool": "built-in image_gen, edit with transparent background"
+  },
+  {
+    "id": "a02",
+    "name": "Golden headphones",
+    "adminOnly": false,
+    "src": "/avatars/a02.png",
+    "reference": "C:\\Users\\Rohit Maity\\Desktop\\coding\\Webdev\\project\\New folder\\journal inspiration\\stickers\\pfp\\351e42f2ae959c023fa35f90f118c74d.jpg",
+    "editedOutput": "C:\\Users\\Rohit Maity\\.codex\\generated_images\\01a19b3d-5f00-7f90-9b7e-d38dbe638c35\\exec-51cd5d8a-cdfd-4820-bc7b-51cd7c86cbad.png",
+    "prompt": "Use case: background-extraction. The attached image is the EDIT TARGET. This is faithful foreground extraction and cleanup, not a redesign. Preserve the actual original character, face, colors, proportions, drawing texture and expression as closely as possible. Improve edge clarity and remove JPEG fuzz without smoothing away line/paint texture. Output ONE high-quality square transparent PNG sticker / profile-picture cutout. Actual alpha transparency outside the silhouette, including gaps between limbs/accessories. Keep the subject's white skin/clothing/eyes opaque. Center the entire selected silhouette with generous transparent margins (about 15% on every side) so it fits a round profile picture without clipping. No backdrop, paper rectangle, cast shadow, fake checkerboard, sticker border, added text or watermark. Cut out the ONE seated girl wearing golden headphones, with black bobbed hair, white star hair clip, huge black eyes, dotted white outfit, gold boots and tiny heart handbag. Preserve the whole original figure, exact sitting pose, drawing and colors; no redesign.",
+    "tool": "built-in image_gen, edit with transparent background"
+  },
+  {
+    "id": "a03",
+    "name": "Koala hood",
+    "adminOnly": false,
+    "src": "/avatars/a03.png",
+    "reference": "C:\\Users\\Rohit Maity\\Desktop\\coding\\Webdev\\project\\New folder\\journal inspiration\\stickers\\pfp\\7c4231f5107c0ba0b8ed55073cc9a14c.jpg",
+    "editedOutput": "C:\\Users\\Rohit Maity\\.codex\\generated_images\\01a19b3d-5f00-7f90-9b7e-d38dbe638c35\\exec-98d98ecc-30c3-464a-88b8-522ddc449ba2.png",
+    "prompt": "Use case: background-extraction. The attached image is the EDIT TARGET. This is faithful foreground extraction and cleanup, not a redesign. Preserve the actual original character, face, colors, proportions, drawing texture and expression as closely as possible. Improve edge clarity and remove JPEG fuzz without smoothing away line/paint texture. Output ONE high-quality square transparent PNG sticker / profile-picture cutout. Actual alpha transparency outside the silhouette, including gaps between limbs/accessories. Keep the subject's white skin/clothing/eyes opaque. Center the entire selected silhouette with generous transparent margins (about 15% on every side) so it fits a round profile picture without clipping. No backdrop, paper rectangle, cast shadow, fake checkerboard, sticker border, added text or watermark. Cut out the ONE lavender koala-hood baby character with large dark eyes, starfish clip and yellow pacifier. Keep the small attached rectangular baby tag and its existing decorative lettering. Preserve the exact silhouette, colored pencil texture and face; exclude the white background.",
+    "tool": "built-in image_gen, edit with transparent background"
+  },
+  {
+    "id": "a04",
+    "name": "Daydream doodle",
+    "adminOnly": false,
+    "src": "/avatars/a04.png",
+    "reference": "C:\\Users\\Rohit Maity\\Desktop\\coding\\Webdev\\project\\New folder\\journal inspiration\\stickers\\pfp\\cad6938c41299618d40f324df7d8dd8a.jpg",
+    "editedOutput": "C:\\Users\\Rohit Maity\\.codex\\generated_images\\01a19b3d-5f00-7f90-9b7e-d38dbe638c35\\exec-6d9f6785-0a66-4f21-9bb8-d4e7b16831c9.png",
+    "prompt": "Use case: background-extraction. The supplied sheet is the EDIT TARGET. Extract only the precisely identified original character; do not redesign it or produce the whole sheet. Preserve the original face, expression, ink lines, colors and texture. Clean the small low-resolution edges without inventing detail. Output ONE high-quality square transparent PNG sticker cutout with real alpha outside the silhouette and in open gaps. All face/eye whites stay opaque. Center the single entire head and any attached hands with generous transparent margins for a round avatar. No graph lines, paper, rectangular background, other faces, shadow, new text, credit, watermark or sticker border. The edit target is a sheet of eight black-and-white character faces in a 2-row by 4-column grid. Extract ONLY the TOP-LEFT character: short black bob, both hands near the temples/ears, tired sideways expression. Preserve the exact original doodle and face. Remove all seven other characters, all whitespace background, and the faint watermark/credit at bottom right of the sheet.",
+    "tool": "built-in image_gen, edit with transparent background"
+  },
+  {
+    "id": "a05",
+    "name": "Glasses doodle",
+    "adminOnly": false,
+    "src": "/avatars/a05.png",
+    "reference": "C:\\Users\\Rohit Maity\\Desktop\\coding\\Webdev\\project\\New folder\\journal inspiration\\stickers\\pfp\\cad6938c41299618d40f324df7d8dd8a.jpg",
+    "editedOutput": "C:\\Users\\Rohit Maity\\.codex\\generated_images\\01a19b3d-5f00-7f90-9b7e-d38dbe638c35\\exec-8bff2bcd-8720-4dd1-9897-e774d7c9ac30.png",
+    "prompt": "Use case: background-extraction. The supplied sheet is the EDIT TARGET. Extract only the precisely identified original character; do not redesign it or produce the whole sheet. Preserve the original face, expression, ink lines, colors and texture. Clean the small low-resolution edges without inventing detail. Output ONE high-quality square transparent PNG sticker cutout with real alpha outside the silhouette and in open gaps. All face/eye whites stay opaque. Center the single entire head and any attached hands with generous transparent margins for a round avatar. No graph lines, paper, rectangular background, other faces, shadow, new text, credit, watermark or sticker border. The edit target is a sheet of eight black-and-white character faces in a 2-row by 4-column grid. Extract ONLY the SECOND character from the LEFT in the TOP row: round glasses, dark bob, head tilted with playful open mouth/tongue and tiny hands. Preserve exactly that single original doodle, black hair, black outlines and white opaque face. Remove the other seven characters, white background and bottom-right sheet watermark.",
+    "tool": "built-in image_gen, edit with transparent background"
+  },
+  {
+    "id": "a06",
+    "name": "Quiet doodle",
+    "adminOnly": false,
+    "src": "/avatars/a06.png",
+    "reference": "C:\\Users\\Rohit Maity\\Desktop\\coding\\Webdev\\project\\New folder\\journal inspiration\\stickers\\pfp\\download (1).jpg",
+    "editedOutput": "C:\\Users\\Rohit Maity\\.codex\\generated_images\\01a19b3d-5f00-7f90-9b7e-d38dbe638c35\\exec-f000cd2b-47be-47d0-be69-034cd2944d99.png",
+    "prompt": "Use case: background-extraction. The supplied sheet is the EDIT TARGET. Extract only the precisely identified original character; do not redesign it or produce the whole sheet. Preserve the original face, expression, ink lines, colors and texture. Clean the small low-resolution edges without inventing detail. Output ONE high-quality square transparent PNG sticker cutout with real alpha outside the silhouette and in open gaps. All face/eye whites stay opaque. Center the single entire head and any attached hands with generous transparent margins for a round avatar. No graph lines, paper, rectangular background, other faces, shadow, new text, credit, watermark or sticker border. The image is a 3 by 3 grid of simple black-line portraits on yellow graph paper. Extract ONLY the TOP-LEFT head, the calm short center-parted black-haired bob with small dot eyes and little mouth. Preserve its original exact line drawing and light opaque face. Remove the graph-paper background, all grid lines and the eight other heads.",
+    "tool": "built-in image_gen, edit with transparent background"
+  },
+  {
+    "id": "a07",
+    "name": "Sunny doodle",
+    "adminOnly": false,
+    "src": "/avatars/a07.png",
+    "reference": "C:\\Users\\Rohit Maity\\Desktop\\coding\\Webdev\\project\\New folder\\journal inspiration\\stickers\\pfp\\download (1).jpg",
+    "editedOutput": "C:\\Users\\Rohit Maity\\.codex\\generated_images\\01a19b3d-5f00-7f90-9b7e-d38dbe638c35\\exec-48eeb5c2-b0b2-4d82-99a5-d5696201016e.png",
+    "prompt": "Use case: background-extraction. The supplied sheet is the EDIT TARGET. Extract only the precisely identified original character; do not redesign it or produce the whole sheet. Preserve the original face, expression, ink lines, colors and texture. Clean the small low-resolution edges without inventing detail. Output ONE high-quality square transparent PNG sticker cutout with real alpha outside the silhouette and in open gaps. All face/eye whites stay opaque. Center the single entire head and any attached hands with generous transparent margins for a round avatar. No graph lines, paper, rectangular background, other faces, shadow, new text, credit, watermark or sticker border. The image is a 3 by 3 grid of simple black-line portraits on yellow graph paper. Extract ONLY the BOTTOM-RIGHT smiling boy's head, with irregular short black hair, cheerful eyes, ears and open smiling mouth. Preserve the original doodle and opaque pale face. Remove the graph-paper background, grid lines and eight other heads.",
+    "tool": "built-in image_gen, edit with transparent background"
+  },
+  {
+    "id": "a08",
+    "name": "Clover boy",
+    "adminOnly": false,
+    "src": "/avatars/a08.png",
+    "reference": "C:\\Users\\Rohit Maity\\Desktop\\coding\\Webdev\\project\\New folder\\journal inspiration\\stickers\\pfp\\download (2).jpg",
+    "editedOutput": "C:\\Users\\Rohit Maity\\.codex\\generated_images\\01a19b3d-5f00-7f90-9b7e-d38dbe638c35\\exec-00345ddb-7966-492e-bcbf-fa30d981da10.png",
+    "prompt": "Use case: background-extraction. The attached image is the EDIT TARGET. Faithfully extract the specified character; preserve the original face, pose, proportions, colors, linework and texture. Improve clarity and clean JPEG fuzz without redesigning. Deliver ONE square transparent PNG with true alpha outside the silhouette and in its gaps; keep whites of eyes, skin and clothing opaque. Center the complete silhouette with generous transparent margins for a round profile picture. Remove paper backgrounds, rectangular backdrops, other figures, watermarks and creator signatures. No shadow, sticker border or invented text. Cut out the ONE original boy with spiky black hair, very large black sparkling eyes, pink cheeks and green clover held in front of a white dotted outfit. Preserve the exact hand poses, clover, face and original colored pencil texture. Keep the full visible figure. Remove the white background and any faint creator credit outside the character at bottom right.",
+    "tool": "built-in image_gen, edit with transparent background"
+  },
+  {
+    "id": "a09",
+    "name": "Pink day",
+    "adminOnly": false,
+    "src": "/avatars/a09.png",
+    "reference": "C:\\Users\\Rohit Maity\\Desktop\\coding\\Webdev\\project\\New folder\\journal inspiration\\stickers\\pfp\\download (3).jpg",
+    "editedOutput": "C:\\Users\\Rohit Maity\\.codex\\generated_images\\01a19b3d-5f00-7f90-9b7e-d38dbe638c35\\exec-83e4998e-a038-4e54-ac0e-94ebf7659fd3.png",
+    "prompt": "Use case: background-extraction. The attached image is the EDIT TARGET. Faithfully extract the specified character; preserve the original face, pose, proportions, colors, linework and texture. Improve clarity and clean JPEG fuzz without redesigning. Deliver ONE square transparent PNG with true alpha outside the silhouette and in its gaps; keep whites of eyes, skin and clothing opaque. Center the complete silhouette with generous transparent margins for a round profile picture. Remove paper backgrounds, rectangular backdrops, other figures, watermarks and creator signatures. No shadow, sticker border or invented text. Cut out the ONE original black-haired boy with huge black oval eyes, pink cheeks, tiny ears, pink striped top and little white feet. Preserve this exact face and small full-body pose, black hair and textured drawing. Remove the white/off-white background only, retaining the white eyeballs, clothes and feet as opaque.",
+    "tool": "built-in image_gen, edit with transparent background"
+  },
+  {
+    "id": "a10",
+    "name": "Braided artist",
+    "adminOnly": false,
+    "src": "/avatars/a10.png",
+    "reference": "C:\\Users\\Rohit Maity\\Desktop\\coding\\Webdev\\project\\New folder\\journal inspiration\\stickers\\pfp\\download (5).jpg",
+    "editedOutput": "C:\\Users\\Rohit Maity\\.codex\\generated_images\\01a19b3d-5f00-7f90-9b7e-d38dbe638c35\\exec-15d570cc-84ca-46a5-af0b-e6464e215336.png",
+    "prompt": "Use case: background-extraction. The attached image is the EDIT TARGET. Faithfully extract the specified character; preserve the original face, pose, proportions, colors, linework and texture. Improve clarity and clean JPEG fuzz without redesigning. Deliver ONE square transparent PNG with true alpha outside the silhouette and in its gaps; keep whites of eyes, skin and clothing opaque. Center the complete silhouette with generous transparent margins for a round profile picture. Remove paper backgrounds, rectangular backdrops, other figures, watermarks and creator signatures. No shadow, sticker border or invented text. Cut out the ONE original illustrated girl's head with two dark braids, short uneven fringe, pale face, olive-yellow eyes, round glasses and tiny calm mouth. Preserve the exact linework, head shape and colors. Remove the light paper background; keep the whites of the eyes, skin and glasses highlights opaque.",
+    "tool": "built-in image_gen, edit with transparent background"
+  },
+  {
+    "id": "a11",
+    "name": "Clover girl",
+    "adminOnly": false,
+    "src": "/avatars/a11.png",
+    "reference": "C:\\Users\\Rohit Maity\\Desktop\\coding\\Webdev\\project\\New folder\\journal inspiration\\stickers\\pfp\\download.jpg",
+    "editedOutput": "C:\\Users\\Rohit Maity\\.codex\\generated_images\\01a19b3d-5f00-7f90-9b7e-d38dbe638c35\\exec-c7c90db5-3bd8-4c53-bc2f-32fa14ad7d04.png",
+    "prompt": "Use case: background-extraction. The attached image is the EDIT TARGET. Faithfully extract the specified character; preserve the original face, pose, proportions, colors, linework and texture. Improve clarity and clean JPEG fuzz without redesigning. Deliver ONE square transparent PNG with true alpha outside the silhouette and in its gaps; keep whites of eyes, skin and clothing opaque. Center the complete silhouette with generous transparent margins for a round profile picture. Remove paper backgrounds, rectangular backdrops, other figures, watermarks and creator signatures. No shadow, sticker border or invented text. The sheet contains six chibi children in a 3-row by 2-column grid. Extract ONLY the MIDDLE-ROW RIGHT girl: long dark hair, small hair clip, large black eyes, pink cheeks, green clover/flowers held at her white outfit. Preserve her exact original face, hair, hand pose and full visible figure. Remove every other child, the white background and any outside sheet credit.",
+    "tool": "built-in image_gen, edit with transparent background"
+  },
+  {
+    "id": "a12",
+    "name": "Lavender beret",
+    "adminOnly": false,
+    "src": "/avatars/a12.png",
+    "reference": "C:\\Users\\Rohit Maity\\Desktop\\coding\\Webdev\\project\\New folder\\journal inspiration\\stickers\\pfp\\Sketch ✍🏻.jpg",
+    "editedOutput": "C:\\Users\\Rohit Maity\\.codex\\generated_images\\01a19b3d-5f00-7f90-9b7e-d38dbe638c35\\exec-491680c5-8be9-463d-9b2d-609298d68569.png",
+    "prompt": "Use case: background-extraction. The attached image is the EDIT TARGET. Faithfully extract the specified character; preserve the original face, pose, proportions, colors, linework and texture. Improve clarity and clean JPEG fuzz without redesigning. Deliver ONE square transparent PNG with true alpha outside the silhouette and in its gaps; keep whites of eyes, skin and clothing opaque. Center the complete silhouette with generous transparent margins for a round profile picture. Remove paper backgrounds, rectangular backdrops, other figures, watermarks and creator signatures. No shadow, sticker border or invented text. The sheet has six softly drawn girls in a 3-row by 2-column grid. Extract ONLY the MIDDLE-ROW RIGHT girl with a lavender beret, side braid, brown hair, pale face and little red cheek marks. Preserve her exact hand-drawn colored-pencil appearance, expression and little hair accessories. Remove the other five heads, the white sheet background and tiny sheet marks.",
+    "tool": "built-in image_gen, edit with transparent background"
+  },
+  {
+    "id": "mine",
+    "name": "Mine",
+    "adminOnly": true,
+    "src": "/avatars/mine.png",
+    "reference": "C:\\Users\\Rohit Maity\\Desktop\\coding\\Webdev\\project\\New folder\\journal inspiration\\stickers\\pfp\\mine.jpg",
+    "editedOutput": "C:\\Users\\Rohit Maity\\.codex\\generated_images\\01a19b3d-5f00-7f90-9b7e-d38dbe638c35\\exec-9b91c0c8-f1e4-4085-b3c9-405246eec041.png",
+    "prompt": "Use case: background-extraction. The attached image is the EDIT TARGET. This is faithful foreground extraction and cleanup, not a redesign. Preserve the actual original character, face, colors, proportions, drawing texture and expression as closely as possible. Improve edge clarity and remove JPEG fuzz without smoothing away line/paint texture. Output ONE high-quality square transparent PNG sticker / profile-picture cutout. Actual alpha transparency outside the silhouette, including gaps between limbs/accessories. Keep the subject's white skin/clothing/eyes opaque. Center the entire selected silhouette with generous transparent margins (about 15% on every side) so it fits a round profile picture without clipping. No backdrop, paper rectangle, cast shadow, fake checkerboard, sticker border, added text or watermark. Cut out ONLY the original side-profile painted portrait: dark-skinned person facing RIGHT, tall black textured natural hair, original multicolored abstract patches across the face/neck, and pale sage shirt collar. Preserve the exact face profile, nose, ear, expression, hair, skin colors, painted markings and proportions. Remove only the pale cream rectangular background. No new features or jewelry. Keep the complete hair, face and visible collar; do not redraw into a different style.",
+    "tool": "built-in image_gen, edit with transparent background"
+  }
+]

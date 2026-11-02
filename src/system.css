@@ -1,0 +1,118 @@
+/* The UI system for app chrome (docs/UI-SYSTEM.md). Loads last. Never styles book pages, covers, stickers or scribbles. */
+:root{
+ --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--space-8:64px;
+ --text-xs:12px;--text-sm:13px;--text-md:15px;--text-input:16px;--text-lg:18px;--text-xl:24px;--text-2xl:32px;--text-display:clamp(36px,4.4vw,60px);
+ --weight-light:350;--weight-regular:400;--weight-medium:500;
+ --radius:0;--control:40px;--gutter:5%
+}
+@media(max-width:600px),(pointer:coarse){:root{--control:44px}}
+@media(max-width:600px){:root{--gutter:20px}}
+
+/* Buttons: one square shape, one height, five roles. */
+:is(.button-primary,.button-secondary,.button-quiet,.button-icon){display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);min-width:0;min-height:var(--control);padding:0 var(--space-4);border:1px solid transparent;border-radius:var(--radius);background:transparent;color:var(--app-ink);font:inherit;font-size:var(--text-sm);font-weight:var(--weight-regular);letter-spacing:0;line-height:1.2;text-decoration:none;white-space:nowrap;transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease}
+.button-primary{background:var(--app-button);border-color:var(--app-button);color:var(--app-button-ink)}
+.button-secondary{border-color:var(--app-line)}
+.button-quiet{color:var(--app-muted)}
+.button-icon{width:var(--control);min-width:var(--control);padding:0;color:var(--app-muted)}
+.button-secondary.button-icon{color:var(--app-ink)}
+.button-primary.button-icon{color:var(--app-button-ink)}
+:is(.button-secondary,.button-quiet,.button-icon)[aria-pressed=true]{background:var(--app-selected);color:var(--app-ink)}
+.button-secondary[aria-pressed=true]{border-color:var(--app-accent)}
+@media(hover:hover) and (pointer:fine){
+ .button-primary:not(:disabled):hover{background:color-mix(in srgb,var(--app-button) 88%,var(--app-bg))}
+ .button-secondary:not(:disabled):hover{border-color:var(--app-muted)}
+ :is(.button-quiet,.button-icon):not(:disabled):not([aria-pressed=true]):hover{background:color-mix(in srgb,var(--app-ink) 6%,transparent);color:var(--app-ink)}
+}
+.button-link{display:inline;min-height:0;padding:0;border:0;background:none;color:var(--app-accent);font:inherit;text-decoration:underline;text-underline-offset:3px}
+button:disabled{opacity:.4;cursor:default}
+
+/* Choice tiles are secondary buttons laid out as tiles; each group keeps its own layout.
+   Labeled choices carry the border; glyph pickers (layouts, scribbles) draw their own frame, so theirs appears on hover and selection. */
+.portfolio-app :is(.choice-row,.visual-formats,.visual-papers,.motion-choices,.journal-fonts,.journal-row) button{border:1px solid var(--app-line);border-radius:var(--radius);background:transparent;color:var(--app-ink)}
+.portfolio-app :is(.choice-row,.visual-formats,.motion-choices,.journal-row) button{font-size:var(--text-sm)}
+.portfolio-app :is(.cover-layouts,.journal-layouts,.journal-scribbles) button{border:1px solid transparent;border-radius:var(--radius);background:transparent;color:var(--app-ink)}
+.portfolio-app :is(.choice-row,.visual-formats,.visual-papers,.motion-choices,.journal-fonts,.journal-row,.cover-layouts,.journal-layouts,.journal-scribbles) button[aria-pressed=true]{background:var(--app-selected);border-color:var(--app-accent);color:var(--app-ink)}
+@media(hover:hover) and (pointer:fine){.portfolio-app :is(.choice-row,.visual-formats,.visual-papers,.motion-choices,.journal-fonts,.journal-row,.cover-layouts,.journal-layouts,.journal-scribbles) button:not(:disabled):not([aria-pressed=true]):hover{background:transparent;border-color:var(--app-muted)}}
+.portfolio-app :is(.sticker-vibes button,.sticker-pick,.page-thumb,.cover-choice){border-radius:var(--radius)}
+
+/* Focus: a ring outside controls. Text fields show focus with their border, never an outline over the text. */
+:where(button,a,summary,[role=button],[tabindex],input[type=range],input[type=checkbox]):focus-visible{outline:2px solid var(--app-accent);outline-offset:2px}
+:is(input:not([type=range],[type=checkbox]),textarea,select,[contenteditable=true]):is(:focus,:focus-visible){outline:none}
+
+/* Fields: underlined text fields, boxed writing areas. */
+.portfolio-app :is(.caption-field input,.journal-about input,.journal-about textarea,.journal-link input,.portfolio-dialog form input){display:block;width:100%;padding:var(--space-2) 0;border:0;border-bottom:1px solid var(--app-line);border-radius:0;background:transparent;color:var(--app-ink);font:inherit;font-size:var(--text-input);line-height:1.5;transition:border-color 160ms ease,box-shadow 160ms ease}
+.portfolio-app .book-name-input{display:block;width:100%;margin:0 0 var(--space-5);padding:0 0 var(--space-2);border:0;border-bottom:1px solid var(--app-line);border-radius:0;background:transparent;color:var(--app-ink);font-size:var(--text-xl);font-weight:var(--weight-regular);letter-spacing:-.02em;line-height:1.3}
+.portfolio-app :is(.collection-search,.feed-search){display:flex;align-items:center;gap:var(--space-2);padding:0;border-bottom:1px solid var(--app-line);color:var(--app-muted);transition:border-color 160ms ease,box-shadow 160ms ease}
+.portfolio-app :is(.collection-search,.feed-search) input{flex:1;width:auto;min-width:0;padding:var(--space-2) 0;border:0;background:none;color:var(--app-ink);font:inherit;font-size:var(--text-input)}
+.portfolio-app .journal-field{border:1px solid var(--app-line);border-radius:var(--radius);background:var(--app-bg)}
+.portfolio-app :is(.caption-field input,.journal-about input,.journal-about textarea,.journal-link input,.portfolio-dialog form input,.book-name-input):focus,.portfolio-app :is(.collection-search,.feed-search):focus-within{border-bottom-color:var(--app-accent);box-shadow:0 1px 0 var(--app-accent)}
+.portfolio-app .journal-field:focus{border-color:var(--app-accent)}
+.portfolio-app .portfolio-dialog form .handle-field input{border:0;box-shadow:none}
+.portfolio-app .handle-field:focus-within{border-bottom-color:var(--app-accent);box-shadow:0 1px 0 var(--app-accent)}
+.portfolio-app .journal-link input[aria-invalid=true]{border-bottom-color:var(--app-danger)}
+.portfolio-app :is(input,textarea)::placeholder{color:var(--app-muted);opacity:1}
+
+/* Labels above fields and control groups. */
+.portfolio-app :is(.creation-controls>label,.creator-binding>label,.creator-paper>label,.creator-visibility>label,.journal-group>label,.journal-about,.caption-field,.control-label,.band-color-row,.portfolio-dialog form label,.avatar-choices legend){color:var(--app-muted);font-size:var(--text-xs);letter-spacing:0;text-transform:none}
+.portfolio-app :is(.creation-controls>label,.creator-binding>label,.creator-paper>label,.creator-visibility>label){display:block;margin:var(--space-5) 0 var(--space-2)}
+.portfolio-app .portfolio-dialog form label{display:block;margin:var(--space-5) 0 0}
+.portfolio-app .portfolio-dialog form label input{margin-top:var(--space-1)}
+
+/* Type scale. Editorial keeps its serif family; sizes come from the same scale. */
+.portfolio-app :is(.artist-details h1,.feed-creator h1,.reading-heading h1,.guest-welcome h1){font-size:var(--text-display);font-weight:var(--weight-light);letter-spacing:-.03em;line-height:1.1}
+.portfolio-app :is(.portfolio-dialog>h2,.portfolio-dialog form h2,.portfolio-dialog .account-form h2,.account-settings>h2,.notifications h2,.style-editorial .collection-book-caption h3,.style-editorial .feed-card-caption h2,.style-editorial .collection-heading h2){font-size:var(--text-2xl);font-weight:var(--weight-regular);letter-spacing:-.02em;line-height:1.2}
+.portfolio-app :is(.collection-heading h2,.artwork-editor h2,.shelf-selection h3,.welcome-content h1,.feed-empty h2,.kind-switch-large button,.style-editorial .artwork-editor h2){font-size:var(--text-xl);font-weight:var(--weight-regular);letter-spacing:-.02em;line-height:1.25}
+.portfolio-app :is(.collection-book-caption h3,.feed-card-caption h2,.legal-copy h2,.account-form h3){font-size:var(--text-lg);font-weight:var(--weight-regular);letter-spacing:-.01em;line-height:1.35}
+.portfolio-app :is(.artist-details p,.guest-welcome p,.reading-heading>p,.legal-copy,.feed-creator p,.welcome-content>p,.kind-switch button){font-size:var(--text-md);line-height:1.7}
+.portfolio-app :is(.portfolio-header nav button,.notification,.notifications li,.form-note,.form-error,.form-switch,.account-form>.button-link,.feed-notice,.feed-empty p,.feed-author,.feed-reactions button,.artist-links,.reading-back,.sticker-failed){font-size:var(--text-sm)}
+.portfolio-app :is(.eyebrow,.artist-counts,.collection-book-caption span,.feed-author small,.feed-category,.feed-edition,.feed-open,.feed-card-caption>div>span,.feed-footer,.site-footer,.profile-main footer,.empty-search,.upload-limits,.creation-preview>p,.cover-picture-row,.crop-sliders label,.placement-tools,.art-order,.artwork-edit-card>div,.journal-fonts span,.journal-status,.journal-tools small,.journal-link small,.mobile-navigation button,.reading-heading>span,.account-legal,.notifications time,.avatar-choices legend,.form-divider,.cover-layouts button,.shelf-selection .eyebrow){font-size:var(--text-xs)}
+.portfolio-app .eyebrow{letter-spacing:.12em}
+
+/* Spacing: one gutter, one section rhythm. */
+.portfolio-app .portfolio-header{margin:0 var(--gutter);gap:var(--space-4)}
+.portfolio-app :is(.profile-main,.creation-page,.feed-page){padding-left:var(--gutter);padding-right:var(--gutter)}
+.portfolio-app .header-actions{gap:var(--space-2)}
+.portfolio-app .portfolio-header nav{gap:var(--space-6)}
+.portfolio-app :is(.collection-actions,.guest-actions,.creation-save,.journal-picture-actions,.cover-picture-row,.crop-actions,.canvas-actions,.shelf-actions){gap:var(--space-2)}
+.portfolio-app :is(.journal-tools,.journal-page-tools,.journal-align,.placement-tools,.art-order,.artwork-tools,.cover-rail-controls,.canvas-layout-toggle,.feed-categories,.feed-toolbar-right){gap:var(--space-1)}
+.portfolio-app .collection-toolbar{margin-bottom:0;padding:var(--space-4) 0}
+/* The view switch sits beside the search row: lifted by the toolbar's top padding plus the search field's 40px. */
+.portfolio-app .collection-view-switch{margin:calc(-1 * (var(--space-4) + 40px)) 0 var(--space-5);gap:var(--space-1)}
+@media(max-width:600px){.portfolio-app .collection-view-switch{margin:0 0 var(--space-5)}}
+@media(max-width:600px){.portfolio-app .creation-heading{flex-wrap:wrap;gap:var(--space-2)}.portfolio-app .creation-save{margin-left:auto}}
+.portfolio-app .collection-book-caption{gap:var(--space-2)}
+.portfolio-app .collection-book-caption h3{margin:0 auto 0 0}
+.portfolio-app .feed-toolbar{padding:var(--space-4) 0}
+.portfolio-app .feed-search{margin-bottom:var(--space-6)}
+.portfolio-app .feed-empty{display:flex;flex-direction:column;align-items:center;gap:var(--space-2);padding:var(--space-8) 0;text-align:center;color:var(--app-muted)}
+.portfolio-app .feed-empty h2{margin:var(--space-3) 0 0;color:var(--app-ink)}
+.portfolio-app .feed-empty p{margin:0}
+.portfolio-app .feed-empty button{margin-top:var(--space-5)}
+.portfolio-app :is(.load-more,.feed-load){display:flex;margin:var(--space-7) auto 0}
+.portfolio-app .account-form :is(.button-primary,.button-secondary){width:100%;margin-top:var(--space-5)}
+.portfolio-app .account-form>.button-link{display:block;margin-top:var(--space-5)}
+.portfolio-app .shelf-actions>.button-secondary:last-child{margin-left:var(--space-3)}
+
+/* Surfaces share the radius. */
+.portfolio-app :is(.portfolio-dialog,.book-stage,.canvas-editor,.journal-canvas,.notification,.art-upload-empty){border-radius:var(--radius)}
+
+/* Dividers: header and phone-navigation edges, list rows, field underlines, the sign-in "or" and the bookshelf only. */
+.portfolio-app :is(.collection-toolbar,.feed-toolbar,.feed-footer,.profile-main footer,.collection-book-caption,.layout-shelf .collection-book-caption,.account-settings .account-form,.style-editorial .artwork-editor,.journal-align,.caption-material){border:0}
+.portfolio-app .journal-align{padding-left:0;margin-left:var(--space-2)}
+
+/* Controls added outside the system classes follow the same shape: square, no pills. */
+.portfolio-app :is(.link-kind,.link-add,.link-remove,.link-menu,.link-menu button,.artist-link-icons a,.ask-send,.film-toggle,.feed-cover-toggle,.journal-mic){border-radius:var(--radius)}
+.portfolio-app :is(.portfolio-dialog.is-panel,.profile-card){border-radius:var(--radius)}
+.portfolio-app .link-add{border-style:solid}
+/* Brand: the companion's calm face is the Scribb mark; the name is hand-lettered in Caveat */
+.portfolio-app .wordmark{display:inline-flex;align-items:center;gap:var(--space-2);font-family:'Caveat Variable',cursive;font-size:34px;font-weight:700;letter-spacing:0;line-height:1;color:var(--app-ink);text-decoration:none}
+.portfolio-app .wordmark span{transform:translateY(1px)}
+.portfolio-app .brand-mark{display:block;flex:none;object-fit:contain}
+.portfolio-app .wordmark .brand-mark{width:34px;height:34px;transition:transform 260ms cubic-bezier(.34,1.56,.64,1)}
+@media(hover:hover) and (pointer:fine){.portfolio-app .wordmark:hover .brand-mark{transform:rotate(-10deg) scale(1.06)}}
+@media(max-width:600px){.portfolio-app .wordmark{font-size:30px}.portfolio-app .wordmark .brand-mark{width:30px;height:30px}}
+.portfolio-app .account-mark{width:56px;height:56px;margin:0 0 var(--space-4)}
+.portfolio-app .footer-brand{display:inline-flex;align-items:center;gap:var(--space-2)}
+.portfolio-app .footer-brand b{font-family:'Caveat Variable',cursive;font-size:20px;font-weight:700;color:var(--app-ink)}
+.portfolio-app .feed-empty .brand-mark{width:64px;height:64px}
+@media(prefers-reduced-motion:reduce){.portfolio-app .wordmark .brand-mark{transition:none}}
