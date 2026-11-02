@@ -5,10 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 5173 --strictPort",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b tsconfig.json server/tsconfig.json && vite build",
     "preview": "vite preview --host 0.0.0.0 --port 4173",
-    "test": "playwright test",
-    "postinstall": "node scripts/patch-page-flip.mjs"
+    "test": "npm run test:api && playwright test",
+    "postinstall": "node scripts/patch-page-flip.mjs",
+    "dev:api": "tsx watch server/dev.ts",
+    "test:api": "node --import tsx --test \"server/**/*.test.ts\"",
+    "migrate": "tsx server/migrate.ts"
   },
   "dependencies": {
     "@fontsource-variable/caveat": "^5.3.0",
@@ -22,20 +25,32 @@
     "@fontsource/shadows-into-light": "^5.3.0",
     "@fontsource/zilla-slab": "^5.3.0",
     "@gsap/react": "^2.1.2",
+    "@neondatabase/serverless": "^1.2.0",
     "@phosphor-icons/react": "^2.1.10",
+    "express": "^5.3.0",
     "gsap": "^3.15.0",
+    "jose": "^6.2.15",
     "lenis": "1.3.27",
     "page-flip": "2.0.7",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "roughjs": "^4.6.6"
+    "roughjs": "^4.6.6",
+    "sanitize-html": "^2.18.1"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.14",
     "@playwright/test": "^1.58.0",
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.20.5",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
+    "@types/sanitize-html": "^2.16.2",
     "@vitejs/plugin-react": "^6.0.1",
+    "tsx": "^4.23.15",
     "typescript": "~5.9.3",
     "vite": "^8.3.5"
+  },
+  "engines": {
+    "node": "22.x"
   }
 }

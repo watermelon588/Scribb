@@ -151,3 +151,13 @@ Entrance motion is limited to transform/opacity and 360ms, with scoped cleanup.
 Original olive light/dark appearance is restored. Explore opens directly to its
 filters and books; Gallery uses three compact desktop columns, two on tablets
 and one on phones. The Gallery/Editorial selector uses compact labeled icons.
+
+## Backend (local)
+
+The plan is in `backend-plan.md`. Copy `.env.example` to `.env` and fill in the keys.
+
+- `npm run migrate` applies `db/migrations` to `DATABASE_URL`.
+- `npm run dev:api` runs the Express API on port 3001; `npm run dev` proxies `/api` to it.
+- `npm run test:api` runs the API tests against an in-process Postgres, so no database is needed.
+- AI service: `cd ai`, `py -3 -m venv .venv`, `.venv/Scripts/pip install -r requirements.txt pytest`, then `.venv/Scripts/python -m pytest` or `.venv/Scripts/uvicorn scribb_ai.main:app --port 8000`.
+- After the first migration, give the AI role a password once: `alter role scribb_ai login password '...'`, and use it in `AI_DATABASE_URL`.

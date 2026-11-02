@@ -11,3 +11,6 @@ playwright-report/
 *.log
 /From Klickpin.com-*.mp4
 graphify-out/
+ai/.venv/
+__pycache__/
+.pytest_cache/

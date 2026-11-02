@@ -1,6 +1,6 @@
 # Scribb backend plan
 
-**Status:** plan only. Nothing here is built yet.
+**Status:** the Express API (accounts, Google sign-in, email, password reset, AI tickets), the migrations and the AI service skeleton are built and tested locally. Nothing is deployed, and the frontend is not connected yet.
 **Source brief:** `scribb_architecture_journal_ai_brief.md`
 **Facts checked:** 2 November 2026 (see [Sources](#sources))
 **Budget:** ₹0 beyond the `scribb.xyz` domain. Every service runs on its free tier.
@@ -108,7 +108,8 @@ Sign-up is one screen: username and password, or the Google button. Nothing is v
 **Abuse**
 - Register, login and forgot are rate limited per IP by a Postgres counter. In-memory limits do not work on serverless.
 - Write requests must carry a matching `Origin` header.
-- Guests get every public `GET`. Every write needs a session. No feature needs a verified email.
+- Guests get every public `GET`. Every write needs a session.
+- Scribb AI needs a verified email. Nothing else does.
 
 ### Guest mode in the frontend
 - Like, save, follow, New Sketchbook and the phone Create tab stay visible to guests. Using one opens the sign-in dialog, then returns to the same place and completes the action.
@@ -192,7 +193,7 @@ understand ─> out of scope ─────────────────
 Opening Scribb sends nothing to Render. The AI panel is lazy loaded.
 
 1. The user opens "Ask my journal" and accepts the notice if needed.
-2. The panel asks Express for a ticket. Express checks the session, consent, country and daily quota.
+2. The panel asks Express for a ticket. Express checks the session, verified email, consent, country and daily quota.
 3. Express returns the Render URL and a 60-second, one-time ticket signed with a secret only Express and Render share.
 4. The panel polls Render's `/health` every 3 seconds for up to 90 seconds, showing "Starting Scribb AI...". A failed or non-JSON response counts as still starting, because Render can return a loading page.
 5. Typed questions use `POST /ask`, which streams text back. A call opens `WS /call` and sends the ticket in its first frame, never in the URL, as Koe does.
@@ -265,8 +266,8 @@ Express routes are under `/api`. Errors return `{ error: { code, message } }`. G
 
 | Area | Routes |
 |---|---|
-| Auth | `POST auth/register`, `auth/login`, `auth/google`, `auth/logout`, `auth/forgot`, `auth/reset`; `GET auth/me` |
-| Account | `PATCH me/profile` (name, bio, avatar preset, links, username), `PUT me/email`, `POST me/email/verify`, `PUT me/password`, `DELETE me`, `GET me/saved` |
+| Auth | `POST auth/register`, `auth/login`, `auth/google`, `auth/logout`, `auth/forgot`, `auth/reset`, `auth/verify-email`; `GET auth/me` |
+| Account | `PATCH me/profile` (name, bio, avatar preset, links, username), `PUT me/email`, `PUT me/password`, `DELETE me`, `GET me/saved` |
 | People | `GET users/:handle`, `GET users/:handle/books`, `PUT` and `DELETE users/:handle/follow` |
 | Books | `GET books/:id`, `PUT books/:id`, `DELETE books/:id`, `PUT` and `DELETE books/:id/like`, `PUT` and `DELETE books/:id/save` |
 | Feed | `GET feed?tab=explore\|following&category=&cursor=` |
@@ -360,7 +361,7 @@ Each task is a vertical slice. After any task that changes rendering, gestures, 
 - Done when: a ticket for user A cannot read user B's rows even with deliberately broken query code, a reused or expired ticket is refused, and memory stays under 400 MB.
 
 **Task 14: Tickets in Express** (S)
-- Add consent, country and quota checks.
+- Add verified-email, consent, country and quota checks.
 - Done when: a user without consent, a user in an EEA country and the 21st question of the day are each refused before Render is contacted.
 
 **Task 15: Date questions** (M)
@@ -398,7 +399,7 @@ Each task is a vertical slice. After any task that changes rendering, gestures, 
 | Risk | Impact | Mitigation |
 |---|---|---|
 | Gemini free tier: Google may use content and humans may read it | High | Your accepted decision. Opt-in consent, minimum passages, never images or bulk text, no AI in the EEA, UK or Switzerland, and plain privacy wording. |
-| Accounts need no email, so one person can make many and drain the shared AI quota | Medium | Per-IP sign-up limits, per-user AI caps and the global daily cap. Require a verified email for AI later if abuse appears. |
+| One person makes many accounts to drain the shared AI quota | Low | AI needs a verified email and each account has a daily allowance, plus per-IP sign-up limits and the global daily cap. |
 | A user without an email forgets their password | Low | Sign-up and Settings say plainly that an email is needed for resets. |
 | Free Gemini quota shared by all users runs out | Medium | Per-user and global caps, Koe's model fallback, and a clear "AI is resting, try later" message. |
 | Google changes or removes free models, especially Live | Medium | Model names are environment variables. Text chat survives without voice. |
@@ -425,6 +426,7 @@ Each task is a vertical slice. After any task that changes rendering, gestures, 
 | Hiding single entries inside a public journal | Users ask for it |
 | Comments, recommendations, search across users | Not in v1 |
 | Uploaded profile pictures | The preset avatars are not enough |
+| Bring your own Gemini key | Users want more than the daily allowance |
 | Data export | Before opening beyond early users, or if required by law |
 
 ## Defaults to confirm while building
