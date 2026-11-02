@@ -1,15 +1,18 @@
 import {useEffect,useLayoutEffect,useRef,useState,type CSSProperties,type FormEvent,type KeyboardEvent as ReactKeyboardEvent,type PointerEvent as ReactPointerEvent,type ReactNode} from 'react'
-import {ArrowCounterClockwise,ArrowLeft,ArrowRight,BookOpen,Check,Highlighter,LinkSimple,Microphone,Stop,TextB,TextItalic,TextUnderline,Image as ImageIcon,Plus,Sticker,Trash,X} from '@phosphor-icons/react'
+import {ArrowCounterClockwise,ArrowLeft,ArrowRight,ArrowsOutCardinal,BookOpen,Check,Crop,TextAlignCenter,TextAlignLeft,TextAlignRight,Highlighter,LinkSimple,Microphone,Stop,TextB,TextItalic,TextUnderline,Image as ImageIcon,Plus,Trash,X} from '@phosphor-icons/react'
 import {ScribbleArt} from './Scribble'
+import {StickerLayer,StickerTray,changeSticker,dropPoint} from './Stickers'
+import {STICKERS_ON_COVER,STICKERS_PER_PAGE,newSticker,safeSticker,type PlacedSticker,type StickerItem} from '../data/stickers'
 import {Cover,inkFor} from './Sketchbook'
 import {formats,presets} from '../data/presets'
 import type {Book} from '../Profile'
 import type {Owner} from './Journal'
-import {JournalSheet,journalCover,layoutFits,slotBox,slotFits,slotName,useFontReady,writingPages} from './Journal'
+import ArtworkCropper from './ArtworkCropper'
+import {JournalSheet,dragFocus,focusKey,journalCover,layoutFits,pageNumbers,slotBox,slotFits,slotName,useFontReady,writingPages} from './Journal'
 import {IMAGE_LIMITS,ingestJournalImage} from '../lib/images'
 import {escapeText,safeLink,sanitize,wordCount} from '../lib/richtext'
 import {canDictate,dictate} from '../lib/voice'
-import {SCRIBBLES_PER_PAGE,coverFields,coverLayouts,type JournalCover,entrySlots,gridOf,scribbleKinds,journalFonts,journalInks,journalLayouts,layoutSlots,moveEdge,newEntry,paperRules,sectionOf,sheetSize,slotEdges,slotWordLimits,textSizes,today,typeScale,wordLimits,type Edge,type JournalData,type Scribble,type ScribbleKind,type JournalEntry,type LayoutId,type Slot} from '../data/journal'
+import {SCRIBBLES_PER_PAGE,coverFields,coverLayouts,type JournalCover,entrySlots,gridOf,isSpread,scribbleKinds,journalFonts,journalInks,journalLayouts,layoutSlots,moveEdge,newEntry,paperRules,sectionOf,sheetSize,slotArea,slotEdges,slotRect,slotWordLimits,textSizes,today,typeScale,wordLimits,type Edge,type JournalData,type Scribble,type ScribbleKind,type JournalEntry,type LayoutId,type Slot,type TextAlign} from '../data/journal'
 
 export function JournalSettings({journal,owner,onChange}:{journal:JournalData;owner:Owner;onChange:(patch:Partial<JournalData>)=>void}){
  return <div className="journal-settings">
@@ -25,7 +28,7 @@ export function JournalSettings({journal,owner,onChange}:{journal:JournalData;ow
 const NO_COVER:JournalCover={front:'artwork',back:'plain'}
 
 /** Fixed front and back layouts, shown as real covers so each choice looks like the book. */
-export function JournalCoverSettings({book,onChange,onNotice}:{book:Book;onChange:(cover:JournalCover,side:'front'|'back')=>void;onNotice:(message:string)=>void}){
+export function JournalCoverSettings({book,onChange,onNotice,onArrange}:{book:Book;onChange:(cover:JournalCover,side:'front'|'back')=>void;onNotice:(message:string)=>void;onArrange:()=>void}){
  const journal=book.journal!,cover=journal.cover??NO_COVER
  const [busy,setBusy]=useState(false),upload=useRef<HTMLInputElement>(null)
  const ratio=formats.find(f=>f.id===book.format)!.ratio,preset=presets.find(p=>p.id===book.presetId)!
@@ -45,6 +48,14 @@ export function JournalCoverSettings({book,onChange,onNotice}:{book:Book;onChang
   catch(error){onNotice(error instanceof Error?error.message:'Could not open this picture.')}
   finally{setBusy(false)}
  }
+ const stickers=(cover.stickers??[]).filter(s=>safeSticker(s.src))
+ // Stickers are arranged on the flat front cover in the canvas, so adding one opens it there.
+ function addSticker(item:StickerItem,point?:{x:number;y:number}){
+  const at=point&&dropPoint(document.querySelector('.cover-stickers-editor [data-sticker-surface]'),point)
+  if(point&&!at)return
+  if(stickers.length>=STICKERS_ON_COVER){onNotice(`Up to ${STICKERS_ON_COVER} stickers on the cover.`);return}
+  onChange({...cover,stickers:[...stickers,newSticker(item,24,at??undefined)]},'front');onArrange()
+ }
  return <div className="journal-cover-settings">
   <div className="journal-group"><label>Front cover</label><div className="cover-layouts">{coverLayouts.front.map(l=><button key={l.id} aria-label={`${l.name} front cover`} title={l.name} aria-pressed={cover.front===l.id} onClick={()=>set({front:l.id})}>{preview({front:l.id})}<span>{l.name}</span></button>)}</div></div>
   <div className="journal-group"><label>Back cover</label><div className="cover-layouts">{coverLayouts.back.map(l=><button key={l.id} aria-label={`${l.name} back cover`} title={l.name} aria-pressed={cover.back===l.id} onClick={()=>set({back:l.id})}>{preview({back:l.id},true)}<span>{l.name}</span></button>)}</div></div>
@@ -53,14 +64,23 @@ export function JournalCoverSettings({book,onChange,onNotice}:{book:Book;onChang
    return <label key={id} className="journal-about">{field.name}{field.lines?<textarea rows={2} {...props}/>:<input {...props}/>}</label>
   })}
   {cover.back==='picture'&&<div className="cover-picture-row"><button className="quiet-button" disabled={busy} onClick={()=>upload.current?.click()}><ImageIcon size={18} weight="light"/>{cover.image?'Replace back picture':'Add back picture'}</button>{cover.image&&<button className="quiet-button" aria-label="Remove back picture" title="Remove back picture" onClick={()=>set({image:undefined})}><Trash size={18} weight="light"/></button>}<input ref={upload} type="file" hidden accept="image/jpeg,image/png,image/webp" onChange={e=>{void addPicture(e.target.files?.[0]);e.target.value=''}}/></div>}
-  {/* Placeholder: stickers will go on the cover once they are designed. */}
-  <div className="journal-group"><label>Stickers</label><button className="cover-stickers" disabled aria-label="Stickers, coming soon" title="Stickers are coming soon"><Sticker size={18} weight="light"/>Coming soon</button></div>
+  <div className="journal-group"><label>Cover stickers<span className="sticker-count">{stickers.length} / {STICKERS_ON_COVER}</span></label><StickerTray used={stickers.length} max={STICKERS_ON_COVER} onStart={onArrange} onAdd={addSticker}/></div>
+ </div>
+}
+
+/** The front cover, flat and large in the canvas, where its stickers are moved, turned and removed. */
+export function CoverStickers({book,onChange}:{book:Book;onChange:(stickers:PlacedSticker[])=>void}){
+ const [selected,setSelected]=useState<string|null>(null)
+ const stickers=book.journal?.cover?.stickers??[],ratio=formats.find(f=>f.id===book.format)!.ratio,preset=presets.find(p=>p.id===book.presetId)!,shown=journalCover(book)
+ const edit={selected,onSelect:setSelected,onChange:(id:string,patch:Partial<PlacedSticker>)=>onChange(changeSticker(stickers,id,patch)),onRemove:(id:string)=>{onChange(stickers.filter(s=>s.id!==id));setSelected(null)}}
+ return <div className="cover-stickers-editor" onPointerDown={e=>{if(!(e.target as HTMLElement).closest('.sticker'))setSelected(null)}}>
+  <span className="cover-layout-book" style={{'--cover':book.color,'--cover-ink':inkFor(book.color),'--title-scale':1,aspectRatio:ratio} as CSSProperties}><Cover preset={preset} title={book.title} caption={book.caption} count={0} coverPlacement={book.coverPlacement} kicker="JOURNAL" coverImage={shown.coverImage} face={shown.front} overlay={<StickerLayer stickers={stickers} edit={edit}/>}/></span>
  </div>
 }
 
 function PageThumb({journal,entry,ratio,number,owner}:{journal:JournalData;entry:JournalEntry;ratio:number;number:number;owner:Owner}){
  const sheet=sheetSize(ratio),width=Math.round(Math.sqrt(21000*ratio))
- return <span className="journal-thumb" style={{width,height:Math.round(width/ratio),'--sheet-scale':width/sheet.width} as CSSProperties}><JournalSheet journal={journal} entry={entry} ratio={ratio} number={number} side="left" owner={owner}/></span>
+ return <span className="journal-thumb" style={{width:width*(isSpread(entry.layout)?2:1),height:Math.round(width/ratio),'--sheet-scale':width/sheet.width} as CSSProperties}><JournalSheet journal={journal} entry={entry} ratio={ratio} number={number} side="left" owner={owner}/></span>
 }
 
 export function JournalPages({journal,ratio,owner,onEdit,onChange}:{journal:JournalData;ratio:number;owner:Owner;onEdit:(id:string)=>void;onChange:(entries:JournalEntry[])=>void}){
@@ -72,9 +92,9 @@ export function JournalPages({journal,ratio,owner,onEdit,onChange}:{journal:Jour
   if(written&&!confirm('Delete this page? This cannot be undone.'))return
   const next=entries.filter(e=>e.id!==entry.id);onChange(next.length?next:[newEntry()])
  }
- let number=1
+ const numbers=pageNumbers(journal,ratio)
  return <section className="artwork-editor journal-pages"><div className="collection-heading"><h2>Your pages</h2><button className="outline-button" onClick={add}><Plus/>Add page</button></div>
-  <div className="journal-page-strip">{entries.map((entry,i)=>{const first=number;number+=writingPages(journal,entry,ratio);return <div className="journal-page-card" key={entry.id}><button className="journal-page-open" aria-label={`Write on page ${first}`} title="Write on this page" onClick={()=>onEdit(entry.id)}><PageThumb journal={journal} entry={entry} ratio={ratio} number={first} owner={owner}/></button><div className="journal-page-tools"><button title="Move earlier" aria-label={`Move page ${first} earlier`} disabled={i===0} onClick={()=>move(i,i-1)}><ArrowLeft size={15}/></button><button title="Move later" aria-label={`Move page ${first} later`} disabled={i===entries.length-1} onClick={()=>move(i,i+1)}><ArrowRight size={15}/></button><button title="Delete page" aria-label={`Delete page ${first}`} onClick={()=>remove(entry)}><Trash size={15}/></button></div></div>})}</div>
+  <div className="journal-page-strip">{entries.map((entry,i)=>{const first=numbers.get(entry.id)!.first;return <div className="journal-page-card" key={entry.id}><button className="journal-page-open" aria-label={`Write on page ${first}`} title="Write on this page" onClick={()=>onEdit(entry.id)}><PageThumb journal={journal} entry={entry} ratio={ratio} number={first} owner={owner}/></button><div className="journal-page-tools"><button title="Move earlier" aria-label={`Move page ${first} earlier`} disabled={i===0} onClick={()=>move(i,i-1)}><ArrowLeft size={15}/></button><button title="Move later" aria-label={`Move page ${first} later`} disabled={i===entries.length-1} onClick={()=>move(i,i+1)}><ArrowRight size={15}/></button><button title="Delete page" aria-label={`Delete page ${first}`} onClick={()=>remove(entry)}><Trash size={15}/></button></div></div>})}</div>
  </section>
 }
 
@@ -87,9 +107,10 @@ function within(node:HTMLElement,tag:string){
  const found=(at instanceof Element?at:at?.parentElement)?.closest(tag)
  return found&&node.contains(found)?found as HTMLElement:null
 }
+const ALIGNS:{id:TextAlign;name:string;Icon:typeof TextAlignLeft}[]=[{id:'left',name:'Align left',Icon:TextAlignLeft},{id:'center',name:'Align centre',Icon:TextAlignCenter},{id:'right',name:'Align right',Icon:TextAlignRight}]
 const FORMATS=[{tag:'b',name:'Bold',Icon:TextB,command:'bold'},{tag:'i',name:'Italic',Icon:TextItalic,command:'italic'},{tag:'u',name:'Underline',Icon:TextUnderline,command:'underline'},{tag:'mark',name:'Highlight',Icon:Highlighter,command:''}]
 
-function TextField({id,html,label,singleLine,font,readOnly,onWrite,children}:{id:string;html:string;label:string;singleLine:boolean;font:{family:string;scale:number};readOnly:boolean;onWrite:(value:string)=>boolean;children?:ReactNode}){
+function TextField({id,html,label,singleLine,font,readOnly,align,onWrite,children}:{id:string;html:string;label:string;singleLine:boolean;font:{family:string;scale:number};readOnly:boolean;align:TextAlign;onWrite:(value:string)=>boolean;children?:ReactNode}){
  const field=useRef<HTMLDivElement>(null),accepted=useRef(html),composing=useRef(false),saved=useRef<Range|null>(null)
  const [active,setActive]=useState<string[]>([]),[link,setLink]=useState<string|null>(null),[linkError,setLinkError]=useState(false)
  useEffect(()=>{
@@ -141,7 +162,7 @@ function TextField({id,html,label,singleLine,font,readOnly,onWrite,children}:{id
   else{node.innerHTML=accepted.current;caretToEnd(node)}
   node.dataset.empty=String(!node.textContent)
  }
- const field_=<div ref={field} className="journal-field" style={{fontFamily:font.family,fontSize:`${Math.max(17,18*font.scale)}px`}} role="textbox" aria-multiline={!singleLine} aria-label={label} aria-readonly={readOnly} data-placeholder="Write here" contentEditable={!readOnly} suppressContentEditableWarning onInput={input} onCompositionStart={()=>{composing.current=true}} onCompositionEnd={()=>{composing.current=false;input()}} onKeyDown={e=>{if(singleLine&&e.key==='Enter')e.preventDefault()}} onDrop={e=>e.preventDefault()} onPaste={e=>{e.preventDefault();document.execCommand('insertText',false,e.clipboardData.getData('text/plain'))}}/>
+ const field_=<div ref={field} className="journal-field" style={{fontFamily:font.family,fontSize:`${Math.max(17,18*font.scale)}px`,textAlign:align}} role="textbox" aria-multiline={!singleLine} aria-label={label} aria-readonly={readOnly} data-placeholder="Write here" contentEditable={!readOnly} suppressContentEditableWarning onInput={input} onCompositionStart={()=>{composing.current=true}} onCompositionEnd={()=>{composing.current=false;input()}} onKeyDown={e=>{if(singleLine&&e.key==='Enter')e.preventDefault()}} onDrop={e=>e.preventDefault()} onPaste={e=>{e.preventDefault();document.execCommand('insertText',false,e.clipboardData.getData('text/plain'))}}/>
  return <>
   {field_}
   <div className="journal-tools">
@@ -159,7 +180,8 @@ function TextField({id,html,label,singleLine,font,readOnly,onWrite,children}:{id
 }
 
 function LayoutGlyph({layout,ratio}:{layout:LayoutId;ratio:number}){
- return <span className="layout-glyph" style={{aspectRatio:ratio>1?1.4:.76}}>{layoutSlots(layout,ratio).map(slot=><i key={slot.id} className={`glyph-${slot.kind}`} style={slot.bleed?{gridArea:'1/1/-1/-1'}:{gridArea:`${slot.row+1}/${slot.col+1}/span ${slot.h}/span ${slot.w}`,rotate:slot.tilt?`${slot.tilt}deg`:undefined}}/>)}</span>
+ const spread=isSpread(layout)
+ return <span className={`layout-glyph ${spread?'is-spread':''}`} style={{aspectRatio:(ratio>1?1.4:.76)*(spread?2:1)}}>{layoutSlots(layout,ratio).map(slot=><i key={slot.id} className={`glyph-${slot.kind}`} style={slot.bleed?{gridArea:'1/1/-1/-1'}:{gridArea:slotArea(slot),rotate:slot.tilt?`${slot.tilt}deg`:undefined}}/>)}</span>
 }
 
 function swap<T>(items:Record<string,T>,a:string,b:string){
@@ -171,20 +193,12 @@ function swap<T>(items:Record<string,T>,a:string,b:string){
 
 /** Drag the picture inside its box to choose what stays in view. Arrow keys do the same. */
 function PictureFrame({src,shape,focus,onMove}:{src:string;shape:number;focus:[number,number];onMove:(focus:[number,number])=>void}){
- const percent=(value:number)=>Math.min(100,Math.max(0,Math.round(value)))
- function drag(event:ReactPointerEvent<HTMLImageElement>){
-  const image=event.currentTarget,box=image.getBoundingClientRect(),fit=Math.max(box.width/image.naturalWidth,box.height/image.naturalHeight)
-  const spareX=image.naturalWidth*fit-box.width,spareY=image.naturalHeight*fit-box.height,{clientX:x,clientY:y}=event,[fromX,fromY]=focus
-  image.setPointerCapture(event.pointerId)
-  image.onpointermove=e=>onMove([spareX>1?percent(fromX-(e.clientX-x)/spareX*100):fromX,spareY>1?percent(fromY-(e.clientY-y)/spareY*100):fromY])
-  image.onpointerup=image.onpointercancel=()=>{image.onpointermove=null}
- }
- const keys:Record<string,[number,number]>={ArrowLeft:[-5,0],ArrowRight:[5,0],ArrowUp:[0,-5],ArrowDown:[0,5]}
- return <div className="journal-picture-preview is-framed" style={{'--shape':shape} as CSSProperties}><img src={src} alt="" draggable={false} role="slider" tabIndex={0} title="Drag to choose what stays in view" aria-label="Picture position" aria-valuenow={focus[0]} aria-valuetext={`${focus[0]}% across, ${focus[1]}% down`} style={{objectPosition:`${focus[0]}% ${focus[1]}%`}} onPointerDown={drag} onKeyDown={e=>{const step=keys[e.key];if(step){e.preventDefault();onMove([percent(focus[0]+step[0]),percent(focus[1]+step[1])])}}}/></div>
+ return <div className="journal-picture-preview is-framed" style={{'--shape':shape} as CSSProperties}><img src={src} alt="" draggable={false} role="slider" tabIndex={0} title="Drag to choose what stays in view" aria-label="Picture position" aria-valuenow={focus[0]} aria-valuetext={`${focus[0]}% across, ${focus[1]}% down`} style={{objectPosition:`${focus[0]}% ${focus[1]}%`}} onPointerDown={e=>dragFocus(e,e.currentTarget,focus,onMove)} onKeyDown={e=>focusKey(e,focus,onMove)}/></div>
 }
 
 export function JournalDesk({journal,entry,ratio,paper,owner,onEntry,onClose,onNotice}:{journal:JournalData;entry:JournalEntry;ratio:number;paper?:string;owner:Owner;onEntry:(entry:JournalEntry)=>void;onClose:()=>void;onNotice:(message:string)=>void}){
- const section=sectionOf(entry.layout),slots=entrySlots(entry,ratio),edges=slotEdges(slots)
+ // A spread is edited as one surface two pages wide. Its boxes are fixed, so it has no edges to resize.
+ const section=sectionOf(entry.layout),spread=section==='spread',across=spread?2:1,slots=entrySlots(entry,ratio),edges=spread?[]:slotEdges(slots)
  const texts=slots.filter(slot=>slot.kind!=='I')
  const [slotId,setSlotId]=useState(texts[0]?.id??slots[0].id)
  const slot=slots.find(s=>s.id===slotId)??texts[0]??slots[0]
@@ -193,11 +207,13 @@ export function JournalDesk({journal,entry,ratio,paper,owner,onEntry,onClose,onN
  const [listening,setListening]=useState(false),stopVoice=useRef<(()=>void)|null>(null),speech=canDictate()
  // Speech arrives between renders, so writes read the newest page from here.
  const live=useRef(entry);live.current=entry
- const [markId,setMarkId]=useState<string|null>(null)
+ const [markId,setMarkId]=useState<string|null>(null),[stickerId,setStickerId]=useState<string|null>(null)
+ const [cropping,setCropping]=useState(false),[positioning,setPositioning]=useState(false)
  const surface=useRef<HTMLDivElement>(null),picker=useRef<HTMLInputElement>(null),[scale,setScale]=useState(0)
- const sheet=sheetSize(ratio),frame=slot.bleed?sheet:slotBox(slot,ratio)
+ const sheet=sheetSize(ratio),surfaceWidth=sheet.width*across,frame=slot.bleed?{width:surfaceWidth,height:sheet.height}:slotBox(slot,ratio)
+ const maxMarks=SCRIBBLES_PER_PAGE*across,maxStickers=STICKERS_PER_PAGE*across,where=spread?'on a spread':'on a page'
  useFontReady(typeScale(journal,'writing').font.family)
- useLayoutEffect(()=>{const node=surface.current!,measure=()=>setScale(node.clientWidth/sheet.width);measure();const observer=new ResizeObserver(measure);observer.observe(node);return()=>observer.disconnect()},[sheet.width])
+ useLayoutEffect(()=>{const node=surface.current!,measure=()=>setScale(node.clientWidth/surfaceWidth);measure();const observer=new ResizeObserver(measure);observer.observe(node);return()=>observer.disconnect()},[surfaceWidth])
  useEffect(()=>{if(!status)return;const timer=setTimeout(()=>setStatus(''),1800);return()=>clearTimeout(timer)},[status])
  useEffect(()=>()=>{stopDrag.current?.();stopVoice.current?.()},[])
  useEffect(()=>{if(!moving)return;const key=(e:KeyboardEvent)=>{if(e.key==='Escape')setMoving(null)};addEventListener('keydown',key);return()=>removeEventListener('keydown',key)},[moving])
@@ -208,8 +224,7 @@ export function JournalDesk({journal,entry,ratio,paper,owner,onEntry,onClose,onN
  const limit=limited??wordLimits[section]
  const spare=[...Object.keys(entry.texts).filter(key=>entry.texts[key]),...Object.keys(entry.images)].filter(key=>!slots.some(s=>s.id===key))
  const pages=writingPages(journal,entry,ratio)
- let number=1
- for(const e of journal.entries){if(e.id===entry.id)break;number+=writingPages(journal,e,ratio)}
+ const number=pageNumbers(journal,ratio).get(entry.id)?.first??1
  const side=(number+pages-1)%2?'left':'right',mirror=side==='right'&&journalLayouts.find(l=>l.id===entry.layout)?.mirror
  const blank=(page:JournalEntry)=>!Object.values(page.texts).some(Boolean)&&!Object.keys(page.images).length,isEmpty=blank(entry)
 
@@ -245,23 +260,32 @@ export function JournalDesk({journal,entry,ratio,paper,owner,onEntry,onClose,onN
  const marks=(entry.scribbles??[]).filter(mark=>(mark.page??0)===pages-1)
  function setMarks(update:(list:Scribble[])=>Scribble[]){const next={...live.current,scribbles:update(live.current.scribbles??[])};live.current=next;onEntry(next)}
  function fitMark(mark:Scribble):Scribble{
-  const w=Math.round(Math.min(sheet.width,Math.max(40,mark.w))),h=Math.round(Math.min(sheet.height,Math.max(24,mark.h)))
-  return {...mark,w,h,x:Math.round(Math.min(sheet.width-w,Math.max(0,mark.x))),y:Math.round(Math.min(sheet.height-h,Math.max(0,mark.y)))}
+  const w=Math.round(Math.min(surfaceWidth,Math.max(40,mark.w))),h=Math.round(Math.min(sheet.height,Math.max(24,mark.h)))
+  return {...mark,w,h,x:Math.round(Math.min(surfaceWidth-w,Math.max(0,mark.x))),y:Math.round(Math.min(sheet.height-h,Math.max(0,mark.y)))}
  }
  function changeMark(id:string,change:(mark:Scribble)=>Partial<Scribble>){setMarks(list=>list.map(mark=>mark.id===id?fitMark({...mark,...change(mark)}):mark))}
  function resized(mark:Scribble,w:number,h:number){const kind=scribbleKinds.find(k=>k.id===mark.kind)!;return kind.free?{w,h}:{w,h:w*kind.h/kind.w}}
  function addMark(kind:ScribbleKind){
-  if(marks.length>=SCRIBBLES_PER_PAGE){setStatus(`Up to ${SCRIBBLES_PER_PAGE} scribbles on a page`);return}
+  if(marks.length>=maxMarks){setStatus(`Up to ${maxMarks} scribbles ${where}`);return}
   // New scribbles land on the chosen box, where they are most likely wanted.
-  const size=scribbleKinds.find(k=>k.id===kind)!,cw=(sheet.width-2*sheet.margin-11*sheet.gap)/12,ch=(sheet.height-sheet.top-sheet.bottom-11*sheet.gap)/12
-  const col=mirror?12-slot.col-slot.w:slot.col,x=sheet.margin+col*(cw+sheet.gap)+(cw*slot.w+sheet.gap*(slot.w-1))/2,y=sheet.top+slot.row*(ch+sheet.gap)+(ch*slot.h+sheet.gap*(slot.h-1))/2
+  const size=scribbleKinds.find(k=>k.id===kind)!,box=slotRect(mirror?{...slot,col:12-slot.col-slot.w}:slot,ratio),x=box.x+box.width/2,y=box.y+box.height/2
   const mark=fitMark({id:crypto.randomUUID(),kind,x:x-size.w/2,y:y-size.h/2,w:size.w,h:size.h,seed:1+Math.floor(Math.random()*2**30),page:pages-1})
   setMarks(list=>[...list,mark]);setMarkId(mark.id)
  }
+ const stuck=(entry.stickers??[]).filter(s=>(s.page??0)===pages-1&&safeSticker(s.src))
+ function setStickers(update:(list:PlacedSticker[])=>PlacedSticker[]){const next={...live.current,stickers:update(live.current.stickers??[])};live.current=next;onEntry(next)}
+ function addSticker(item:StickerItem,point?:{x:number;y:number}){
+  const at=point&&dropPoint(surface.current,point)
+  if(point&&!at)return
+  if(stuck.length>=maxStickers){setStatus(`Up to ${maxStickers} stickers ${where}`);return}
+  const sticker={...newSticker(item,22/across,at??undefined),page:pages-1}
+  setStickers(list=>[...list,sticker]);setMarkId(null);setStickerId(sticker.id)
+ }
+ const stickerEdit={selected:stickerId,onSelect:(id:string|null)=>{setStickerId(id);if(id)setMarkId(null)},onChange:(id:string,patch:Partial<PlacedSticker>)=>setStickers(list=>changeSticker(list,id,patch)),onRemove:(id:string)=>{setStickers(list=>list.filter(s=>s.id!==id));setStickerId(null)}}
  function removeMark(id:string){setMarks(list=>list.filter(mark=>mark.id!==id));setMarkId(null)}
  function grabMark(event:ReactPointerEvent<HTMLElement>,id:string,mode:'move'|'size'){
   if(event.button)return
-  event.stopPropagation();setMarkId(id)
+  event.stopPropagation();setMarkId(id);setStickerId(null)
   const start=marks.find(mark=>mark.id===id)!,{clientX:x,clientY:y}=event
   follow(event.pointerId,e=>{const dx=(e.clientX-x)/scale,dy=(e.clientY-y)/scale;changeMark(id,()=>mode==='move'?{x:start.x+dx,y:start.y+dy}:resized(start,start.w+dx,start.h+dy))},()=>{})
  }
@@ -301,7 +325,7 @@ export function JournalDesk({journal,entry,ratio,paper,owner,onEntry,onClose,onN
  }
  function select(next:Slot){
   if(dropped.current)return
-  setMarkId(null)
+  setMarkId(null);setStickerId(null);if(next.id!==slot.id)setPositioning(false)
   stopVoice.current?.()
   if(moving){place(moving,next.id);return}
   setSlotId(next.id);if(next.kind==='I'&&!entry.images[next.id])picker.current?.click()
@@ -366,27 +390,40 @@ export function JournalDesk({journal,entry,ratio,paper,owner,onEntry,onClose,onN
   catch(error){onNotice(error instanceof Error?error.message:'Could not open this picture.')}
   finally{setBusy(false)}
  }
- function removePicture(){const images={...entry.images},focus={...entry.focus};delete images[slot.id];delete focus[slot.id];onEntry({...entry,images,focus})}
+ // A crop is compressed again like any journal picture, so it stays under 200 KB.
+ async function applyCrop(src:string){
+  setBusy(true)
+  try{const blob=await (await fetch(src)).blob(),image=await ingestJournalImage(new File([blob],'crop.webp',{type:blob.type})),focus={...live.current.focus};delete focus[slot.id];onEntry({...live.current,images:{...live.current.images,[slot.id]:image},focus});setCropping(false)}
+  catch(error){onNotice(error instanceof Error?error.message:'Could not crop this picture.')}
+  finally{setBusy(false)}
+ }
+ const align=entry.align?.[slot.id]??'left'
+ function setAlign(next:TextAlign){onEntry({...live.current,align:{...live.current.align,[slot.id]:next}})}
+ function removePicture(){const images={...entry.images},focus={...entry.focus};delete images[slot.id];delete focus[slot.id];setPositioning(false);onEntry({...entry,images,focus})}
 
  return <div className="creation-layout journal-desk">
   <div className="creation-preview">
-   <div className="journal-canvas textured"><div ref={surface} className="book-page journal-canvas-page" style={{'--ratio':ratio,'--sheet-scale':scale,'--paper-image':paper?`url("${paper}")`:undefined} as CSSProperties}>{scale>0&&<JournalSheet journal={journal} entry={entry} ratio={ratio} number={number+pages-1} side={side} offset={pages-1} owner={owner} selected={markId?undefined:slot.id} moving={moving} overlay={overlay} scribbles={{selected:markId,onGrab:grabMark,onKey:markKey,onSelect:setMarkId,onRemove:removeMark}} onSelect={select} onGrab={grab} onGrip={grip}/>}</div></div>
+   {cropping&&entry.images[slot.id]&&<div className="canvas-editor"><ArtworkCropper src={entry.images[slot.id]} onApply={src=>void applyCrop(src)} onClose={()=>setCropping(false)}/></div>}
+   {/* Hidden, not unmounted, while cropping: the page keeps its measured scale. */}
+   <div className="journal-canvas textured" style={cropping&&entry.images[slot.id]?{display:'none'}:undefined}><div ref={surface} className={`book-page journal-canvas-page ${spread?'is-spread':''}`} style={{'--ratio':ratio*across,'--sheet-scale':scale,'--paper-image':paper?`url("${paper}")`:undefined} as CSSProperties}>{scale>0&&<JournalSheet journal={journal} entry={entry} ratio={ratio} number={number+pages-1} side={side} offset={pages-1} owner={owner} selected={markId||stickerId?undefined:slot.id} moving={moving} overlay={overlay} scribbles={{selected:markId,onGrab:grabMark,onKey:markKey,onSelect:id=>{setMarkId(id);setStickerId(null)},onRemove:removeMark}} stickers={stickerEdit} positioning={positioning&&slot.kind==='I'?slot.id:null} onPosition={(id,focus)=>onEntry({...live.current,focus:{...live.current.focus,[id]:focus}})} onSelect={select} onGrab={grab} onGrip={grip}/>}</div></div>
    <div className="canvas-actions"><button title="Back to book" aria-label="Back to book" onClick={onClose}><BookOpen size={21} weight="light"/></button>{gridOf(entry,ratio)&&<button title="Reset boxes" aria-label="Reset boxes" onClick={resetGrid}><ArrowCounterClockwise size={21} weight="light"/></button>}</div>
   </div>
   <section className="creation-controls journal-composer">
    {slot.kind==='I'?<div className="journal-picture">
     {entry.images[slot.id]?<PictureFrame src={entry.images[slot.id]} shape={frame.width/frame.height} focus={entry.focus?.[slot.id]??[50,50]} onMove={focus=>onEntry({...entry,focus:{...entry.focus,[slot.id]:focus}})}/>:<div className="journal-picture-preview"><ImageIcon size={30} weight="thin"/></div>}
-    <div className="journal-picture-actions"><button className="outline-button" disabled={busy} onClick={()=>picker.current?.click()}>{busy?'Opening…':entry.images[slot.id]?'Replace picture':'Add picture'}</button>{entry.images[slot.id]&&<button className="quiet-button" title="Remove picture" aria-label="Remove picture" onClick={removePicture}><X size={18}/></button>}</div>
+    <div className="journal-picture-actions"><button className="outline-button" disabled={busy} onClick={()=>picker.current?.click()}>{busy?'Opening…':entry.images[slot.id]?'Replace picture':'Add picture'}</button>{entry.images[slot.id]&&<><button className="quiet-button" title={positioning?'Done positioning':'Position on the page'} aria-label="Position picture" aria-pressed={positioning} onClick={()=>{setCropping(false);setPositioning(p=>!p)}}><ArrowsOutCardinal size={18}/></button><button className="quiet-button" title="Crop picture" aria-label="Crop picture" aria-pressed={cropping} disabled={busy} onClick={()=>{setPositioning(false);setCropping(c=>!c)}}><Crop size={18}/></button><button className="quiet-button" title="Remove picture" aria-label="Remove picture" onClick={removePicture}><X size={18}/></button></>}</div>
     <small className="upload-limits">Reduced to under 200 KB. You are responsible for the pictures you add.</small>
    </div>:<>
-    <TextField id={`${entry.id}-${slot.id}-${revision}`} html={entry.texts[slot.id]??''} label={slotName(slot)} singleLine={Boolean(limited)} font={typeScale(journal,'writing').font} readOnly={listening} onWrite={write}>
+    <TextField id={`${entry.id}-${slot.id}-${revision}`} html={entry.texts[slot.id]??''} label={slotName(slot)} singleLine={Boolean(limited)} font={typeScale(journal,'writing').font} readOnly={listening} align={align} onWrite={write}>
+    <span className="journal-align" role="group" aria-label="Text alignment">{ALIGNS.map(({id,name,Icon})=><button key={id} type="button" className="journal-tool" title={name} aria-label={name} aria-pressed={align===id} disabled={listening} onMouseDown={e=>e.preventDefault()} onClick={()=>setAlign(id)}><Icon size={18}/></button>)}</span>
     {speech&&<><button className={`journal-mic ${listening?'is-on':''}`} title={listening?'Stop voice typing':'Voice typing'} aria-label="Voice typing" aria-pressed={listening} onClick={speak}>{listening?<Stop size={16} weight="fill"/>:<Microphone size={19} weight="light"/>}</button>{listening&&<small>Your browser may send what you say to its speech service to write it out.</small>}</>}
     </TextField>
    </>}
-   <div className="journal-status" aria-live="polite"><span>{moving?'Choose a box':status||(listening?'Listening':'')||(slot.kind==='I'?'':`${used} / ${limit} words`)}</span>{pages>1&&<span>{pages} pages</span>}</div>
+   <div className="journal-status" aria-live="polite"><span>{moving?'Choose a box':status||(positioning&&slot.kind==='I'?'Drag the picture on the page':'')||(listening?'Listening':'')||(slot.kind==='I'?'':`${used} / ${limit} words`)}</span>{pages>1&&<span>{pages} pages</span>}</div>
    <input ref={picker} hidden type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>{void addPicture(e.target.files?.[0]);e.target.value=''}}/>
-   {(['writing','minimal','long'] as const).map(group=><div className="journal-group" key={group}><label>{group[0].toUpperCase()+group.slice(1)}</label><div className="journal-layouts">{journalLayouts.filter(l=>l.section===group).map(l=><button key={l.id} title={l.name} aria-label={`${l.name} layout`} aria-pressed={entry.layout===l.id} onClick={()=>setLayout(l.id)}><LayoutGlyph layout={l.id} ratio={ratio}/></button>)}</div></div>)}
-   <div className="journal-group"><label>Scribbles</label><div className="journal-scribbles">{scribbleKinds.map(kind=><button key={kind.id} type="button" title={kind.name} aria-label={`Add ${kind.name.toLowerCase()} scribble`} disabled={marks.length>=SCRIBBLES_PER_PAGE} onClick={()=>addMark(kind.id)}><ScribbleArt kind={kind.id} w={kind.w} h={kind.h} seed={7}/></button>)}</div></div>
+   {(['writing','minimal','long','layered','spread'] as const).map(group=><div className="journal-group" key={group}><label>{group[0].toUpperCase()+group.slice(1)}</label><div className="journal-layouts">{journalLayouts.filter(l=>l.section===group).map(l=><button key={l.id} className={l.section==='spread'?'is-spread-layout':undefined} title={l.name} aria-label={`${l.name} layout`} aria-pressed={entry.layout===l.id} onClick={()=>setLayout(l.id)}><LayoutGlyph layout={l.id} ratio={ratio}/></button>)}</div></div>)}
+   <div className="journal-group"><label>Scribbles</label><div className="journal-scribbles">{scribbleKinds.map(kind=><button key={kind.id} type="button" title={kind.name} aria-label={`Add ${kind.name.toLowerCase()} scribble`} disabled={marks.length>=maxMarks} onClick={()=>addMark(kind.id)}><ScribbleArt kind={kind.id} w={kind.w} h={kind.h} seed={7}/></button>)}</div></div>
+   <div className="journal-group"><label>Stickers<span className="sticker-count">{stuck.length} / {maxStickers}</span></label><StickerTray used={stuck.length} max={maxStickers} onAdd={addSticker}/></div>
    {spare.length>0&&<div className="journal-group"><label>Not on this page</label><div className="journal-tray">{spare.map(id=><button key={id} title="Move onto the page" aria-label={`Move ${entry.images[id]?'picture':'text'} onto the page`} aria-pressed={moving===id} onPointerDown={e=>{if(e.pointerType!=='touch')grab(e,id)}} onClick={()=>grip(id)}>{entry.images[id]?<img src={entry.images[id]} alt="" draggable={false}/>:<span style={{fontFamily:typeScale(journal,'writing').font.family}} dangerouslySetInnerHTML={{__html:sanitize(entry.texts[id])}}/>}</button>)}</div></div>}
   </section>
  </div>

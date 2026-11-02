@@ -69,10 +69,15 @@ Reviewed desktop Midnight and phone palette chooser captures; all three new pale
 
 Production build and 18 browser tests passed. Reviewed compact three-column desktop Explore and 320px phone layout.
 
-## Journal sticker board — IN PROGRESS
-Owner: current Codex task (2026-11-03). Scope: replace the journal cover sticker placeholder only; existing journal/sketchbook features remain unchanged.
-- [ ] Graphify architecture analysis and journal/sticker documentation review.
-- [ ] Compact sticker browser using prepared cutouts, with vibe/category filters.
-- [ ] Cover placement, positioning, size/rotation/removal, shared rendering and persistence.
-- [ ] Existing palette/spacing, accessible icons, touch/keyboard support, reduced-motion GSAP.
-- [ ] Tests, visual review and build; publish integration notes for other agents.
+## Journal Part 17, layered and spread layouts — DONE (2026-11-02, Claude)
+Scope: journal layouts only. Subtitle box, five Layered layouts, three two-page Spread layouts starting on a left page. See journaling-plan.md part 17.
+
+## Journal sticker board — DONE (2026-11-03, Claude; taken over from the unfinished Codex task)
+Scope: journals only. Sketchbooks are unchanged. Do not start this again.
+- [x] Graphify query of the journal cover/page/scribble code; read docs/stickers/README.md and the plans.
+- [x] Compact sticker tray (src/components/Stickers.tsx `StickerTray`): 13 vibe filters as icon buttons, lazy-loaded from /stickers/manifest.json, skeleton while loading, retry on failure.
+- [x] One shared `StickerLayer` for the front cover and pages. Records are percentages of the surface (src/data/stickers.ts), so editor, book, shelf and every format match.
+- [x] Pages: tray in JournalDesk, up to 8 per page (writing entries: on the page being edited). Cover: tray in JournalCoverSettings, up to 5 on the front cover, arranged on a flat cover in the canvas (`editing==='stickers'`, sticker button in the canvas actions).
+- [x] Tap to add, drag from the tray to drop exactly there (mouse/pen), drag to move, corner handle to resize and turn, remove button; keyboard: arrows move, Shift+arrows turn/resize, Delete removes, Escape deselects.
+- [x] GSAP press-in on add, lift while held, shrink on remove; all instant under reduced motion. Only prepared /stickers/*.png sources are drawn.
+- [x] Tests (journal.spec.ts sticker tests), desktop and 390px visual review, build.

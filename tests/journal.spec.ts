@@ -54,9 +54,9 @@ test('long writing continues across pages and word limits hold',async({page})=>{
  await page.getByRole('button',{name:'Statement layout'}).click();await expect(page.locator('.journal-status')).toContainText('Too much text');await expect(page.getByRole('button',{name:'Writing layout'})).toHaveAttribute('aria-pressed','true')
 })
 
-test('all ten layouts adapt to every format without losing text',async({page})=>{
+test('every layout, layered and spread, adapts to every format without losing text',async({page})=>{
  await newJournal(page);await page.getByRole('button',{name:'Write on page 1'}).click();await field(page).click();await page.keyboard.type('Kept across every layout.')
- for(const name of ['Statement','Window','Margin Note','Two Frames','Zigzag','Stepped Essay','Inset Columns','Ledger','Collage Story','Fold Band']){
+ for(const name of ['Statement','Window','Margin Note','Two Frames','Zigzag','Stepped Essay','Inset Columns','Ledger','Collage Story','Overlap Title','Photo Stack','Title Card','Offset Frames','Ribbon Title','Panorama','Across the Fold','Scrapbook','Fold Band']){
   await page.getByRole('button',{name:`${name} layout`}).click();await expect(page.locator('.journal-canvas-page .j-box').filter({hasText:'Kept across every layout.'})).toHaveCount(1)
  }
  await page.getByRole('button',{name:'Back to book'}).click()
@@ -231,7 +231,7 @@ test('journals are always Linen, with no elastic or wire, while sketchbooks keep
  const view=page.locator('.portfolio-dialog .book-stage');await expect(view).toHaveClass(/preset-linen/);await expect(view.locator('.elastic-band')).toHaveCount(0)
 })
 
-test('front and back covers use fixed layouts in the book and on the shelf, with stickers held for later',async({page})=>{
+test('front and back covers use fixed layouts in the book and on the shelf',async({page})=>{
  await newJournal(page);await page.getByLabel('Journal name').fill('Small summer');await page.getByLabel('Cover caption').fill('Volume one')
  const source=page.locator('.book-stage [hidden]')
  await page.getByRole('button',{name:'Title front cover'}).click();await expect(page.getByRole('button',{name:'Title front cover'})).toHaveAttribute('aria-pressed','true')
@@ -244,7 +244,6 @@ test('front and back covers use fixed layouts in the book and on the shelf, with
  await page.getByRole('button',{name:'Picture back cover'}).click();await page.getByLabel('Note',{exact:true}).fill('The river house.')
  await page.locator('.cover-picture-row input[type=file]').setInputFiles('public/textures/woven.jpg')
  await expect(source.locator('.cover').last().locator('.jc-picture img')).toHaveAttribute('src',/^data:image\//);await expect(source.locator('.cover').last()).toContainText('The river house.')
- await expect(page.getByRole('button',{name:'Stickers, coming soon'})).toBeDisabled()
  await page.getByRole('button',{name:'Save journal'}).click()
  await expect(page.locator('.portfolio-cover .jc-titled')).toContainText('Small summer')
  await page.setViewportSize({width:320,height:640});await page.getByRole('button',{name:'Edit Small summer'}).click()
@@ -271,6 +270,24 @@ test('Collage keeps three overlapping pictures and no hidden box',async({page})=
  await expect(page.locator('.journal-canvas-page [data-slot^=i]')).toHaveCount(3)
 })
 
+test('a spread is one surface over two pages, starts on a left page and carries a subtitle',async({page})=>{
+ await newJournal(page);await page.getByLabel('Journal name').fill('Spreads');await page.getByRole('button',{name:'Write on page 1'}).click()
+ await field(page).click();await page.keyboard.type('First page.');await page.getByRole('button',{name:'Back to book'}).click()
+ await page.getByRole('button',{name:'Add page'}).click();await page.getByRole('button',{name:'Across the Fold layout'}).click()
+ const canvas=page.locator('.journal-canvas-page')
+ await expect(canvas).toHaveClass(/is-spread/);await expect(canvas.locator('.j-edge')).toHaveCount(0)
+ // Page 2 would be a right page, so a blank comes first and the spread is pages 3 and 4.
+ await expect(canvas.locator('.j-number')).toHaveText(['3','4'])
+ await canvas.getByRole('button',{name:'Edit subtitle'}).click();await page.getByRole('textbox',{name:'Subtitle'}).click();await page.keyboard.type('A weekend away')
+ await expect(canvas.locator('.j-text.j-H')).toHaveText('A weekend away')
+ await page.getByRole('button',{name:'Back to book'}).click();await expect(page.getByRole('button',{name:'Write on page 3'})).toBeVisible()
+ await page.getByRole('button',{name:'Save journal'}).click();await page.getByRole('button',{name:'Open Spreads'}).click()
+ const stage=page.locator('.portfolio-dialog .book-stage');await expect(stage.locator('.stf__item').first()).toBeAttached()
+ // Both pages of the spread draw the same sheet; the right page shows its second half.
+ await expect(stage.locator('.stf__item .journal-sheet.is-spread').filter({hasText:'A weekend away'})).toHaveCount(2)
+ await expect(stage.locator('.stf__item .journal-sheet.is-right-half')).toHaveCount(1)
+})
+
 test('journals show one page at a time on phones and everything fits at 320px',async({page})=>{
  await page.setViewportSize({width:320,height:640});await newJournal(page)
  await expect(page.locator('.book-stage')).toHaveClass(/is-portrait/);await page.getByRole('button',{name:'Write on page 1'}).click();await expect(field(page)).toBeVisible()
@@ -292,4 +309,67 @@ test('a journal opens at its newest written page, jumps from the page strip and 
  await stage.getByRole('button',{name:'Back to start'}).click();await expect(stage).not.toHaveClass(/is-back/);await expect(stage).toHaveClass(/is-closed/)
  await expect(stage.getByRole('button',{name:'Front cover'})).toHaveAttribute('aria-current','true')
  await expect(stage.locator('.book-orbit')).not.toHaveAttribute('style',/rotate/)
+})
+
+test('stickers are pressed onto a page, moved, turned, removed and limited, and the book draws them',async({page})=>{
+ await deskWith(page,{layout:'margin',texts:{p0:'A quiet day.'},stickers:[{id:'bad',src:'javascript:alert(1)',name:'Bad',x:50,y:50,size:20,rotate:0}]})
+ const canvas=page.locator('.journal-canvas-page')
+ // A stored record that is not a prepared cutout is never drawn.
+ await expect(canvas.locator('.sticker')).toHaveCount(0)
+ const tray=page.locator('.journal-desk .sticker-tray')
+ await tray.getByRole('button',{name:'Faces',exact:true}).click();await expect(tray.locator('.sticker-pick').first()).toBeVisible()
+ for(const src of await tray.locator('.sticker-pick img').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('src'))))expect(src).toContain('/stickers/expressions/')
+ await tray.locator('.sticker-pick').first().click()
+ await expect(canvas.locator('.sticker')).toHaveCount(1);await expect(page.locator('.journal-desk .sticker-count')).toHaveText('1 / 8')
+ const sticker=canvas.locator('.sticker').first(),hit=canvas.locator('.sticker-hit').first()
+ const left=await sticker.evaluate(n=>parseFloat((n as HTMLElement).style.left))
+ await hit.focus();await page.keyboard.press('ArrowRight');await expect.poll(()=>sticker.evaluate(n=>parseFloat((n as HTMLElement).style.left))).toBeCloseTo(Math.min(100,left+1),1)
+ const width=await sticker.evaluate(n=>parseFloat((n as HTMLElement).style.width))
+ await page.keyboard.press('Shift+ArrowUp');await expect.poll(()=>sticker.evaluate(n=>parseFloat((n as HTMLElement).style.width))).toBeCloseTo(width+1,1)
+ await page.keyboard.press('Shift+ArrowRight');await expect(sticker).toHaveAttribute('style',/rotate\(-?\d+deg\)/)
+ await page.keyboard.press('Delete');await expect(canvas.locator('.sticker')).toHaveCount(0)
+ for(let i=0;i<8;i++)await tray.locator('.sticker-pick').nth(i).click()
+ await expect(canvas.locator('.sticker')).toHaveCount(8);await expect(tray.locator('.sticker-pick').first()).toBeDisabled()
+ await page.getByRole('button',{name:'Back to book'}).click()
+ await expect(page.locator('.book-stage [hidden] .journal-page .sticker')).toHaveCount(8)
+})
+
+test('cover stickers are arranged on the flat cover, limited, and shown in the book and on the shelf',async({page})=>{
+ await newJournal(page);await page.getByLabel('Journal name').fill('Stuck')
+ const tray=page.locator('.journal-cover-settings .sticker-tray')
+ await tray.getByRole('button',{name:'Nature',exact:true}).click();await tray.locator('.sticker-pick').first().click()
+ const editor=page.locator('.cover-stickers-editor');await expect(editor.locator('.sticker')).toHaveCount(1)
+ await expect(page.getByRole('button',{name:'Cover stickers'})).toHaveAttribute('aria-pressed','true')
+ // Dragging a sticker from the tray drops it where it is released.
+ const pick=await tray.locator('.sticker-pick').nth(1).boundingBox(),surface=await editor.locator('[data-sticker-surface]').boundingBox()
+ await page.mouse.move(pick!.x+20,pick!.y+20);await page.mouse.down();await page.mouse.move(pick!.x+40,pick!.y+40,{steps:3});await page.mouse.move(surface!.x+surface!.width*.25,surface!.y+surface!.height*.75,{steps:8});await page.mouse.up()
+ await expect(editor.locator('.sticker')).toHaveCount(2)
+ const dropped=await editor.locator('.sticker').nth(1).evaluate(n=>[parseFloat((n as HTMLElement).style.left),parseFloat((n as HTMLElement).style.top)])
+ expect(dropped[0]).toBeCloseTo(25,0);expect(dropped[1]).toBeCloseTo(75,0)
+ for(let i=2;i<5;i++)await tray.locator('.sticker-pick').nth(i).click()
+ await expect(editor.locator('.sticker')).toHaveCount(5);await expect(tray.locator('.sticker-pick').first()).toBeDisabled()
+ await page.locator('.cover-stickers-editor .sticker-hit').first().focus();await page.getByRole('button',{name:'Remove sticker'}).click()
+ await expect(editor.locator('.sticker')).toHaveCount(4)
+ await page.getByRole('button',{name:'Preview book'}).first().click()
+ await expect(page.locator('.creation-preview .book-stage [hidden] .cover').first().locator('.sticker')).toHaveCount(4)
+ await expect(page.locator('.creation-preview .book-stage [hidden] .cover').last().locator('.sticker')).toHaveCount(0)
+ await page.getByRole('button',{name:'Save journal'}).click()
+ await expect(page.locator('.portfolio-cover .sticker')).toHaveCount(4)
+})
+
+test('text aligns per box, pictures are positioned on the page and cropped under 200 KB',async({page})=>{
+ await deskWith(page,{layout:'margin',texts:{p0:'A quiet day.',c0:'Caption'},images:{i0:'/artworks/irises.jpg'}})
+ const canvas=page.locator('.journal-canvas-page')
+ await page.getByRole('button',{name:'Edit paragraph'}).click();await page.getByRole('button',{name:'Align centre'}).click()
+ await expect(canvas.locator('[data-slot=p0] .j-text')).toHaveCSS('text-align','center');await expect(field(page)).toHaveCSS('text-align','center')
+ await expect(canvas.locator('[data-slot=c0] .j-text')).toHaveCSS('text-align','left')
+ await page.getByRole('button',{name:'Edit picture'}).click();await page.getByRole('button',{name:'Position picture'}).click()
+ const pad=canvas.getByRole('slider',{name:'Picture position'});await expect(pad).toBeVisible()
+ await pad.focus();await page.keyboard.press('ArrowRight');await expect(canvas.locator('[data-slot=i0] img')).toHaveCSS('object-position','55% 50%')
+ await page.getByRole('button',{name:'Crop picture'}).click();await expect(pad).toHaveCount(0)
+ await page.getByRole('button',{name:'Apply crop'}).click()
+ const src=canvas.locator('[data-slot=i0] img');await expect(src).toHaveAttribute('src',/^data:image\//)
+ expect(((await src.getAttribute('src'))!.length*3/4)).toBeLessThan(200*1024)
+ await page.getByRole('button',{name:'Back to book'}).click()
+ await expect(page.locator('.book-stage [hidden] .j-layout-margin [style*="text-align: center"]')).toHaveCount(1)
 })

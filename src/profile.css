@@ -107,7 +107,7 @@ button:disabled{opacity:.4;cursor:default}
 .notification button{color:inherit}
 
 .image-cover .cover-art-image{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#f5f3eb}
-.image-cover>:not(.cover-art-image):not(.cover-spine):not(.jc){display:none}
+.image-cover>:not(.cover-art-image):not(.cover-spine):not(.jc):not(.stickers){display:none}
 .image-cover::after{opacity:.07}
 .art-image-frame{width:100%;height:100%;display:flex;align-items:center;justify-content:center;min-height:0}
 .art-page:has(.spread-art) .page-inner{padding-left:0;padding-right:0}

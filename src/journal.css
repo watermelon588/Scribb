@@ -30,6 +30,8 @@
 .j-scribble{position:absolute;z-index:5;color:var(--j-ink);pointer-events:none}
 .j-scribble>.j-scribble-art{position:absolute;inset:0;overflow:visible}
 .j-text.j-T{font-size:calc(var(--j-size)*1.8);line-height:1.12;letter-spacing:-.01em;text-wrap:balance}
+.j-box-T:has(+.j-box-H){display:flex;flex-direction:column;justify-content:flex-end}
+.j-text.j-H{font-size:calc(var(--j-size)*1.12);line-height:1.32;opacity:.74;text-wrap:balance}
 .j-text.j-Q{font-size:calc(var(--j-size)*1.34);line-height:1.24;font-style:italic;text-wrap:balance}
 .j-text.j-C,.j-text.j-S{font-size:calc(var(--j-size)*.76);line-height:1.42}
 
@@ -38,6 +40,11 @@
 .j-number{bottom:50px}
 .side-left .j-date,.side-left .j-number{left:var(--sheet-mx)}
 .side-right .j-date,.side-right .j-number{right:var(--sheet-mx)}
+/* A spread is one sheet two pages wide. The gutter track keeps every column where it sits on a single page. */
+.is-spread .j-number.is-right{left:auto;right:var(--sheet-mx)}
+.is-spread .j-grid{grid-template-columns:repeat(12,minmax(0,1fr)) calc(2*var(--sheet-mx) - 2*var(--sheet-gap)) repeat(12,minmax(0,1fr))}
+.is-spread .j-watermark{left:75%}
+.journal-sheet.is-right-half{transform:scale(var(--sheet-scale,1)) translateX(-50%)}
 
 .j-grid{position:absolute;inset:var(--sheet-top) var(--sheet-mx) var(--sheet-bottom);display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:repeat(12,minmax(0,1fr));gap:var(--sheet-gap)}
 .j-slot{position:relative;min-width:0;min-height:0}
@@ -47,6 +54,10 @@
 .j-slot.is-over{z-index:2}
 .j-slot.is-tilted{overflow:visible;padding:10px;background:#fbf9f2;box-shadow:0 8px 20px #2a2a2424}
 .j-box.is-over{padding:36px;background:#f8f5ecf2}
+/* Layered and spread panels hug their words; an empty panel keeps its whole box so it can be found. A title panel meets its subtitle panel as one stepped label. */
+.j-section-layered .j-box.is-over:has(>.j-text),.j-section-spread .j-box.is-over:has(>.j-text){align-self:start}
+.j-box-T.is-over:has(>.j-text):has(+.j-box-H.is-over>.j-text){align-self:end;padding-bottom:12px}
+.j-box-T.is-over:has(>.j-text)+.j-box-H.is-over:has(>.j-text){margin-top:calc(var(--sheet-gap)*-1);padding-top:0}
 .j-panel-meta{display:flex;justify-content:space-between;height:44px;font-size:calc(var(--j-size)*.72);line-height:1;opacity:.6}
 .j-panel-meta span{position:static}
 .j-box-B{margin-right:calc(var(--sheet-mx)*-1);padding:36px var(--sheet-mx) 36px 36px;background:color-mix(in srgb,var(--j-ink) 7%,transparent)}
@@ -101,7 +112,6 @@
 @media(max-width:600px){label.journal-about textarea,label.journal-about input{font-size:16px}}
 .cover-picture-row{display:flex;gap:6px;align-items:center}
 .cover-picture-row .quiet-button{display:inline-flex;align-items:center;gap:8px;font-size:12px}
-.cover-stickers{display:inline-flex;align-items:center;justify-self:start;gap:8px;padding:9px 14px;border:1px dashed var(--app-line);border-radius:3px;background:none;color:var(--app-muted);font-size:12px}
 
 /* 3D view: the book turns as one flat object over a slab with real page edges and a plain back. */
 .book-orbit{position:relative;transform-style:preserve-3d}
@@ -126,6 +136,8 @@
 /* Live page and writing field */
 .journal-canvas{display:grid;place-items:center;height:clamp(520px,calc(100dvh - 240px),700px);padding:28px;border-radius:3px;background:var(--app-panel);box-sizing:border-box}
 .journal-canvas-page{position:relative;width:min(100%,calc((clamp(520px,calc(100dvh - 240px),700px) - 56px)*var(--ratio)));aspect-ratio:var(--ratio);border-radius:2px;box-shadow:0 1px 2px #2a2a241f,0 14px 34px #2a2a241f}
+.journal-canvas.textured .journal-canvas-page.is-spread{background-size:50% 100%}
+.journal-canvas.textured .journal-canvas-page.is-spread::after{content:'';display:block;position:absolute;inset:0 auto 0 50%;z-index:4;width:24px;margin-left:-12px;background:linear-gradient(90deg,#2a2a2400,#2a2a2414 46%,#2a2a2426 50%,#2a2a2414 54%,#2a2a2400);pointer-events:none}
 .j-hit{position:absolute;inset:0;display:grid;place-items:center;padding:0;border:0;background:none;cursor:text}
 .j-hit.is-empty{outline:2px dashed color-mix(in srgb,var(--j-ink) 24%,transparent);outline-offset:-2px;transition:background-color 160ms ease}
 .j-hit span{color:color-mix(in srgb,var(--j-ink) 52%,transparent);font:400 22px 'Manrope Variable',sans-serif}
@@ -235,6 +247,9 @@
 .layout-glyph i{min-width:0;min-height:0;background:color-mix(in srgb,var(--app-ink) 12%,transparent)}
 .layout-glyph .glyph-I{background:color-mix(in srgb,var(--app-ink) 42%,transparent)}
 .layout-glyph .glyph-T{background:color-mix(in srgb,var(--app-ink) 62%,transparent)}
+.layout-glyph .glyph-H{background:color-mix(in srgb,var(--app-ink) 32%,transparent)}
+.layout-glyph.is-spread{grid-template-columns:repeat(12,1fr) 3px repeat(12,1fr);max-width:96px}
+.journal-layouts .is-spread-layout{grid-column:span 2}
 
 .journal-page-strip{display:flex;align-items:flex-start;gap:22px;overflow-x:auto;padding:18px 2px 8px;scrollbar-width:none}
 .journal-page-strip::-webkit-scrollbar{display:none}
@@ -284,3 +299,42 @@
  .has-rail .book-area{padding-left:0}
 }
 @media(prefers-reduced-motion:reduce){.page-thumb{transition:none}}
+/* Stickers: one layer for covers and pages. Sizes are percentages of the surface; handles keep a constant screen size. */
+.stickers{position:absolute;inset:0;z-index:3;pointer-events:none}
+.sticker{position:absolute;aspect-ratio:1;pointer-events:none}
+.sticker-art{display:block;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 1px 1px #2a2a2024) drop-shadow(0 2px 5px #2a2a2014);transition:filter 160ms ease-out}
+.sticker.is-lifted{z-index:1}
+.sticker.is-lifted .sticker-art{filter:drop-shadow(0 6px 12px #2a2a2033) drop-shadow(0 2px 3px #2a2a201f)}
+.sticker-hit{position:absolute;inset:12%;padding:0;border:0;border-radius:50%;background:none;cursor:grab;pointer-events:auto;touch-action:none;outline:0}
+.sticker.is-lifted .sticker-hit{cursor:grabbing}
+.sticker.is-chosen::before{content:'';position:absolute;inset:0;border:calc(1.5px/var(--sheet-scale,1)) dashed var(--app-accent);border-radius:calc(4px/var(--sheet-scale,1));pointer-events:none}
+.sticker-hit:focus-visible{outline:calc(2px/var(--sheet-scale,1)) solid var(--app-accent);outline-offset:calc(2px/var(--sheet-scale,1))}
+.sticker-turn,.sticker-remove{position:absolute;display:grid;place-items:center;width:28px;height:28px;padding:0;border:0;border-radius:50%;background:var(--app-accent);color:#fff;pointer-events:auto;touch-action:none;transform:scale(calc(1/var(--sheet-scale,1)))}
+.sticker-turn{right:0;bottom:0;transform-origin:100% 100%;margin:calc(-14px/var(--sheet-scale,1));cursor:alias}
+.sticker-remove{top:0;right:0;transform-origin:100% 0;margin:calc(-14px/var(--sheet-scale,1)) calc(-14px/var(--sheet-scale,1)) 0 0;background:var(--app-ink);color:var(--app-bg)}
+.sticker-ghost{position:fixed;z-index:1000;left:0;top:0;width:72px;height:72px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 8px 14px #2a2a2033)}
+.journal-group>label:has(.sticker-count){display:flex;justify-content:space-between;gap:12px}
+.sticker-count{font-variant-numeric:tabular-nums}
+.sticker-tray{display:grid;gap:8px}
+.sticker-vibes{display:flex;gap:2px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
+.sticker-vibes::-webkit-scrollbar{display:none}
+.sticker-vibes button{display:grid;place-items:center;flex:none;width:44px;height:36px;padding:0;border:0;border-radius:3px;background:none;color:var(--app-muted);transition:background-color 160ms ease,color 160ms ease,transform 160ms ease}
+.sticker-vibes button[aria-pressed=true]{background:var(--app-panel);color:var(--app-ink)}
+.sticker-vibes button:active,.sticker-pick:active{transform:scale(.96)}
+.sticker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:4px;max-height:172px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+.sticker-grid::-webkit-scrollbar{display:none}
+.sticker-pick{display:grid;place-items:center;aspect-ratio:1;padding:6px;border:0;border-radius:3px;background:none;cursor:grab;transition:background-color 160ms ease,transform 160ms ease}
+.sticker-pick img{width:100%;height:100%;object-fit:contain;pointer-events:none}
+.sticker-pick:disabled{opacity:.35;cursor:default}
+.sticker-pick.is-loading{background:var(--app-panel);opacity:.6}
+.sticker-failed{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--app-muted);font-size:12px}
+@media(hover:hover) and (pointer:fine){.sticker-vibes button:hover,.sticker-pick:not(:disabled):hover{background:var(--app-panel)}}
+.cover-stickers-editor{display:grid;place-items:center;width:100%;height:100%}
+.cover-stickers-editor .cover-layout-book{display:block;position:relative;height:100%;max-width:100%;width:auto;max-height:100%;box-shadow:0 18px 36px #2a2a201f,0 2px 4px #2a2a2014}
+@media(prefers-reduced-motion:reduce){.sticker-art,.sticker-vibes button,.sticker-pick{transition:none}}
+/* Position mode: the chosen picture gets a visible drag pad on the page itself. */
+.j-position{position:absolute;inset:0;z-index:2;display:grid;place-items:center;color:#fff;background:#1f241f1a;cursor:move;touch-action:none;outline:calc(1.5px/var(--sheet-scale,1)) solid var(--app-accent);outline-offset:calc(-1.5px/var(--sheet-scale,1))}
+.j-position svg{width:calc(40px/var(--sheet-scale,1));height:calc(40px/var(--sheet-scale,1));padding:calc(9px/var(--sheet-scale,1));border-radius:50%;background:#1f241f73;pointer-events:none}
+.j-position:focus-visible{outline-width:calc(2.5px/var(--sheet-scale,1))}
+.journal-picture-actions .quiet-button[aria-pressed=true]{background:var(--app-panel);color:var(--app-ink)}
+.journal-align{display:flex;gap:4px;padding-left:8px;margin-left:4px;border-left:1px solid var(--app-line)}

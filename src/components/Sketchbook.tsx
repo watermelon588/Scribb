@@ -38,6 +38,8 @@ export interface SketchbookProps {
   back?: ReactNode
   /** Turns to a cover whenever this changes, e.g. while that cover is being edited. */
   show?: { side: 'front' | 'back'; at: number }
+  /** Drawn over the front cover after its layout, e.g. a journal's stickers. */
+  overlay?: ReactNode
   /** Page to open on, e.g. a journal's latest entry. Overrides initiallyClosed. */
   startPage?: number
 }
@@ -48,7 +50,7 @@ export function inkFor(color: string) {
   return rgb[0] * .299 + rgb[1] * .587 + rgb[2] * .114 > .57 ? '#303a34' : '#f3f0df'
 }
 
-export function Cover({ preset, title, count, caption, back = false, coverImage, coverPlacement, kicker = 'SKETCHBOOK', face }: { preset: BookPreset; title: string; count: number; caption?: string; back?: boolean; coverImage?: string; coverPlacement?: Placement; kicker?: string; face?: ReactNode }) {
+export function Cover({ preset, title, count, caption, back = false, coverImage, coverPlacement, kicker = 'SKETCHBOOK', face, overlay }: { preset: BookPreset; title: string; count: number; caption?: string; back?: boolean; coverImage?: string; coverPlacement?: Placement; kicker?: string; face?: ReactNode; overlay?: ReactNode }) {
   return <div className={`book-page cover material-${preset.id} ${back ? 'back-cover' : ''} ${coverImage && !back ? 'image-cover' : ''}`} data-density="hard">
     {coverImage && !back && <img className="cover-art-image" src={coverImage} alt="" style={placementStyle(coverPlacement)} />}
     <div className="cover-spine" />
@@ -63,6 +65,7 @@ export function Cover({ preset, title, count, caption, back = false, coverImage,
       <div className="cover-bottom"><span>ART, IN YOUR OWN TIME.</span><span>01—{String(count).padStart(2, '0')}</span></div>
     </>}
     {face}
+    {!back && overlay}
   </div>
 }
 
@@ -82,7 +85,7 @@ function ArtworkPage({ artwork, index }: { artwork: Artwork; index: number }) {
 
 /** The only book renderer. PageFlip owns cloned DOM; React owns the source pages.
  * Keeping those trees separate makes cleanup safe under StrictMode and resizing. */
-export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle, title, caption, artworks, texture = true, paper = "/paper.svg", coverImage, coverPlacement, bandColor = '#2464ed', initiallyClosed = false, pages, sheetWidth, maxPage = 370, kicker, front, back, show, startPage }: SketchbookProps) {
+export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle, title, caption, artworks, texture = true, paper = "/paper.svg", coverImage, coverPlacement, bandColor = '#2464ed', initiallyClosed = false, pages, sheetWidth, maxPage = 370, kicker, front, back, overlay, show, startPage }: SketchbookProps) {
   const stage = useRef<HTMLDivElement>(null)
   const area = useRef<HTMLDivElement>(null)
   const pose = useRef<HTMLDivElement>(null)
@@ -236,7 +239,7 @@ export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle,
       engine.destroy()
       book.remove()
     }
-  }, [pageWidth, pageHeight, size.width, turnStyle, artworks, pages, portrait, lastPage, title, caption, reduced, coverImage, coverPlacement, front, back])
+  }, [pageWidth, pageHeight, size.width, turnStyle, artworks, pages, portrait, lastPage, title, caption, reduced, coverImage, coverPlacement, front, back, overlay])
 
   useGSAP(() => {
     const shift = portrait ? 0 : page === 0 ? -pageWidth / 2 : page === lastPage ? pageWidth / 2 : 0
@@ -342,10 +345,10 @@ export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle,
   }
 
   const sheets = [
-    <Cover key="front" preset={preset} title={title} caption={caption} count={leafCount} coverImage={coverImage} coverPlacement={coverPlacement} kicker={kicker} face={front} />,
+    <Cover key="cover-front" preset={preset} title={title} caption={caption} count={leafCount} coverImage={coverImage} coverPlacement={coverPlacement} kicker={kicker} face={front} overlay={overlay} />,
     ...(pages ?? pageArtworks.map((artwork, i) => <ArtworkPage key={artwork.id} artwork={artwork} index={i} />)),
     leafCount % 2 === 1 && <div key="filler" className="book-page endpaper"><span>To be continued.</span></div>,
-    <Cover key="back" preset={preset} title={title} caption={caption} count={leafCount} coverImage={coverImage} coverPlacement={coverPlacement} back face={back} />,
+    <Cover key="cover-back" preset={preset} title={title} caption={caption} count={leafCount} coverImage={coverImage} coverPlacement={coverPlacement} back face={back} />,
   ].filter(Boolean)
   // Page i is showing: alone in portrait, otherwise beside its partner in the spread (1-2, 3-4, …).
   const showing = (i: number) => portrait ? i === page : Math.ceil(i / 2) === Math.ceil(page / 2)

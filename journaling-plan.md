@@ -41,7 +41,7 @@
 - Journals use the sketchbook covers for now. Journal covers are defined later.
 - Front and back covers are customizable through fixed layouts: title, subheading, heading, text, quotes and an image.
 - **Watermark:** optional per journal, with username and profile picture.
-- **Stickers** go on the cover. They are not defined yet, so this is a **placeholder**.
+- **Stickers** go on the front cover (up to 5) and on pages (up to 8), from the prepared cutouts with vibe filters.
 
 ### Images
 - Journal images must be **under 200 KB**. Resolution is reduced without visibly hurting quality.
@@ -143,11 +143,13 @@ A box also stops taking text when it is visually full, and a live counter shows 
 
 13. Quick fixes (done): cover phrase focus without a line through the label; one thin outline on a selected picture, with the resize grip shown only on hover or focus; one centred row of book controls and no stray dot; Collage keeps three overlapping pictures, not a hidden fourth; journals and sketchbooks open in one viewer size; the studio preview turns to the cover being changed; the selected book on the shelf opens on click; an Edit button in the preview.
 14. Journals are always Linen (done): no binding choice, no elastic and no spiral wire. Journals stored with another binding open as Linen. Sketchbooks are unchanged and keep Linen, Spiral, Watercolor and the elastic.
+15. Reading (done): a journal opens at the last page of its newest written entry, the page strip (Pages icon) jumps to any page, and the back cover's Back to start turns the book over to the front.
+16. Pictures and text (done): Crop opens ArtworkCropper in the page editor's canvas and the result is compressed again under 200 KB; Position puts a drag pad on the picture on the page itself (arrow keys too); left, centre and right alignment per box (`entry.align`), drawn the same in the editor, the book and thumbnails.
+- Stickers (done, outside the numbered parts, taken over from another agent): front cover and pages, see plan.md, "Journal sticker board".
+
+17. Layered and spread layouts (done): a Subtitle box (H, 14 words); five Layered layouts (Overlap Title, Photo Stack, Title Card, Offset Frames, Ribbon Title) whose overlapping panels hug their words; three Spread layouts (Panorama, Across the Fold, Scrapbook) drawn as one sheet two pages wide, on columns 0 to 23 with a gutter track at the fold. A spread starts on a left page after a blank when needed (`pageNumbers`), the book shows each half, the desk edits the whole spread, and only pictures cross the fold. Spread boxes are fixed (no edge resizing); scribble and sticker limits double on a spread.
 
 **Next** (from the review of findings on 2026-11-02)
-15. Reading: open at the most recent written page, "Back to start" on the back cover, and a page-thumbnail strip to jump to any page, all within a few icons.
-16. Pictures and text: crop with the existing cropper, a visible position mode, and left, centre or right alignment per box.
-17. Five more overlapping layouts with title, subtitle, text and pictures, and two-page layouts that treat a spread as one surface, starting on a left page.
 18. One or two pictures on the front page, in a fixed front-page layout.
 19. A separate full-screen view for handling the journal: rotate, twist, flip over, lift, reset.
 20. Final docs, including `AGENTS.md` and `README.md`.
@@ -156,7 +158,7 @@ A box also stops taking text when it is visually full, and a live counter shows 
 
 - **Voice typing:** the Web Speech API needs no new dependency. Typing must remain available where it is unsupported. Some browsers send audio to a remote speech service, which must be disclosed. It needs a secure context, so phone testing needs HTTPS. Recognition stops on silence, so it needs restart without duplicated words. When a box fills, voice moves to the next box.
 - **3D view:** the transform lives on `.book-orbit`, because `.book-pose` is pinned straight. The page-turn engine never sees gestures in 3D, because its pointer math assumes a flat page. The slab has no curl: a turning page lifts off a flat block.
-- **Stickers:** only a placeholder exists. When they are designed, they go on the cover face (`.jc` layers in `journalCover`) and need a per-cover limit like scribbles.
+- **Stickers (done):** one shared `StickerLayer` draws them on the front cover (through Cover's `overlay`) and on pages (in JournalSheet). Limits: 5 on the cover, 8 per page.
 - **Picture notice:** exact wording needs review before a public launch, because a notice alone may not settle liability.
 - **Scribbles on long Writing entries** belong to the page they were added on. The desk shows the last page only, so scribbles on earlier pages of a long entry cannot be edited yet.
 - **Phones:** a page in 3:4 is readable at 390px. 16:9 pages are small on an upright phone and may need a reading view.
