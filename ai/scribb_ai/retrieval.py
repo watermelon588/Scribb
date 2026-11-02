@@ -40,9 +40,23 @@ def search_words(words: list[str]) -> str:
     return " OR ".join(clean)
 
 
+# Searches rely on row-level security, which superusers, BYPASSRLS roles and the table owner skip.
+BYPASSES_RLS = """select r.rolsuper or r.rolbypassrls or pg_has_role(current_user, c.relowner, 'USAGE')
+                  from pg_roles r, pg_class c where r.rolname = current_user and c.oid = 'journal_entries'::regclass"""
+
+
+class UnsafeRole(RuntimeError):
+    pass
+
+
 async def connect() -> psycopg.AsyncConnection:
     # prepare_threshold=None: no server-side prepared statements, which a transaction pooler may not keep.
-    return await psycopg.AsyncConnection.connect(os.environ["AI_DATABASE_URL"], prepare_threshold=None)
+    conn = await psycopg.AsyncConnection.connect(os.environ["AI_DATABASE_URL"], prepare_threshold=None)
+    if (await (await conn.execute(BYPASSES_RLS)).fetchone())[0]:
+        await conn.close()
+        # Such a role would read every user's journal, so refuse instead of answering.
+        raise UnsafeRole("AI_DATABASE_URL must use the scribb_ai role")
+    return conn
 
 
 async def search_journal(conn: psycopg.AsyncConnection, user_id: str, f: Filter) -> list[Passage]:
