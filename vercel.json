@@ -22,6 +22,9 @@
   "rewrites": [
     { "source": "/api/(.*)", "destination": { "service": "api" } },
     { "source": "/ai/(.*)", "destination": { "service": "scribb-ai" } },
+    { "source": "/sitemap.xml", "destination": { "service": "api" } },
+    { "source": "/explore", "destination": { "service": "api" } },
+    { "source": "/@(.*)", "destination": { "service": "api" } },
     { "source": "/(.*)", "destination": { "service": "app" } }
   ],
   "headers": [

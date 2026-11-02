@@ -3,6 +3,7 @@ import sanitizeHtml from 'sanitize-html'
 import { journalLayouts, sectionOf, slotWordLimits, wordLimits, type LayoutId, type SlotKind } from '../src/data/journal.js'
 import { currentUser, fail, requireUser, text } from './auth.js'
 import { decodeCursor, encodeCursor, limit, sql, UUID, type Row } from './db.js'
+import { indexNow } from './seo.js'
 
 /** Books (sketchbooks and journals), journal entries, the feed, likes and saves.
  * A private book answers 404 to everyone but its owner, and so do its entries. */
@@ -81,7 +82,10 @@ books.put('/books/:id', requireUser, async (req, res) => {
       version = books.version + 1, updated_at = now()
     where books.user_id = ${user.id} and books.kind = excluded.kind and books.version = ${version}
     returning version, (xmax = 0) as created`
-  if (row) return void res.status(row.created ? 201 : 200).json({ version: row.version })
+  if (row) {
+    if (visibility === 'public') await indexNow([`/@${user.handle}/${id}`, `/@${user.handle}`, '/explore'])
+    return void res.status(row.created ? 201 : 200).json({ version: row.version })
+  }
   const [current] = await sql()`select version from books where id = ${id} and user_id = ${user.id}`
   if (!current) return notFound(res)
   fail(res, 409, 'stale_version', 'This book changed on another device. Your draft is kept.')

@@ -19,7 +19,7 @@ test('feed reactions, artist portfolios, following and book preview',async({page
  await page.getByRole('button',{name:`Save ${wonder}`,exact:true}).click()
  await page.reload();await search();await expect(page.getByRole('button',{name:`Like ${wonder}`,exact:true})).toHaveAttribute('aria-pressed','true')
  await page.getByLabel('Show saved books').click();await expect(page.locator('.feed-card')).toHaveCount(1);await page.getByLabel('Show saved books').click()
- await page.getByRole('button',{name:`View ${mira}'s portfolio`,exact:true}).first().click();await expect(page).toHaveURL(new RegExp(`#@${mira}$`))
+ await page.getByRole('button',{name:`View ${mira}'s portfolio`,exact:true}).first().click();await expect(page).toHaveURL(new RegExp(`/@${mira}$`))
  await expect(page.locator('.artist-details h1')).toHaveText(`${mira}.`);await expect(page.locator('.collection-book')).toHaveCount(3);await expect(page.getByRole('button',{name:'New sketchbook'})).toHaveCount(0);await expect(page.getByRole('button',{name:/^Edit /})).toHaveCount(0)
  await page.getByRole('button',{name:'Follow',exact:true}).click();await expect(page.getByRole('button',{name:'Following',exact:true})).toHaveAttribute('aria-pressed','true')
  // The preview opens at the latest artwork, past the elastic.
