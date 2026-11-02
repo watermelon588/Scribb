@@ -1,0 +1,13 @@
+import {useState,useRef} from 'react'
+import {Check,ArrowCounterClockwise,X} from '@phosphor-icons/react'
+type Rect={x:number;y:number;w:number;h:number}
+export default function ArtworkCropper({src,onApply,onClose}:{src:string;onApply:(src:string)=>void;onClose:()=>void}){
+ const [ratio,setRatio]=useState(1),[rect,setRect]=useState<Rect>({x:.1,y:.1,w:.8,h:.8}),[error,setError]=useState('')
+ const area=useRef<HTMLDivElement>(null),img=useRef<HTMLImageElement>(null),start=useRef<{x:number;y:number}|null>(null)
+ function point(x:number,y:number){const b=area.current!.getBoundingClientRect();return{x:Math.max(0,Math.min(1,(x-b.x)/b.width)),y:Math.max(0,Math.min(1,(y-b.y)/b.height))}}
+ function apply(){const image=img.current;if(!image)return;const w=Math.round(rect.w*image.naturalWidth),h=Math.round(rect.h*image.naturalHeight);if(w<16||h<16){setError('Select a larger area.');return}try{const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d')!.drawImage(image,rect.x*image.naturalWidth,rect.y*image.naturalHeight,w,h,0,0,w,h);onApply(c.toDataURL('image/webp',.92))}catch{setError('This image could not be cropped.')}}
+ return <div className="crop-editor"><div className="crop-surface" ref={area} style={{aspectRatio:ratio}} aria-label="Crop selection" onPointerDown={e=>{start.current=point(e.clientX,e.clientY);e.currentTarget.setPointerCapture(e.pointerId)}} onPointerMove={e=>{if(!start.current)return;const p=point(e.clientX,e.clientY),s=start.current;setRect({x:Math.min(p.x,s.x),y:Math.min(p.y,s.y),w:Math.abs(p.x-s.x),h:Math.abs(p.y-s.y)})}} onPointerUp={()=>start.current=null} onPointerCancel={()=>start.current=null}>
+ <img ref={img} src={src} draggable={false} alt="Select the area to keep" onLoad={e=>setRatio(e.currentTarget.naturalWidth/e.currentTarget.naturalHeight)}/><div className="crop-selection" style={{left:`${rect.x*100}%`,top:`${rect.y*100}%`,width:`${rect.w*100}%`,height:`${rect.h*100}%`}}><i/><i/></div></div>
+ <div className="crop-sliders">{(['x','y','w','h'] as const).map(k=><label key={k}>{({x:'Left',y:'Top',w:'Width',h:'Height'})[k]}<input aria-label={`Crop ${k}`} type="range" min={k==='w'||k==='h'?.05:0} max={k==='x'?1-rect.w:k==='y'?1-rect.h:k==='w'?1-rect.x:1-rect.y} step=".01" value={rect[k]} onChange={e=>setRect({...rect,[k]:Number(e.target.value)})}/></label>)}</div>
+ <div className="crop-actions"><button aria-label="Cancel crop" title="Cancel" onClick={onClose}><X/></button><button aria-label="Reset crop" title="Select entire image" onClick={()=>setRect({x:0,y:0,w:1,h:1})}><ArrowCounterClockwise/></button><button className="solid-button" onClick={apply}><Check/> Apply crop</button></div>{error&&<span role="alert">{error}</span>}</div>
+}

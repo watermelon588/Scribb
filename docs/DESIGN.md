@@ -1,3 +1,5 @@
+> Revision: books stay straight, with no presentation rotation or tilt. Current designs: Linen, Spiral (visible wire loops), and Watercolor (elastic closure). Float is removed. Five muted and five bright cover colors; four original reference textures plus a dotted pattern. This revision supersedes earlier preset/motion descriptions below.
+
 # Design contract
 
 ## Direction
@@ -85,3 +87,51 @@ accessibility tree; only the engine's visible page copies are exposed.
 At small widths the book stays first and the customization becomes a two-column
 section below it. Preset cards stack vertically. Preserve natural page scrolling.
 Never trap touch scrolling in the whole studio; gestures belong to the book only.
+
+Current closure correction: no stationary spread-wide backing plane. Watercolor starts closed and secured; releasing the elastic (click or horizontal pull) stretches and snaps it clear before page navigation is enabled. Closing either cover secures it again. Off-white is restored alongside the five textures. Five custom cover presets remain deferred.
+
+Elastic interaction revision: ElasticBand renders an anchored SVG ribbon. Pointer position controls the bend location and stretch; longer pulls thin the ribbon. Pulls under 48 px recoil and remain locked. Outward pulls beyond that threshold slip off the cover with a damped elastic recovery. Pointer cancellation recoils. Click/keyboard release follows the same path. All animations are scoped and honor reduced motion.
+
+
+## Portfolio milestone
+The root route is the profile; /#studio retains design exploration. Profile provides a gallery and compact upright bookshelf, search and incremental loading. Creation supports the original cover, all 26 supplied images in an overlapping hover/focus card rail, ten colors, paper, format and binding. Artwork stays contained. A full spread duplicates one image into aligned clipped halves with gutter shading; a blank page aligns spreads after odd single pages. Profile and books save locally (localStorage and IndexedDB), not to a remote account. Band material is charcoal woven elastic, with point-of-grab deformation and automatic opening after release.
+
+## Current creation revision (2026-11-02)
+This supersedes the earlier two-layout and studio descriptions. Only Gallery is
+active. New Sketchbook is the unified creation studio; /#studio and /#new enter it.
+The new front covers are flat prepared artwork, full bleed, with plain backs.
+Cover and page artwork placement can be dragged and resized; visual single-page
+and full-spread choices persist with each artwork. Visual format, paper and motion
+buttons replace dropdowns. Book chrome is icon-led. The ribbon remains attached
+when released and the cover opens automatically. See docs/COVER-ASSETS.md for
+asset provenance, generated reconstruction prompts and the active preset policy.
+
+## 2026-11-02: portfolio style exploration
+Gallery keeps the original open grid and right-hand editor controls. Editorial
+uses a sticky artist sidebar, alternating catalog rows, Newsreader typography and
+left-hand editing tools. Library uses a centered artist masthead, the reference
+spine rail and a full-width editing workbench with grouped controls beneath it.
+The style picker switches the shared UI without resetting drafts or library data.
+
+The re-examined 6-second reference shows neighboring spines sliding aside as a
+selected spine becomes a full front cover. Bookshelf uses adjacent variable-height
+spines and one expanding cover, keyboard arrows and horizontal scrolling. It does
+not copy the reference's slight rotations: prior user instructions keep books straight.
+
+Captions are optional, capped at 48 characters, and typeset on the front cover.
+Back covers remain plain. ArtworkCropper applies a selected crop to encoded image
+pixels; PlacementEditor handles position/scale independently. Both work on the same
+saved artwork used by the single Sketchbook renderer.
+
+## Feed and phone milestone
+The latest scope includes Explore at /#feed. Gallery uses two columns, Editorial a
+reading-room sidebar and larger single-column books, and Library a compact three-column
+collection. Each collapses to a legible phone feed. Four fictional artists and twelve
+books demonstrate the existing bindings, all aspect ratios, covers and full spreads.
+Likes/bookmarks are local only; no comments or server claims.
+
+The existing elastic release sequence is preserved. On completion of the cover turn,
+the elastic unmounts with no fade; later page turns do not reintroduce it. Shared
+BookObject thumbnails fit their available space while maintaining the saved ratio.
+All scrollbar chrome is hidden without disabling scrolling. Mobile navigation,
+safe-area padding, larger controls and full-screen dialogs support touch use.

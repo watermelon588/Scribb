@@ -10,3 +10,4 @@ playwright-report/
 !.env.example
 *.log
 /From Klickpin.com-*.mp4
+graphify-out/

@@ -1,0 +1,23 @@
+{
+  "date": "2026-11-02",
+  "total": 40,
+  "sketchbook": 20,
+  "journal": 20,
+  "anime": 5,
+  "pixelPreservedOriginals": 21,
+  "builtInEdits": 19,
+  "ratiosReviewed": [
+    "16:9",
+    "1:1",
+    "4:3",
+    "3:4"
+  ],
+  "crops": 160,
+  "referenceFilesUnchanged": 103,
+  "fileFormat": "WebP lossless",
+  "frontendIntegrated": false,
+  "buildAndTests": "Not run: asset-only preparation; no renderer, gesture, control or persistence changes.",
+  "totalBytes": 40666960,
+  "minDimension": 400,
+  "maxDimension": 1600
+}

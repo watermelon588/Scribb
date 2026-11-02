@@ -1,0 +1,592 @@
+{
+  "collection": "sketchbook",
+  "format": "webp",
+  "ratios": [
+    "16:9",
+    "1:1",
+    "4:3",
+    "3:4"
+  ],
+  "items": [
+    {
+      "id": "bicycle-balance",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Bicycle Balance",
+      "src": "/covers/sketchbook/bicycle-balance.webp",
+      "width": 1200,
+      "height": 1003,
+      "bytes": 725142,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "blue-cat",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Blue Cat",
+      "src": "/covers/sketchbook/blue-cat.webp",
+      "width": 1200,
+      "height": 1200,
+      "bytes": 124918,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "blue-garden",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Blue Garden",
+      "src": "/covers/sketchbook/blue-garden.webp",
+      "width": 400,
+      "height": 538,
+      "bytes": 281754,
+      "objectPosition": {
+        "16:9": [
+          50,
+          0
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          0
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "blue-table",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Blue Table",
+      "src": "/covers/sketchbook/blue-table.webp",
+      "width": 1199,
+      "height": 708,
+      "bytes": 590812,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          55,
+          50
+        ]
+      },
+      "textPreserved": "食器ほしい。。。"
+    },
+    {
+      "id": "charcoal-cat",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Charcoal Cat",
+      "src": "/covers/sketchbook/charcoal-cat.webp",
+      "width": 720,
+      "height": 906,
+      "bytes": 433192,
+      "objectPosition": {
+        "16:9": [
+          50,
+          55
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          55
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "cherry-blossom",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Cherry Blossom",
+      "src": "/covers/sketchbook/cherry-blossom.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 2051328,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "cobalt-house",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Cobalt House",
+      "src": "/covers/sketchbook/cobalt-house.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 859686,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "TV (incidental painted dish label)"
+    },
+    {
+      "id": "color-orbit",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Color Orbit",
+      "src": "/covers/sketchbook/color-orbit.webp",
+      "width": 736,
+      "height": 1104,
+      "bytes": 267874,
+      "objectPosition": {
+        "16:9": [
+          50,
+          65
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          65
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "distant-hills",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Distant Hills",
+      "src": "/covers/sketchbook/distant-hills.webp",
+      "width": 1116,
+      "height": 1116,
+      "bytes": 1071920,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "evening-bus",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Evening Bus",
+      "src": "/covers/sketchbook/evening-bus.webp",
+      "width": 1199,
+      "height": 1255,
+      "bytes": 518118,
+      "objectPosition": {
+        "16:9": [
+          50,
+          80
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          80
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "floating-face",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Floating Face",
+      "src": "/covers/sketchbook/floating-face.webp",
+      "width": 742,
+      "height": 742,
+      "bytes": 95928,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "hands-and-kitten",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Hands And Kitten",
+      "src": "/covers/sketchbook/hands-and-kitten.webp",
+      "width": 480,
+      "height": 640,
+      "bytes": 287688,
+      "objectPosition": {
+        "16:9": [
+          50,
+          25
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          25
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "lemon-road",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Lemon Road",
+      "src": "/covers/sketchbook/lemon-road.webp",
+      "width": 960,
+      "height": 926,
+      "bytes": 542778,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "lotus-children",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Lotus Children",
+      "src": "/covers/sketchbook/lotus-children.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1861554,
+      "objectPosition": {
+        "16:9": [
+          50,
+          85
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          85
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "patterned-child",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Patterned Child",
+      "src": "/covers/sketchbook/patterned-child.webp",
+      "width": 861,
+      "height": 960,
+      "bytes": 494956,
+      "objectPosition": {
+        "16:9": [
+          50,
+          15
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          15
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "red-poppies",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Red Poppies",
+      "src": "/covers/sketchbook/red-poppies.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 703690,
+      "objectPosition": {
+        "16:9": [
+          50,
+          20
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          20
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "small-study",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Small Study",
+      "src": "/covers/sketchbook/small-study.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 902996,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "tidal-ink",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Tidal Ink",
+      "src": "/covers/sketchbook/tidal-ink.webp",
+      "width": 600,
+      "height": 803,
+      "bytes": 214896,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "watercolor-koi",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Watercolor Koi",
+      "src": "/covers/sketchbook/watercolor-koi.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1976418,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "watercolor-portrait",
+      "collection": "sketchbook",
+      "group": "sketchbook",
+      "name": "Watercolor Portrait",
+      "src": "/covers/sketchbook/watercolor-portrait.webp",
+      "width": 1200,
+      "height": 1200,
+      "bytes": 709544,
+      "objectPosition": {
+        "16:9": [
+          45,
+          65
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          45,
+          65
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    }
+  ]
+}

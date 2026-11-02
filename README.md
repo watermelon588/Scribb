@@ -1,3 +1,5 @@
+> Revision: books stay straight, with no presentation rotation or tilt. Current designs: Linen, Spiral (visible wire loops), and Watercolor (elastic closure). Float is removed. Five muted and five bright cover colors; four original reference textures plus a dotted pattern. This revision supersedes earlier preset/motion descriptions below.
+
 # Untitled — the sketchbook studio
 
 A design prototype for an artist portfolio built around tactile digital
@@ -99,3 +101,53 @@ It checks the exact upstream source and fails clearly if an upgrade needs review
 
 The local MP4 references remain untouched. Generated analysis images and QA
 captures are ignored in `.reference-analysis/`. No backend or hosting is configured.
+
+
+## Current application
+- `/` or `/#portfolio`: your artist profile and locally saved sketchbooks and journals.
+- `/#feed`: Explore, with 12 demo sketchbooks and four fictional artists. Open books, visit artist collections, filter/search, like and bookmark. Reactions persist only on this device.
+- `/#new` and legacy `/#studio`: one creation/editing flow that switches between Sketchbook and Journal. Drafts autosave on this device.
+
+Journals have 10 fonts, 10 layouts that adapt to all four formats, and a Writing page that continues across pages. Pictures are reduced under 200 KB. See `journaling-plan.md` for the parts still to come.
+
+Gallery and Editorial have coordinated profile, editor and feed layouts with a shared palette. Both include Gallery and Bookshelf previews. Library has been removed.
+The style switch preserves the draft. Phone navigation links Explore, Create and
+Portfolio; Create resumes an in-memory draft when switching sections.
+
+21 prepared/standalone covers, custom cover upload and solid colors are available.
+All four formats apply to thumbnails and the interactive renderer. Front artwork
+fills the cover; backs remain plain. An optional 48-character caption is printed
+on the front. The elastic keeps its existing stretch/release/opening sequence and
+is removed immediately when opening completes, without fading.
+
+Cover and artwork editors support dragging, resizing and keyboard/range controls.
+Artwork also supports explicit cropping and continuous two-page spreads with a
+center fold. JPG/PNG/WebP uploads are validated before decoding and re-encoded:
+10 MiB/file, 40 MiB/batch, 20 MP, 8192 pixels/edge and 40 artworks/book.
+See docs/UPLOADS.md and docs/COVER-ASSETS.md.
+
+The reference-inspired Bookshelf uses close-set spines and an expanding selected
+front cover. Scrollbars are hidden while scrolling remains enabled. Phone layouts
+use safe-area navigation, full-screen book dialogs and appropriately sized inputs.
+
+Books/images use IndexedDB; profile, style and feed reactions use localStorage.
+There is no backend, authentication or cloud sync. Clearing browser storage removes
+saved work. Reference artwork is included for this local design exploration.
+
+Run `npm run build` and `npm test` for validation. Browser checks cover desktop and
+320/390px phone viewports, touch input, reduced motion, formats, persistence,
+upload rejection, covers and spreads. Real-device testing remains a separate check.
+
+Appearance: the header sun/moon button switches the entire application between light
+and dark, remembers the preference, and initializes before paint. Artwork and paper
+retain their original colors. New Sketchbook is available in the collection and
+phone Create tab, not the top navbar.
+
+Motion: Lenis 1.3.27 smooths desktop wheel scrolling through the existing GSAP ticker
+(https://github.com/darkroomengineering/lenis). Touch, book gestures and nested
+editors remain native. Reduced motion disables smoothing and entrance tweens.
+Entrance motion is limited to transform/opacity and 360ms, with scoped cleanup.
+
+Original olive light/dark appearance is restored. Explore opens directly to its
+filters and books; Gallery uses three compact desktop columns, two on tablets
+and one on phones. The Gallery/Editorial selector uses compact labeled icons.

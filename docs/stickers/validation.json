@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "sourceSheets": 14,
+  "count": 204,
+  "categories": 13,
+  "totalBytes": 4260667,
+  "averageBytes": 20886,
+  "largestBytes": 68149,
+  "square": true,
+  "maxEdge": 320,
+  "format": "PNG with alpha",
+  "issues": [],
+  "sourceChecksums": {
+    "079921d57dec8cdf47c4a39ab104273a.jpg": "0ee098d48ac17d49b7c6c222757c48e4a7eddab8d86307169025bc9cb9b242f3",
+    "0ddf5ecd2bb85f0639ddeb0ec89c059c.jpg": "0327807857eda273d03f0ccc7e208150b2c993f7ffa49050eb2f93af82790b9e",
+    "166d4d168838d9dc368ed1724347f8ce.jpg": "3c4ccb7d56baaae32dbfbcac2a3c9e81ff2aae063b9ae74d45da1a901467f06a",
+    "54b7c9d14751385a50cb45f0b26a7ca5.jpg": "791b0086a54248a92e8762d9196374c53299c9201fbb51ef7287bf533093d7e2",
+    "81ba239b552b1aed487fd1d085b00bfb.jpg": "cf56f45aba967dd63468fe94372d6dd54cdfed30e8052ab65a940909d6051dc1",
+    "a2ada1002f67b04c834093961e05a758.jpg": "ecf6e1d42dc10f3e6e07f6ea7d5f18f871a48554041b70994b3e8453d3fac609",
+    "b2d43e0e06eaa005fa0c010e5596a5dd.jpg": "12c4875dd2206abb5bc0fcb65f6c83d5717bc324c2765808a856e7d0ec674f0e",
+    "c3b63b326265493fc12396b6d295709b.jpg": "bf9128fdacb11cd9805cc254929716e608c98ab1d76e19d281b1c3df4b9a8848",
+    "cad6938c41299618d40f324df7d8dd8a.jpg": "646bdf345d63bf5bc40f503cbc8785dc0fae7d0aa0255a0b7f9ae32dedf36da5",
+    "calender.jpg": "46aa3bc8a14ebdf56456adf5f658f30a1b88c8120fe1be62f6bbbb7ad187adc3",
+    "compsci.png": "4f6b15674687ac5df19d67aaa598a9d246bad25df78d053d5edef0c780597c60",
+    "download.jpg": "b21b71f43698087438529b02bffe005a0dbf6a1b92235919f1fb7262b9d44fb2",
+    "e4436189e087ea4e907f93a558331a76.jpg": "db8171d54cd7ddb9b61a8bdeb7d948ec4a702de01d99e8d3a08eab131bd8987f",
+    "sticks.png": "df17ba1f2ddb9e751cc460e17eb3e54f7e0dd0dcfb1e9bad75c7428330b58f2c"
+  }
+}

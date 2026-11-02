@@ -1,0 +1,295 @@
+import {test,expect} from '@playwright/test'
+
+test('a save that aborts at commit shows an error and keeps the draft',async({page})=>{
+ await page.goto('/#new');await page.getByLabel('Sketchbook name').fill('Abort at commit')
+ await page.locator('input[type=file]').last().setInputFiles('public/artworks/roses.jpg');await page.locator('.artwork-edit-card').first().waitFor()
+ await page.evaluate(()=>{const put=IDBObjectStore.prototype.put;IDBObjectStore.prototype.put=function(...args){const request=put.apply(this,args as [unknown]);request.addEventListener('success',()=>this.transaction.abort());return request}})
+ await page.getByRole('button',{name:'Save sketchbook'}).click()
+ await expect(page.locator('.notification')).toContainText('Could not save');await expect(page.getByRole('button',{name:'Save sketchbook'})).toBeEnabled();await expect(page.getByLabel('Sketchbook name')).toHaveValue('Abort at commit')
+})
+
+test('blocked local storage still renders the portfolio',async({page})=>{
+ await page.addInitScript(()=>{Storage.prototype.getItem=()=>{throw new DOMException('denied','SecurityError')}})
+ await page.goto('/');await expect(page.locator('.artist-profile')).toBeVisible()
+})
+
+test('an unsaved draft survives reload and is not replaced by a new book',async({page})=>{
+ await page.goto('/');await page.getByRole('button',{name:'New sketchbook',exact:true}).last().click()
+ await page.getByLabel('Sketchbook name').fill('My unsaved work')
+ await page.getByRole('button',{name:'Back to portfolio'}).click();await page.getByRole('button',{name:'New sketchbook',exact:true}).last().click()
+ await expect(page.getByLabel('Sketchbook name')).toHaveValue('My unsaved work');await expect(page.locator('.notification')).toContainText('unsaved draft')
+ await page.waitForTimeout(900);await page.reload();await expect(page.getByLabel('Sketchbook name')).toHaveValue('My unsaved work')
+ page.once('dialog',dialog=>dialog.accept());await page.getByRole('button',{name:'Discard draft'}).click()
+ await expect(page.locator('.artist-profile')).toBeVisible();await page.reload();await page.getByRole('button',{name:'New sketchbook',exact:true}).last().click();await expect(page.getByLabel('Sketchbook name')).toHaveValue('Untitled sketchbook')
+})
+
+async function newJournal(page:import('@playwright/test').Page){
+ await page.goto('/#new');await page.getByRole('group',{name:'Book type'}).getByRole('button',{name:'Journal'}).click()
+ await expect(page.getByLabel('Journal name')).toHaveValue('Untitled journal')
+}
+const field=(page:import('@playwright/test').Page)=>page.getByRole('textbox',{name:'Paragraph'})
+
+test('the customizing section switches between sketchbook and journal and saves a journal with no pictures',async({page})=>{
+ await newJournal(page);await expect(page.getByRole('heading',{name:'Your pages'})).toBeVisible()
+ await page.getByRole('group',{name:'Book type'}).getByRole('button',{name:'Sketchbook'}).click();await expect(page.getByLabel('Sketchbook name')).toHaveValue('Untitled sketchbook');await expect(page.getByRole('heading',{name:'Your artwork'})).toBeVisible()
+ await page.getByRole('group',{name:'Book type'}).getByRole('button',{name:'Journal'}).click()
+ await page.getByLabel('Journal name').fill('Slow notes');await page.getByLabel('About this journal').fill('What the days felt like.')
+ await page.getByRole('button',{name:'Everyday font'}).click();await page.getByRole('button',{name:'Write on page 1'}).click()
+ await field(page).click();await page.keyboard.type('Today was quiet.');await expect(page.locator('.journal-canvas-page .j-text')).toHaveText('Today was quiet.')
+ await expect(page.locator('.journal-canvas-page .j-text')).toHaveCSS('font-family',/Caveat/)
+ await page.getByRole('button',{name:'Back to book'}).click();await page.getByRole('button',{name:'Save journal'}).click()
+ await expect(page.getByRole('button',{name:'Journals',exact:true})).toHaveAttribute('aria-pressed','true');await page.reload()
+ await page.getByRole('button',{name:'Open Slow notes'}).click()
+ const stage=page.locator('.portfolio-dialog .book-stage');await expect(stage.locator('.stf__item').first()).toBeAttached()
+ const pages=stage.locator('[hidden] .book-page')
+ // Cover, inside cover, front page, one written page, two blanks, one to keep the spread even, back cover.
+ await expect(pages).toHaveCount(8);await expect(pages.nth(2)).toContainText('What the days felt like.');await expect(pages.nth(2)).toContainText('Your studio');await expect(pages.nth(2)).toContainText('Started')
+ await expect(pages.nth(3)).toContainText('Today was quiet.');await expect(pages.nth(3).locator('.j-number')).toHaveText('1')
+})
+
+test('long writing continues across pages and word limits hold',async({page})=>{
+ await newJournal(page);await page.getByRole('button',{name:'Write on page 1'}).click();await field(page).click()
+ await page.evaluate(()=>document.execCommand('insertText',false,'word '.repeat(400)))
+ await expect(page.locator('.journal-status')).toContainText('2 pages');await expect(page.locator('.journal-status')).toContainText('400 / 1000 words')
+ await page.getByRole('button',{name:'Statement layout'}).click();await expect(page.locator('.journal-status')).toContainText('Too much text');await expect(page.getByRole('button',{name:'Writing layout'})).toHaveAttribute('aria-pressed','true')
+})
+
+test('all ten layouts adapt to every format without losing text',async({page})=>{
+ await newJournal(page);await page.getByRole('button',{name:'Write on page 1'}).click();await field(page).click();await page.keyboard.type('Kept across every layout.')
+ for(const name of ['Statement','Window','Margin Note','Two Frames','Zigzag','Stepped Essay','Inset Columns','Ledger','Collage Story','Fold Band']){
+  await page.getByRole('button',{name:`${name} layout`}).click();await expect(page.locator('.journal-canvas-page .j-box').filter({hasText:'Kept across every layout.'})).toHaveCount(1)
+ }
+ await page.getByRole('button',{name:'Back to book'}).click()
+ for(const format of ['1:1','4:3','16:9','3:4']){
+  await page.getByRole('button',{name:`${format} format`}).click();await expect(page.locator('.journal-thumb .j-grid .j-text')).toHaveText('Kept across every layout.')
+  const inside=await page.locator('.journal-thumb .j-grid').evaluate(grid=>{const box=grid.getBoundingClientRect();return [...grid.querySelectorAll<HTMLElement>('.j-image')].every(slot=>{const r=slot.getBoundingClientRect();return r.left>=box.left-1&&r.right<=box.right+1&&r.top>=box.top-1&&r.bottom<=box.bottom+1})})
+  expect(inside).toBe(true)
+ }
+})
+
+test('a box stops at its limits and pictures are reduced under 200 KB',async({page})=>{
+ await newJournal(page);await page.getByRole('button',{name:'Write on page 1'}).click();await page.getByRole('button',{name:'Statement layout'}).click()
+ await page.getByRole('button',{name:'Edit title'}).click();await page.getByRole('textbox',{name:'Title'}).click()
+ await page.evaluate(()=>document.execCommand('insertText',false,'one two three four five six seven eight nine'))
+ await expect(page.locator('.journal-status')).toContainText('Word limit');await expect(page.getByRole('textbox',{name:'Title'})).toHaveText('')
+ await page.locator('.journal-composer input[type=file]').evaluate(()=>{})
+ await page.getByRole('button',{name:'Edit picture'}).click({noWaitAfter:true}).catch(()=>{})
+ await page.locator('.journal-composer input[type=file]').setInputFiles('public/textures/woven.jpg')
+ const image=page.locator('.journal-canvas-page .j-image img');await expect(image).toBeVisible()
+ const bytes=await image.evaluate(img=>{const src=(img as HTMLImageElement).src;return (src.length-src.indexOf(',')-1)*.75});expect(bytes).toBeLessThan(200*1024)
+})
+
+test('stored markup cannot run and old books stay sketchbooks',async({page})=>{
+ const hostile={id:'hostile',kind:'journal',title:'Hostile',presetId:'linen',color:'#526756',format:'3:4',paper:'plain',artworks:[],journal:{font:'book',size:'m',ink:'#262826',rule:'lined',about:'',created:'2026-11-02',entries:[{id:'e1',layout:'writing',date:'2026-11-02',images:{},texts:{p0:'<img src=x onerror="window.pwned=1"><script>window.pwned=1</script><b onclick="window.pwned=1">safe</b>'}}]}}
+ await page.goto('/');await expect(page.getByRole('button',{name:'Sketchbooks',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.locator('.collection-book').first()).toBeVisible()
+ await page.evaluate(book=>new Promise<void>(resolve=>{const open=indexedDB.open('untitled-portfolio',1);open.onsuccess=()=>{const tx=open.result.transaction('library','readwrite');tx.objectStore('library').put([book],'books');tx.oncomplete=()=>{open.result.close();resolve()}}}),hostile)
+ await page.reload();await expect(page.locator('.collection-book')).toHaveCount(0);await page.getByRole('button',{name:'Journals',exact:true}).click();await page.getByRole('button',{name:'Open Hostile'}).click()
+ const text=page.locator('.portfolio-dialog [hidden] .j-text');await expect(text.locator('b')).toHaveText('safe');await expect(text.locator('img')).toHaveCount(0);expect(await text.locator('b').getAttribute('onclick')).toBeNull();expect(await page.evaluate(()=>'pwned' in window)).toBe(false)
+})
+
+async function deskWith(page:import('@playwright/test').Page,entry:object){
+ const book={id:'moves',kind:'journal',title:'Moves',presetId:'linen',color:'#526756',format:'3:4',paper:'plain',artworks:[],journal:{font:'book',size:'m',ink:'#262826',rule:'lined',about:'',created:'2026-11-02',entries:[{id:'e1',date:'2026-11-02',images:{},...entry}]}}
+ await page.goto('/');await expect(page.locator('.artist-profile')).toBeVisible()
+ await page.evaluate(book=>new Promise<void>(resolve=>{const open=indexedDB.open('untitled-portfolio',1);open.onsuccess=()=>{const tx=open.result.transaction('library','readwrite');tx.objectStore('library').put([book],'books');tx.oncomplete=()=>{open.result.close();resolve()}}}),book)
+ await page.reload();await page.getByRole('button',{name:'Journals',exact:true}).click();await page.getByRole('button',{name:'Edit Moves'}).click();await page.getByRole('button',{name:'Write on page 1'}).click()
+}
+const slotText=(page:import('@playwright/test').Page,id:string)=>page.locator(`.journal-canvas-page [data-slot=${id}] .j-text`)
+
+test('text and pictures move between boxes by drag or by tap',async({page})=>{
+ await deskWith(page,{layout:'frames',texts:{p0:'First box',p1:'Second box'},images:{i0:'/artworks/roses.jpg'}})
+ const from=await page.locator('.journal-canvas-page [data-slot=p0]').boundingBox(),to=await page.locator('.journal-canvas-page [data-slot=p1]').boundingBox()
+ await page.mouse.move(from!.x+from!.width/2,from!.y+20);await page.mouse.down();await page.mouse.move(to!.x+to!.width/2,to!.y+30,{steps:8})
+ await expect(page.locator('.journal-ghost')).toBeVisible();await expect(page.locator('.journal-canvas-page [data-slot=p1]')).toHaveClass(/is-target/);await expect(page.locator('.journal-canvas-page [data-slot=i0]')).not.toHaveClass(/is-target/)
+ await page.mouse.up();await expect(slotText(page,'p0')).toHaveText('Second box');await expect(slotText(page,'p1')).toHaveText('First box');await expect(page.locator('.journal-ghost')).toHaveCount(0)
+ await expect(field(page)).toHaveText('First box')
+ await page.getByRole('button',{name:'Move paragraph'}).click();await expect(page.locator('.journal-status')).toContainText('Choose a box')
+ await page.getByRole('button',{name:'Edit picture'}).first().click();await expect(page.locator('.journal-status')).toContainText('keep their own boxes');await expect(slotText(page,'p1')).toHaveText('First box')
+ await page.getByRole('button',{name:'Edit picture'}).first().click();await page.getByRole('button',{name:'Move picture',exact:true}).click();await page.getByRole('button',{name:'Edit picture'}).last().click()
+ await expect(page.locator('.journal-canvas-page [data-slot=i1] img')).toHaveAttribute('src','/artworks/roses.jpg');await expect(page.locator('.journal-canvas-page [data-slot=i0] img')).toHaveCount(0)
+})
+
+test('a move that does not fit is refused and boxes resize, reset and keep their size in the book',async({page})=>{
+ await deskWith(page,{layout:'statement',texts:{p0:'A paragraph that is much too long to become the title of this page'}})
+ await page.getByRole('button',{name:'Edit paragraph'}).click();await page.getByRole('button',{name:'Move paragraph'}).click();await page.getByRole('button',{name:'Edit title'}).click()
+ await expect(page.locator('.journal-status')).toContainText('Too long');await expect(slotText(page,'p0')).toContainText('A paragraph')
+ const edge=page.locator('.journal-canvas-page .j-edge').last(),image=page.locator('.journal-canvas-page [data-slot=i0]')
+ const before=(await image.boundingBox())!.height
+ await edge.focus();await page.keyboard.press('ArrowDown');await expect.poll(async()=>(await image.boundingBox())!.height).toBeGreaterThan(before+5)
+ await page.getByRole('button',{name:'Back to book'}).click();await expect(page.locator('.journal-thumb [style*="span 6"]')).toHaveCount(1)
+ await page.getByRole('button',{name:'Write on page 1'}).click();await page.getByRole('button',{name:'Reset boxes'}).click()
+ await expect.poll(async()=>Math.round((await image.boundingBox())!.height)).toBe(Math.round(before));await expect(page.getByRole('button',{name:'Reset boxes'})).toHaveCount(0)
+})
+
+test('text without a box waits in the tray and pictures keep their chosen focus',async({page})=>{
+ await deskWith(page,{layout:'ledger',texts:{p0:'One',p1:'Two',p2:'Three'},images:{i0:'/artworks/venice.jpg'}})
+ await page.getByRole('button',{name:'Statement layout'}).click()
+ const tray=page.locator('.journal-tray button');await expect(tray).toHaveCount(2)
+ await tray.first().click();await page.getByRole('button',{name:'Edit title'}).click();await expect(tray).toHaveCount(1);await expect(page.locator('.journal-canvas-page [data-slot=t0] .j-text')).toHaveText('Two')
+ await page.getByRole('button',{name:'Edit picture'}).click();const frame=page.getByRole('slider',{name:'Picture position'})
+ await frame.focus();await page.keyboard.press('ArrowLeft');await page.keyboard.press('ArrowLeft')
+ await expect(page.locator('.journal-canvas-page [data-slot=i0] img')).toHaveCSS('object-position','40% 50%')
+ await page.getByRole('button',{name:'Back to book'}).click();await expect(page.locator('.journal-thumb .j-image img').first()).toHaveCSS('object-position','40% 50%')
+})
+
+// A stand-in for the browser's recognizer, so tests can speak.
+async function fakeSpeech(page:import('@playwright/test').Page){
+ await page.addInitScript(()=>{
+  const w=window as unknown as Record<string,unknown>
+  w.SpeechRecognition=class{onresult:unknown;onend:(()=>void)|null=null;start(){w.voice=this;w.starts=((w.starts as number)||0)+1}stop(){this.onend?.()}}
+ })
+}
+const say=(page:import('@playwright/test').Page,text:string,final:boolean)=>page.evaluate(([text,final])=>{const voice=(window as unknown as {voice:{onresult:(e:unknown)=>void}}).voice;voice.onresult({resultIndex:0,results:[Object.assign([{transcript:text}],{isFinal:final})]})},[text,final] as const)
+
+test('voice typing writes live, survives restarts and moves on when a box fills',async({page})=>{
+ await fakeSpeech(page);await deskWith(page,{layout:'statement',texts:{}})
+ await page.getByRole('button',{name:'Edit title'}).click();await page.getByRole('button',{name:'Voice typing'}).click()
+ await expect(page.getByRole('button',{name:'Voice typing'})).toHaveAttribute('aria-pressed','true');await expect(page.locator('.journal-tools small')).toContainText('speech service')
+ await say(page,'A quiet',false);await expect(slotText(page,'t0')).toHaveText('A quiet');await expect(page.getByRole('textbox',{name:'Title'})).toHaveAttribute('aria-readonly','true')
+ await say(page,'A quiet <b>morning</b>',true);await expect(slotText(page,'t0')).toHaveText('A quiet <b>morning</b>');await expect(slotText(page,'t0').locator('b')).toHaveCount(0)
+ // The browser ends a session after silence; the next one must not repeat what was kept.
+ await page.evaluate(()=>(window as unknown as {voice:{onend:()=>void}}).voice.onend());expect(await page.evaluate(()=>(window as unknown as {starts:number}).starts)).toBe(2)
+ await say(page,'by the sea and the long road home',true)
+ await expect(slotText(page,'t0')).toHaveText('A quiet <b>morning</b>');await expect(slotText(page,'p0')).toHaveText('by the sea and the long road home')
+ await expect(page.getByRole('textbox',{name:'Paragraph'})).toHaveText('by the sea and the long road home')
+ await page.getByRole('button',{name:'Voice typing'}).click();await expect(page.getByRole('button',{name:'Voice typing'})).toHaveAttribute('aria-pressed','false')
+ await expect(page.getByRole('textbox',{name:'Paragraph'})).toHaveAttribute('contenteditable','true')
+})
+
+test('voice typing is hidden where the browser cannot listen',async({page})=>{
+ await page.addInitScript(()=>{const w=window as unknown as Record<string,unknown>;delete w.SpeechRecognition;delete w.webkitSpeechRecognition})
+ await deskWith(page,{layout:'writing',texts:{}});await expect(field(page)).toBeVisible();await expect(page.getByRole('button',{name:'Voice typing'})).toHaveCount(0)
+})
+
+test('formatting and links are drawn on the page, and only web links survive',async({page})=>{
+ await deskWith(page,{layout:'writing',texts:{p0:'<a href="javascript:window.pwned=1">bad</a> and <a href="https://ok.example/x">good</a>'}})
+ const text=page.locator('.journal-canvas-page .j-text')
+ await expect(text.locator('a')).toHaveCount(1);await expect(text.locator('a')).toHaveAttribute('href','https://ok.example/x');await expect(text.locator('a')).toHaveAttribute('rel',/noopener/)
+ await field(page).click();await page.keyboard.press('Control+A');await page.keyboard.type('A quiet morning');await page.keyboard.press('Control+A')
+ for(const name of ['Bold','Italic','Underline','Highlight'])await page.getByRole('button',{name,exact:true}).click()
+ for(const tag of ['b','i','u','mark'])await expect(text.locator(tag)).toHaveText('A quiet morning')
+ await expect(page.getByRole('button',{name:'Highlight',exact:true})).toHaveAttribute('aria-pressed','true')
+ await page.getByRole('button',{name:'Highlight',exact:true}).click();await expect(text.locator('mark')).toHaveCount(0);await expect(text.locator('b')).toHaveText('A quiet morning')
+ await page.keyboard.press('End');await page.getByRole('button',{name:'Add link'}).click()
+ await page.getByLabel('Link address').fill('not a link');await page.getByRole('button',{name:'Save link'}).click();await expect(page.getByRole('alert')).toContainText('web address')
+ await page.getByLabel('Link address').fill('www.example.com/notes?user=8812');await page.getByRole('button',{name:'Save link'}).click()
+ const link=text.locator('a');await expect(link).toHaveText('example.com');await expect(link).toHaveAttribute('href','https://www.example.com/notes?user=8812');await expect(link).toHaveAttribute('target','_blank')
+ expect(await page.evaluate(()=>'pwned' in window)).toBe(false)
+})
+
+test('rough scribbles are placed, moved, removed and limited per page',async({page})=>{
+ await deskWith(page,{layout:'statement',texts:{t0:'Sunday'}})
+ await page.getByRole('button',{name:'Add heart scribble'}).click()
+ const mark=page.locator('.journal-canvas-page .j-scribble');await expect(mark).toHaveCount(1);await expect(mark.locator('path').first()).toBeAttached()
+ const left=await mark.evaluate(node=>parseFloat((node as HTMLElement).style.left))
+ await page.getByRole('button',{name:'Heart scribble',exact:true}).focus();await page.keyboard.press('ArrowRight');await page.keyboard.press('ArrowRight')
+ await expect.poll(()=>mark.evaluate(node=>parseFloat((node as HTMLElement).style.left))).toBe(left+16)
+ const width=await mark.evaluate(node=>(node as HTMLElement).offsetWidth);await page.keyboard.press('Shift+ArrowRight');await expect.poll(()=>mark.evaluate(node=>(node as HTMLElement).offsetWidth)).toBe(width+8)
+ await page.keyboard.press('Delete');await expect(mark).toHaveCount(0)
+ for(const name of ['underline','box','circle','arrow','star','check'])await page.getByRole('button',{name:`Add ${name} scribble`}).click()
+ await expect(mark).toHaveCount(6);await expect(page.getByRole('button',{name:'Add smile scribble'})).toBeDisabled()
+ await page.getByRole('button',{name:'Back to book'}).click();await expect(page.locator('.journal-thumb .j-scribble')).toHaveCount(6)
+})
+
+test('the watermark puts the owner on every written page and nowhere else',async({page})=>{
+ await newJournal(page);await page.getByRole('button',{name:'Add page'}).click();await field(page).click();await page.keyboard.type('Second page.')
+ await page.getByRole('button',{name:'Back to book'}).click()
+ const thumbs=page.locator('.journal-thumb .j-watermark');await expect(thumbs).toHaveCount(0)
+ await page.getByRole('button',{name:'Watermark with your name and picture'}).click();await expect(thumbs).toHaveCount(2);await expect(thumbs.first()).toHaveText('@yourstudio')
+ await page.getByLabel('Journal name').fill('Marked');await page.getByRole('button',{name:'Save journal'}).click();await page.getByRole('button',{name:'Open Marked'}).click()
+ const pages=page.locator('.portfolio-dialog [hidden] .book-page');await expect(pages.first()).toBeAttached()
+ // Front page, two written pages and the blanks: only the written pages carry the mark.
+ await expect(page.locator('.portfolio-dialog [hidden] .j-watermark')).toHaveCount(2);await expect(pages.nth(2).locator('.j-watermark')).toHaveCount(0)
+ await page.keyboard.press('Escape');await page.getByRole('button',{name:'Edit Marked'}).click();await page.getByRole('button',{name:'No watermark'}).click();await expect(thumbs).toHaveCount(0)
+})
+
+test('a journal turns in 3D by drag and keys, still turns pages, and returns flat',async({page})=>{
+ await newJournal(page);const stage=page.locator('.book-stage'),orbit=stage.locator('.book-orbit'),view=stage.getByRole('button',{name:'3D view'})
+ await expect(stage.locator('.stf__item').first()).toBeAttached();await expect(stage.locator('.book-slab')).toHaveCount(0)
+ await view.click();await expect(view).toHaveAttribute('aria-pressed','true');await expect(stage.locator('.book-slab')).toBeAttached()
+ const angle=()=>orbit.evaluate(node=>node.style.transform)
+ const box=(await stage.locator('.book-area').boundingBox())!;await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();await page.mouse.move(box.x+box.width/2+200,box.y+box.height/2,{steps:8});await page.mouse.up()
+ await expect.poll(angle).toMatch(/rotateY\((4\d|5\d|6\d)/)
+ await stage.locator('.book-area').focus();await page.keyboard.press('Shift+ArrowRight');await expect.poll(angle).toMatch(/rotate\(6/)
+ // Dragging never turned a page; the buttons still do.
+ const previous=stage.getByRole('button',{name:'Previous pages'});await expect(previous).toBeDisabled()
+ await stage.getByRole('button',{name:'Next pages'}).click();await expect(previous).toBeEnabled()
+ await view.click();await expect(view).toHaveAttribute('aria-pressed','false');await expect(stage.locator('.book-slab')).toHaveCount(0);await expect.poll(angle).toBe('')
+})
+
+test('journals are always Linen, with no elastic or wire, while sketchbooks keep every binding',async({page})=>{
+ await newJournal(page);const stage=page.locator('.book-stage')
+ await expect(page.locator('.creator-binding')).toHaveCount(0);await expect(stage).toHaveClass(/preset-linen/);await expect(stage.locator('.elastic-band')).toHaveCount(0)
+ await expect(page.getByRole('button',{name:/^Elastic /})).toHaveCount(0)
+ // Back to Sketchbook: the bindings and the Watercolor elastic are still there.
+ await page.getByRole('group',{name:'Book type'}).getByRole('button',{name:'Sketchbook'}).click()
+ await expect(page.locator('.creator-binding')).toBeVisible();await expect(stage).toHaveClass(/preset-watercolor/);await expect(stage.locator('.elastic-band')).toHaveCount(1)
+ await page.getByRole('button',{name:'Spiral'}).click();await page.getByRole('group',{name:'Book type'}).getByRole('button',{name:'Journal'}).click();await expect(stage).toHaveClass(/preset-linen/)
+ await page.getByRole('group',{name:'Book type'}).getByRole('button',{name:'Sketchbook'}).click();await expect(stage).toHaveClass(/preset-spiral/)
+ // A journal stored with another binding opens as Linen.
+ await page.evaluate(()=>new Promise<void>(resolve=>{const open=indexedDB.open('untitled-portfolio',1);open.onsuccess=()=>{const tx=open.result.transaction('library','readwrite');tx.objectStore('library').put([{id:'old',kind:'journal',title:'Old',presetId:'watercolor',color:'#526756',format:'3:4',paper:'plain',artworks:[],journal:{font:'book',size:'m',ink:'#262826',rule:'lined',about:'',created:'2026-11-02',entries:[]}}],'books');tx.objectStore('library').put(null,'draft');tx.oncomplete=()=>{open.result.close();resolve()}}}))
+ await page.goto('/');await page.reload();await page.getByRole('button',{name:'Journals',exact:true}).click();await page.getByRole('button',{name:'Open Old'}).click()
+ const view=page.locator('.portfolio-dialog .book-stage');await expect(view).toHaveClass(/preset-linen/);await expect(view.locator('.elastic-band')).toHaveCount(0)
+})
+
+test('front and back covers use fixed layouts in the book and on the shelf, with stickers held for later',async({page})=>{
+ await newJournal(page);await page.getByLabel('Journal name').fill('Small summer');await page.getByLabel('Cover caption').fill('Volume one')
+ const source=page.locator('.book-stage [hidden]')
+ await page.getByRole('button',{name:'Title front cover'}).click();await expect(page.getByRole('button',{name:'Title front cover'})).toHaveAttribute('aria-pressed','true')
+ await page.getByLabel('Quote',{exact:true}).fill('Write it down.');await page.getByLabel('Quote by',{exact:true}).fill('Me')
+ const front=source.locator('.cover').first();await expect(front.locator('.jc-titled')).toContainText('Small summer');await expect(front.locator('.jc-titled q')).toHaveText('Write it down.');await expect(front.locator('.jc-titled cite')).toHaveText('Me')
+ // Title is plain material: the artwork is not drawn edge to edge, and the caption is not repeated.
+ await expect(front.locator('.cover-art-image')).toHaveCount(0);await expect(front.locator('.cover-phrase')).toHaveCount(0)
+ await page.getByRole('button',{name:'Quote back cover'}).click();await page.getByLabel('Back quote',{exact:true}).fill('<b>Keep</b> the small days.')
+ await expect(source.locator('.cover').last().locator('.jc-quote q')).toHaveText('<b>Keep</b> the small days.')
+ await page.getByRole('button',{name:'Picture back cover'}).click();await page.getByLabel('Note',{exact:true}).fill('The river house.')
+ await page.locator('.cover-picture-row input[type=file]').setInputFiles('public/textures/woven.jpg')
+ await expect(source.locator('.cover').last().locator('.jc-picture img')).toHaveAttribute('src',/^data:image\//);await expect(source.locator('.cover').last()).toContainText('The river house.')
+ await expect(page.getByRole('button',{name:'Stickers, coming soon'})).toBeDisabled()
+ await page.getByRole('button',{name:'Save journal'}).click()
+ await expect(page.locator('.portfolio-cover .jc-titled')).toContainText('Small summer')
+ await page.setViewportSize({width:320,height:640});await page.getByRole('button',{name:'Edit Small summer'}).click()
+ expect(parseFloat(await page.getByLabel('Note',{exact:true}).evaluate(node=>getComputedStyle(node).fontSize))).toBeGreaterThanOrEqual(16)
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)
+})
+
+test('the preview turns to the cover being changed, and a saved journal opens for editing from its preview and the shelf',async({page})=>{
+ await newJournal(page);await page.getByLabel('Journal name').fill('Turns');const stage=page.locator('.creation-preview .book-stage')
+ await expect(stage).toHaveClass(/is-closed/);await expect(stage).not.toHaveClass(/is-back/)
+ await page.getByRole('button',{name:'Quote back cover'}).click();await expect(stage).toHaveClass(/is-back/)
+ await page.getByLabel('Back quote',{exact:true}).fill('Slowly.');await expect(stage).toHaveClass(/is-back/);await expect(stage.locator('[hidden] .jc-quote')).toHaveText('Slowly.')
+ await page.getByRole('button',{name:'Label front cover'}).click();await expect(stage).not.toHaveClass(/is-back/);await expect(stage).toHaveClass(/is-closed/)
+ // The cover phrase shows focus with its underline, not an outline cutting through the label.
+ await page.getByLabel('Cover caption').focus();await expect(page.getByLabel('Cover caption')).toHaveCSS('outline-style','none')
+ await page.getByRole('button',{name:'Save journal'}).click()
+ await page.getByRole('button',{name:'Open Turns'}).click();await page.locator('.portfolio-dialog').getByRole('button',{name:'Edit Turns'}).click()
+ await expect(page.getByLabel('Journal name')).toHaveValue('Turns');await page.getByRole('button',{name:'Back to portfolio'}).click()
+ await page.getByRole('button',{name:'Bookshelf'}).click();await page.getByRole('button',{name:'Select Turns'}).click();await expect(page.locator('.portfolio-dialog')).toBeVisible()
+})
+
+test('Collage keeps three overlapping pictures and no hidden box',async({page})=>{
+ await deskWith(page,{layout:'collage',texts:{},images:{}})
+ await expect(page.locator('.journal-canvas-page [data-slot^=i]')).toHaveCount(3)
+})
+
+test('journals show one page at a time on phones and everything fits at 320px',async({page})=>{
+ await page.setViewportSize({width:320,height:640});await newJournal(page)
+ await expect(page.locator('.book-stage')).toHaveClass(/is-portrait/);await page.getByRole('button',{name:'Write on page 1'}).click();await expect(field(page)).toBeVisible()
+ const fits=await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth);expect(fits).toBe(true)
+ expect(parseFloat(await field(page).evaluate(node=>getComputedStyle(node).fontSize))).toBeGreaterThanOrEqual(16)
+})
+
+test('a journal opens at its newest written page, jumps from the page strip and turns back to the start',async({page})=>{
+ await newJournal(page);await page.getByLabel('Journal name').fill('Recent');await page.getByRole('button',{name:'Write on page 1'}).click()
+ await field(page).click();await page.keyboard.type('Latest words.');await page.getByRole('button',{name:'Back to book'}).click();await page.getByRole('button',{name:'Save journal'}).click()
+ await page.getByRole('button',{name:'Open Recent'}).click()
+ const stage=page.locator('.portfolio-dialog .book-stage');await expect(stage.locator('.stf__item').first()).toBeAttached()
+ await expect(stage).not.toHaveClass(/is-closed/)
+ await stage.getByRole('button',{name:'Pages',exact:true}).click()
+ // Cover, inside cover, front page, the written page, then blanks and the back cover; the written page is showing.
+ await expect(stage.getByRole('button',{name:'Page 3'})).toHaveAttribute('aria-current','true')
+ await stage.getByRole('button',{name:'Back cover'}).click();await expect(stage).toHaveClass(/is-back/)
+ await expect(stage.getByRole('button',{name:'Next pages'})).toHaveCount(0)
+ await stage.getByRole('button',{name:'Back to start'}).click();await expect(stage).not.toHaveClass(/is-back/);await expect(stage).toHaveClass(/is-closed/)
+ await expect(stage.getByRole('button',{name:'Front cover'})).toHaveAttribute('aria-current','true')
+ await expect(stage.locator('.book-orbit')).not.toHaveAttribute('style',/rotate/)
+})

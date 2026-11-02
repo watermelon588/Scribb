@@ -1,0 +1,286 @@
+/* Journals: studio controls and the sheet every journal page is drawn on. */
+.creation-heading{align-items:center;gap:16px}
+.creation-save{display:flex;align-items:center;gap:8px}
+
+.kind-switch{display:inline-flex;gap:28px}
+.kind-switch button{position:relative;padding:8px 0;border:0;background:none;color:var(--app-muted);font:inherit;font-size:14px;transition:color 160ms ease}
+.kind-switch button::after{content:'';position:absolute;left:0;right:0;bottom:2px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform 240ms cubic-bezier(.23,1,.32,1)}
+.kind-switch button[aria-pressed=true]{color:var(--app-ink)}
+.kind-switch button[aria-pressed=true]::after{transform:scaleX(1)}
+.kind-switch-large button{font-size:26px;letter-spacing:-1px;line-height:1.2}
+@media(hover:hover) and (pointer:fine){.kind-switch button:hover{color:var(--app-ink)}}
+
+/* The sheet: one reference size per format, scaled to whatever surface shows it. */
+.journal-probe.j-text{position:fixed;left:0;top:0;visibility:hidden;pointer-events:none}
+.journal-sheet{position:absolute;left:0;top:0;width:var(--sheet-w);height:var(--sheet-h);overflow:hidden;transform:scale(var(--sheet-scale,1));transform-origin:0 0;color:var(--j-ink);font-family:var(--j-font);font-weight:400;text-align:left}
+.journal-sheet *{box-sizing:border-box}
+.j-text{position:relative;color:var(--j-ink);text-align:left;font-family:var(--j-font);font-size:var(--j-size);font-weight:400;line-height:var(--j-line);overflow-wrap:break-word;text-wrap:pretty}
+.j-text b{font-weight:600}
+/* Formatting reads as pen on paper: a fine underline, a marker stroke, links with a small arrow. */
+.j-text u,.journal-field u{text-decoration-line:underline;text-decoration-thickness:.07em;text-underline-offset:.2em;text-decoration-color:color-mix(in srgb,currentColor 70%,transparent)}
+.j-text mark,.journal-field mark{margin:0 -.1em;padding:0 .1em;border-radius:.3em .45em .35em .5em;background:linear-gradient(100deg,#f2d86a00 0,#f2d86ad9 .25em,#f2d86aa6 calc(100% - .25em),#f2d86a00 100%) 0 70%/100% 64% no-repeat;color:inherit;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.journal-field mark{color:#262826}
+.j-text a,.journal-field a{color:inherit;text-decoration-line:underline;text-decoration-style:dotted;text-decoration-thickness:.07em;text-underline-offset:.22em}
+.j-text a::after,.journal-field a::after{content:'';display:inline-block;width:.56em;height:.56em;margin-left:.14em;background:currentColor;opacity:.7;vertical-align:.08em;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 12 12 4M6 4h6v6' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 12 12 4M6 4h6v6' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat}
+.j-watermark{position:absolute;left:50%;bottom:40px;display:flex;align-items:center;gap:12px;transform:translateX(-50%);font-size:calc(var(--j-size)*.72);line-height:1;white-space:nowrap;opacity:.55;pointer-events:none}
+.j-watermark img{width:38px;height:38px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px #fbf9f2}
+.has-bleed .j-watermark{color:#fff;opacity:.8;text-shadow:0 1px 6px #0006}
+.journal-watermark-choice{display:flex;align-items:center;justify-content:center;gap:7px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.journal-watermark-choice img{flex:none;width:18px;height:18px;border-radius:50%;object-fit:cover}
+.j-scribble{position:absolute;z-index:5;color:var(--j-ink);pointer-events:none}
+.j-scribble>.j-scribble-art{position:absolute;inset:0;overflow:visible}
+.j-text.j-T{font-size:calc(var(--j-size)*1.8);line-height:1.12;letter-spacing:-.01em;text-wrap:balance}
+.j-text.j-Q{font-size:calc(var(--j-size)*1.34);line-height:1.24;font-style:italic;text-wrap:balance}
+.j-text.j-C,.j-text.j-S{font-size:calc(var(--j-size)*.76);line-height:1.42}
+
+.j-date,.j-number{position:absolute;font-size:calc(var(--j-size)*.72);line-height:1;opacity:.6}
+.j-date{top:54px}
+.j-number{bottom:50px}
+.side-left .j-date,.side-left .j-number{left:var(--sheet-mx)}
+.side-right .j-date,.side-right .j-number{right:var(--sheet-mx)}
+
+.j-grid{position:absolute;inset:var(--sheet-top) var(--sheet-mx) var(--sheet-bottom);display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:repeat(12,minmax(0,1fr));gap:var(--sheet-gap)}
+.j-slot{position:relative;min-width:0;min-height:0}
+.j-image{overflow:hidden}
+.j-image img{display:block;width:100%;height:100%;object-fit:cover}
+.j-slot.is-bleed{position:absolute;inset:0}
+.j-slot.is-over{z-index:2}
+.j-slot.is-tilted{overflow:visible;padding:10px;background:#fbf9f2;box-shadow:0 8px 20px #2a2a2424}
+.j-box.is-over{padding:36px;background:#f8f5ecf2}
+.j-panel-meta{display:flex;justify-content:space-between;height:44px;font-size:calc(var(--j-size)*.72);line-height:1;opacity:.6}
+.j-panel-meta span{position:static}
+.j-box-B{margin-right:calc(var(--sheet-mx)*-1);padding:36px var(--sheet-mx) 36px 36px;background:color-mix(in srgb,var(--j-ink) 7%,transparent)}
+.is-mirrored .j-box-B{margin-right:0;margin-left:calc(var(--sheet-mx)*-1);padding:36px 36px 36px var(--sheet-mx)}
+
+/* Writing pages keep every font on one line grid, so ruled lines meet the baseline. */
+.j-writing{position:absolute;left:0;right:0;top:var(--sheet-top);padding:0 var(--sheet-mx);overflow:hidden}
+.j-rule{position:absolute;left:0;top:0;fill:none;stroke:var(--j-ink);stroke-width:1.6;stroke-opacity:.17}
+
+.j-front{display:flex;flex-direction:column;justify-content:space-between;padding:108px var(--sheet-mx) 96px}
+.j-owner{display:flex;align-items:center;gap:20px;font-size:calc(var(--j-size)*.86);line-height:1.2}
+.j-owner img{width:76px;height:76px;border-radius:50%;object-fit:cover}
+.j-front-title{font-size:calc(var(--j-size)*2.5);line-height:1.08;letter-spacing:-.015em;text-wrap:balance}
+.j-front-body p{margin:28px 0 0;max-width:30em;font-size:var(--j-size);line-height:var(--j-line);text-wrap:pretty}
+.j-front-date{font-size:calc(var(--j-size)*.72);line-height:1;opacity:.6}
+
+.journal-page{position:relative}
+.is-journal.book-stage{height:clamp(520px,calc(100dvh - 240px),760px)}
+.is-portrait.book-stage .book-ground-shadow{display:none}
+
+/* Journal covers: fixed layouts in the journal's own font. Sizes use cqmin, so thumbnails, previews and the book match in every format. */
+.jc{position:absolute;inset:0;z-index:1;color:var(--cover-ink);font-family:var(--jc-font);pointer-events:none}
+.jc b{display:block;font-weight:400;font-size:calc(9cqmin*var(--jc-scale,1)*var(--title-scale,1));line-height:1.08;letter-spacing:-.01em;overflow-wrap:anywhere}
+.jc small{display:block;margin-top:3.4cqmin;font:450 2.2cqmin/1.6 'Manrope Variable',sans-serif;letter-spacing:.16em;text-transform:uppercase;opacity:.72}
+.jc blockquote{margin:0;font-size:calc(4.4cqmin*var(--jc-scale,1));line-height:1.4}
+.jc cite{display:block;margin-top:3cqmin;font:450 2cqmin/1.5 'Manrope Variable',sans-serif;font-style:normal;letter-spacing:.16em;text-transform:uppercase;opacity:.7}
+.jc cite::before{content:'\2014\00a0'}
+.jc p{margin:0;font-size:calc(3.6cqmin*var(--jc-scale,1));line-height:1.5}
+.jc figure{margin:0;height:46cqh;max-width:60%;aspect-ratio:4/5;padding:2.2cqmin;background:#f3efe2;box-shadow:0 1px 2px #1f241f33,0 6px 14px #1f241f1f;overflow:hidden}
+.jc figure img{display:block;width:100%;height:100%;object-fit:cover}
+.jc-label .jc-plate{position:absolute;left:20%;right:14%;top:30%;padding:8cqmin 6cqmin;background:#f3efe2;color:#2f3631;text-align:center;box-shadow:0 1px 2px #1f241f33,inset 0 0 0 1.4cqmin #f3efe2,inset 0 0 0 calc(1.4cqmin + 1px) #2f36313d}
+.jc-label b{font-size:calc(7.4cqmin*var(--jc-scale,1)*var(--title-scale,1))}
+.jc-titled{display:flex;flex-direction:column;padding:15cqmin 12cqmin 13cqmin 17cqmin}
+.jc-titled b{font-size:calc(11cqmin*var(--jc-scale,1)*var(--title-scale,1));max-width:9em}
+.jc-titled blockquote{margin-top:auto;max-width:80%;padding-top:4cqmin;border-top:1px solid color-mix(in srgb,currentColor 32%,transparent)}
+.jc-window,.jc-quote,.jc-picture{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5cqmin;padding:8cqmin 12cqmin 8cqmin 16cqmin;text-align:center}
+.jc-window b{font-size:calc(7.4cqmin*var(--jc-scale,1)*var(--title-scale,1))}
+.jc-window small{margin-top:0}
+.jc-quote blockquote{max-width:30em;font-size:calc(5.4cqmin*var(--jc-scale,1))}
+.jc-note p{position:absolute;left:16%;right:14%;bottom:12%;padding-top:4cqmin;border-top:1px solid color-mix(in srgb,currentColor 32%,transparent)}
+.jc-picture p{max-width:80%}
+.cover-layouts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.cover-layouts button{display:grid;justify-items:center;align-content:start;gap:8px;padding:8px 6px;border:1px solid transparent;border-radius:3px;background:none;color:var(--app-ink);font-size:11px;transition:background-color 160ms ease,border-color 160ms ease,transform 160ms ease}
+.cover-layouts button[aria-pressed=true]{background:var(--app-selected);border-color:var(--app-line)}
+.cover-layouts button:active{transform:scale(.97)}
+@media(hover:hover) and (pointer:fine){.cover-layouts button:not([aria-pressed=true]):hover{background:var(--app-panel)}}
+.cover-layout-book{position:relative;display:block;width:100%;max-width:64px;max-height:86px;box-shadow:2px 2px 0 #dedace,4px 8px 12px #34372818;border-radius:2px 4px 4px 2px}
+.cover-layout-book>.book-page{position:absolute;inset:0;width:100%;height:100%;border-radius:inherit;box-shadow:none}
+.journal-cover-settings{display:grid;gap:22px;margin:0 0 26px}
+.journal-about input{width:100%;padding:0 0 10px;border:0;border-bottom:1px solid var(--app-line);border-radius:0;outline:0;background:none;color:var(--app-ink);font:inherit;font-size:14px;line-height:1.5}
+.journal-about input:focus{border-color:var(--app-accent)}
+@media(max-width:600px){label.journal-about textarea,label.journal-about input{font-size:16px}}
+.cover-picture-row{display:flex;gap:6px;align-items:center}
+.cover-picture-row .quiet-button{display:inline-flex;align-items:center;gap:8px;font-size:12px}
+.cover-stickers{display:inline-flex;align-items:center;justify-self:start;gap:8px;padding:9px 14px;border:1px dashed var(--app-line);border-radius:3px;background:none;color:var(--app-muted);font-size:12px}
+
+/* 3D view: the book turns as one flat object over a slab with real page edges and a plain back. */
+.book-orbit{position:relative;transform-style:preserve-3d}
+.is-orbit .book-area{cursor:grab;touch-action:none}
+.is-orbit .book-area:active{cursor:grabbing}
+.is-orbit .book-mount{touch-action:none}
+.is-orbit .book-centering{backface-visibility:hidden}
+.is-orbit .book-ground-shadow{opacity:.1}
+.stage-topline:has(.orbit-toggle){justify-content:flex-end;gap:4px}
+.orbit-toggle[aria-pressed=true]{background:var(--app-selected,#e4e9dc);color:var(--app-ink,#2b302a)}
+.book-slab{position:absolute;left:50%;top:0;transform:translateX(-50%);transform-style:preserve-3d;pointer-events:none}
+.book-slab>i{position:absolute;display:block}
+.slab-back{inset:0;border-radius:4px;background:var(--cover);transform:translateZ(calc(var(--depth)*-1))}
+.slab-left{top:0;bottom:0;right:100%;width:var(--depth);transform-origin:100% 50%;transform:rotateY(-90deg)}
+.slab-right{top:0;bottom:0;left:100%;width:var(--depth);transform-origin:0 50%;transform:rotateY(90deg)}
+.slab-top{left:0;right:0;bottom:100%;height:var(--depth);transform-origin:50% 100%;transform:rotateX(90deg)}
+.slab-bottom{left:0;right:0;top:100%;height:var(--depth);transform-origin:50% 0;transform:rotateX(-90deg)}
+.slab-left,.slab-right{background:linear-gradient(90deg,#0000,#2a2a2414),repeating-linear-gradient(90deg,#f4f0e6 0 1px,#dcd5c5 1px 2px)}
+.slab-top,.slab-bottom{background:linear-gradient(#0000,#2a2a2414),repeating-linear-gradient(0deg,#f4f0e6 0 1px,#dcd5c5 1px 2px)}
+.book-slab.is-front .slab-left,.book-slab.is-back .slab-right{background:linear-gradient(90deg,#0000001f,#0000 40%,#ffffff14),var(--cover)}
+
+/* Live page and writing field */
+.journal-canvas{display:grid;place-items:center;height:clamp(520px,calc(100dvh - 240px),700px);padding:28px;border-radius:3px;background:var(--app-panel);box-sizing:border-box}
+.journal-canvas-page{position:relative;width:min(100%,calc((clamp(520px,calc(100dvh - 240px),700px) - 56px)*var(--ratio)));aspect-ratio:var(--ratio);border-radius:2px;box-shadow:0 1px 2px #2a2a241f,0 14px 34px #2a2a241f}
+.j-hit{position:absolute;inset:0;display:grid;place-items:center;padding:0;border:0;background:none;cursor:text}
+.j-hit.is-empty{outline:2px dashed color-mix(in srgb,var(--j-ink) 24%,transparent);outline-offset:-2px;transition:background-color 160ms ease}
+.j-hit span{color:color-mix(in srgb,var(--j-ink) 52%,transparent);font:400 22px 'Manrope Variable',sans-serif}
+.j-image .j-hit{cursor:pointer}
+.j-hit[aria-pressed=true]{outline:calc(1.5px/var(--sheet-scale,1)) solid var(--app-accent);outline-offset:calc(3px/var(--sheet-scale,1))}
+.j-box>.j-hit:not(.is-empty),.j-image>.j-hit:not(.is-empty){cursor:grab}
+.journal-canvas{user-select:none;-webkit-user-select:none}
+.j-slot{transition:opacity 160ms ease}
+.j-slot.is-source{opacity:.4}
+.j-slot.is-target>.j-hit{outline:3px dashed var(--app-accent);outline-offset:-3px;background:color-mix(in srgb,var(--app-accent) 8%,transparent)}
+.j-image:has(>.j-grip){overflow:visible}
+.j-image:has(>.j-grip) img{clip-path:inset(0)}
+.is-bleed>.j-grip,.j-box-B>.j-grip{margin:calc(12px/var(--sheet-scale,1))}
+.j-grip{position:absolute;z-index:4;top:0;right:0;margin:calc(-18px/var(--sheet-scale,1)) calc(-18px/var(--sheet-scale,1)) 0 0;display:grid;place-items:center;width:36px;height:36px;padding:0;border:0;border-radius:50%;background:var(--app-accent);color:#fff;cursor:grab;touch-action:none;transform:scale(calc(1/var(--sheet-scale,1)));transform-origin:100% 0}
+.j-grip[aria-pressed=true]{background:var(--app-ink);color:var(--app-bg)}
+.j-edge{position:relative;z-index:3;touch-action:none;outline:0}
+.j-edge::before{content:'';position:absolute;inset:calc(-12px/var(--sheet-scale,1))}
+.j-edge::after{content:'';position:absolute;background:var(--app-accent);border-radius:999px;opacity:0;transition:opacity 160ms ease}
+.j-edge.is-x{justify-self:start;width:var(--sheet-gap);margin-left:calc(var(--sheet-gap)*-1);cursor:col-resize}
+.j-edge.is-y{align-self:start;height:var(--sheet-gap);margin-top:calc(var(--sheet-gap)*-1);cursor:row-resize}
+.j-edge.is-x::after{top:50%;left:50%;width:calc(4px/var(--sheet-scale,1));height:calc(32px/var(--sheet-scale,1));transform:translate(-50%,-50%)}
+.j-edge.is-y::after{left:50%;top:50%;width:calc(32px/var(--sheet-scale,1));height:calc(4px/var(--sheet-scale,1));transform:translate(-50%,-50%)}
+.j-edge:focus-visible::after,.j-edge:active::after{opacity:1}
+.journal-ghost{position:fixed;left:0;top:0;z-index:1000;width:168px;max-height:112px;margin:-24px 0 0 -84px;overflow:hidden;padding:10px 12px;box-sizing:border-box;border-radius:2px;background:#fbf9f2;color:#262826;font-size:15px;line-height:1.4;box-shadow:0 10px 28px #2a2a2433;pointer-events:none;rotate:-1.5deg;animation:journal-ghost 140ms cubic-bezier(.23,1,.32,1)}
+.journal-ghost img{display:block;width:calc(100% + 24px);height:112px;margin:-10px -12px;object-fit:cover}
+@keyframes journal-ghost{from{opacity:0;scale:.96}}
+@media(hover:hover) and (pointer:fine){.j-edge:hover::after{opacity:.7}}
+@media(hover:none){.j-edge::after{opacity:.35}}
+@media(hover:hover) and (pointer:fine){.j-hit.is-empty:hover{background:color-mix(in srgb,var(--j-ink) 5%,transparent)}}
+
+.journal-composer{display:flex;flex-direction:column;gap:20px}
+.journal-field{min-height:210px;max-height:340px;overflow:auto;padding:16px 18px;border:1px solid var(--app-line);border-radius:3px;background:var(--app-bg);color:var(--app-ink);font-size:17px;line-height:1.6;outline:0;overflow-wrap:break-word;transition:border-color 160ms ease}
+.journal-field:focus{border-color:var(--app-accent)}
+.journal-field[data-empty=true]::before{content:attr(data-placeholder);color:var(--app-muted);pointer-events:none}
+.journal-tools{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-top:-8px}
+.journal-tools .journal-mic{margin-left:auto}
+.journal-tools small{flex-basis:100%;order:1}
+.journal-tool{display:grid;place-items:center;width:36px;height:36px;padding:0;border:0;border-radius:3px;background:none;color:var(--app-muted);transition:background-color 160ms ease,color 160ms ease,transform 160ms ease}
+.journal-tool[aria-pressed=true]{background:var(--app-selected);color:var(--app-ink)}
+.journal-tool:active{transform:scale(.96)}
+.journal-tool:disabled{opacity:.35}
+@media(hover:hover) and (pointer:fine){.journal-tool:not(:disabled):hover{background:var(--app-panel);color:var(--app-ink)}}
+.journal-link{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-top:-10px}
+.journal-link input{flex:1;min-width:0;padding:8px 0;border:0;border-bottom:1px solid var(--app-line);border-radius:0;outline:0;background:none;color:var(--app-ink);font:inherit;font-size:16px}
+.journal-link input:focus{border-color:var(--app-accent)}
+.journal-link input[aria-invalid=true]{border-color:#b3261e}
+.journal-link small{flex-basis:100%;color:#b3261e;font-size:12px}
+.journal-scribbles{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px}
+.journal-scribbles button{display:grid;place-items:center;height:46px;padding:8px;border:1px solid transparent;border-radius:3px;background:none;color:var(--app-ink);transition:background-color 160ms ease,transform 160ms ease}
+.journal-scribbles button:active{transform:scale(.96)}
+.journal-scribbles button:disabled{opacity:.35}
+.journal-scribbles svg{width:100%;height:100%;max-height:30px}
+.journal-scribbles svg path{stroke-width:7px}
+@media(hover:hover) and (pointer:fine){.journal-scribbles button:not(:disabled):hover{background:var(--app-panel)}}
+.j-scribble-hit{position:absolute;inset:0;padding:0;border:0;background:none;cursor:move;pointer-events:auto;touch-action:none;outline:0}
+.j-scribble.is-chosen .j-scribble-hit{outline:calc(2px/var(--sheet-scale,1)) dashed var(--app-accent);outline-offset:calc(4px/var(--sheet-scale,1))}
+.j-scribble-hit:focus-visible{outline:calc(2px/var(--sheet-scale,1)) solid var(--app-accent)}
+.j-scribble-size,.j-scribble-remove{position:absolute;display:grid;place-items:center;width:28px;height:28px;padding:0;border:0;border-radius:50%;background:var(--app-accent);color:#fff;pointer-events:auto;touch-action:none;transform:scale(calc(1/var(--sheet-scale,1)))}
+.j-scribble-size{right:0;bottom:0;transform-origin:100% 100%;margin:calc(-14px/var(--sheet-scale,1));cursor:nwse-resize}
+.j-scribble-size::after{content:'';width:8px;height:8px;border-right:2px solid;border-bottom:2px solid}
+.j-scribble-remove{top:0;right:0;transform-origin:100% 0;margin:calc(-14px/var(--sheet-scale,1)) calc(-14px/var(--sheet-scale,1)) 0 0;background:var(--app-ink);color:var(--app-bg)}
+.journal-tools small{color:var(--app-muted);font-size:12px;line-height:1.45}
+.journal-mic{position:relative;display:grid;place-items:center;flex:none;width:40px;height:40px;padding:0;border:1px solid var(--app-line);border-radius:50%;background:none;color:var(--app-ink);transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease,transform 160ms ease}
+.journal-mic:active{transform:scale(.96)}
+.journal-mic.is-on{border-color:var(--app-accent);background:var(--app-accent);color:#fff}
+.journal-mic.is-on::after{content:'';position:absolute;inset:-1px;border:1px solid var(--app-accent);border-radius:50%;animation:journal-listen 1.6s cubic-bezier(.23,1,.32,1) infinite;pointer-events:none}
+@keyframes journal-listen{from{opacity:.7;transform:scale(1)}to{opacity:0;transform:scale(1.45)}}
+@media(hover:hover) and (pointer:fine){.journal-mic:not(.is-on):hover{background:var(--app-panel)}}
+.journal-field[contenteditable=false]{cursor:default}
+.journal-status{display:flex;justify-content:space-between;min-height:18px;margin-top:-10px;color:var(--app-muted);font-size:12px}
+.journal-tray{display:flex;flex-wrap:wrap;gap:8px}
+.journal-tray button{width:92px;height:68px;padding:8px;overflow:hidden;border:1px solid var(--app-line);border-radius:3px;background:var(--app-bg);color:var(--app-ink);font-size:12px;line-height:1.35;text-align:left;cursor:grab;transition:border-color 160ms ease,transform 160ms ease}
+.journal-tray button:active{transform:scale(.97)}
+.journal-tray button[aria-pressed=true]{border-color:var(--app-accent)}
+.journal-tray span{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:3}
+.journal-tray img{display:block;width:calc(100% + 16px);height:calc(100% + 16px);margin:-8px;object-fit:cover}
+.journal-picture{display:grid;gap:14px}
+.journal-picture-preview{display:grid;place-items:center;height:210px;overflow:hidden;background:var(--app-panel);color:var(--app-muted)}
+.journal-picture-preview img{width:100%;height:100%;object-fit:cover}
+.journal-picture-preview.is-framed{justify-self:center;width:min(100%,calc(210px*var(--shape)));height:auto;aspect-ratio:var(--shape)}
+.is-framed img{cursor:grab;touch-action:none;outline:0}
+.is-framed img:focus-visible{outline:2px solid var(--app-accent);outline-offset:-2px}
+.journal-picture-actions{display:flex;align-items:center;gap:8px}
+
+.journal-settings{display:grid;gap:22px;margin:0 0 26px}
+.journal-about{display:grid;gap:10px;color:var(--app-muted);font-size:11px}
+.journal-about textarea{width:100%;padding:0 0 10px;border:0;border-bottom:1px solid var(--app-line);border-radius:0;outline:0;background:none;color:var(--app-ink);font:inherit;font-size:14px;line-height:1.5;resize:none}
+.journal-about textarea:focus{border-color:var(--app-accent)}
+.journal-group{display:grid;gap:10px}
+.journal-group>label{color:var(--app-muted);font-size:11px}
+.journal-fonts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+.journal-fonts button,.journal-row button,.journal-layouts button{border:1px solid transparent;border-radius:3px;background:none;color:var(--app-ink);transition:background-color 160ms ease,border-color 160ms ease,transform 160ms ease}
+.journal-fonts button{display:grid;justify-items:center;gap:3px;padding:8px 2px 7px}
+.journal-fonts b{font-weight:400;line-height:28px}
+.journal-fonts span{color:var(--app-muted);font-size:9px}
+.journal-row{display:flex;gap:4px}
+.journal-row button{flex:1;padding:9px 6px;font-size:12px}
+.journal-inks{display:flex;gap:10px}
+.journal-inks button{width:26px;height:26px;padding:0;border:0;border-radius:50%;box-shadow:0 0 0 2px var(--app-bg),0 0 0 3px transparent;transition:box-shadow 160ms ease,transform 160ms ease}
+.journal-inks button[aria-pressed=true]{box-shadow:0 0 0 2px var(--app-bg),0 0 0 3px var(--app-accent)}
+.journal-layouts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}
+.journal-layouts button{display:grid;place-items:center;padding:7px}
+.journal-fonts button[aria-pressed=true],.journal-row button[aria-pressed=true],.journal-layouts button[aria-pressed=true]{background:var(--app-selected);border-color:var(--app-line)}
+.journal-fonts button:active,.journal-row button:active,.journal-layouts button:active,.journal-inks button:active{transform:scale(.97)}
+@media(hover:hover) and (pointer:fine){.journal-fonts button:not([aria-pressed=true]):hover,.journal-row button:not([aria-pressed=true]):hover,.journal-layouts button:not([aria-pressed=true]):hover{background:var(--app-panel)}}
+.layout-glyph{display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:repeat(12,1fr);gap:1px;width:100%;max-width:46px;padding:4px;border:1px solid var(--app-line);background:var(--app-bg);box-sizing:border-box}
+.layout-glyph i{min-width:0;min-height:0;background:color-mix(in srgb,var(--app-ink) 12%,transparent)}
+.layout-glyph .glyph-I{background:color-mix(in srgb,var(--app-ink) 42%,transparent)}
+.layout-glyph .glyph-T{background:color-mix(in srgb,var(--app-ink) 62%,transparent)}
+
+.journal-page-strip{display:flex;align-items:flex-start;gap:22px;overflow-x:auto;padding:18px 2px 8px;scrollbar-width:none}
+.journal-page-strip::-webkit-scrollbar{display:none}
+.journal-page-card{flex:none;display:grid;gap:8px}
+.journal-page-open{display:block;padding:0;border:0;background:none;transition:transform 160ms ease}
+.journal-page-open:active{transform:scale(.98)}
+.journal-thumb{position:relative;display:block;overflow:hidden;border-radius:2px;background:#f6f3e9;box-shadow:0 0 0 1px #2a2a2414,0 6px 16px #2a2a2414}
+.journal-page-tools{display:flex;justify-content:center;gap:2px}
+.journal-page-tools button{display:grid;place-items:center;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:none;color:var(--app-muted);transition:color 160ms ease,background-color 160ms ease}
+.journal-page-tools button:disabled{opacity:.3}
+@media(hover:hover) and (pointer:fine){.journal-page-tools button:not(:disabled):hover{background:var(--app-panel);color:var(--app-ink)}}
+
+@media(max-width:700px){
+ .kind-switch-large button{font-size:22px}
+ .is-journal.book-stage{height:clamp(420px,calc(100dvh - 210px),700px)}
+ .portfolio-dialog:has(.is-journal){width:100vw;max-width:100vw;max-height:100dvh;margin:0}
+ .portfolio-dialog .is-journal.book-stage{height:calc(100dvh - 130px)}
+ .journal-canvas{height:auto;padding:12px;background:none}
+ .journal-canvas-page{width:100%}
+ .journal-field{font-size:17px;min-height:180px}
+}
+@media(prefers-reduced-motion:reduce){.journal-tool,.journal-scribbles button{transition:none}.journal-ghost,.journal-mic.is-on::after{animation:none}.journal-mic,.j-slot,.j-edge::after,.journal-tray button,.kind-switch button::after,.journal-page-open,.journal-fonts button,.journal-row button,.journal-layouts button,.journal-inks button,.cover-layouts button{transition:none}}
+
+/* Underlined fields show focus with their underline. The global offset outline cut through the label above. */
+.creation-controls :is(.book-name-input,.caption-field input,.journal-about input,.journal-about textarea):focus-visible{outline:none;border-color:var(--app-accent)}
+/* page-flip hides pages it is not showing; .endpaper's forced flex drew a hidden blank page as a 2px dot. */
+.stf__item.endpaper[style*="display: none"]{display:none!important}
+/* One row of book controls: previous, cover, next, evenly sized and centred under the book. */
+.book-stage .stage-bottomline{display:flex;justify-content:center}
+.book-stage .page-navigation{gap:8px}
+.book-stage .page-navigation>button{display:grid;place-items:center;width:40px;height:40px;min-width:40px;padding:0;border:0;border-radius:50%;background:none;justify-self:auto}
+@media(hover:hover) and (pointer:fine){.book-stage .page-navigation>button:not(:disabled):hover{background:var(--app-panel,#0000000a)}}
+.portfolio-dialog .book-stage{height:min(640px,calc(94dvh - 150px))}
+.dialog-edit{position:absolute;top:24px;right:72px;z-index:5;display:inline-flex;align-items:center;gap:8px}
+@media(max-width:600px){.dialog-edit{top:12px;right:60px;min-height:44px}}
+/* Page strip: every page as a thumbnail down the left edge, like a document's page panel. */
+.page-rail{position:absolute;z-index:5;left:0;top:58px;bottom:64px;width:112px;display:flex;flex-direction:column;align-items:center;gap:14px;padding:6px 0 24px;overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain}
+.page-rail::-webkit-scrollbar{display:none}
+.page-thumb{position:relative;flex:none;padding:0;border:0;border-radius:3px;background:none;cursor:pointer;opacity:.78;transition:opacity .2s ease,transform .16s ease-out;content-visibility:auto;contain-intrinsic-size:auto 72px auto 100px}
+.page-thumb>.book-page{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.page-thumb[aria-current]{opacity:1;outline:1.5px solid var(--app-accent);outline-offset:3px}
+.page-thumb:active{transform:scale(.97)}
+@media(hover:hover) and (pointer:fine){.page-thumb:hover{opacity:1}}
+.has-rail .book-area{padding-left:112px}
+@media(max-width:640px){
+ .page-rail{top:52px;bottom:56px;width:96px;background:var(--app-bg,#f6f5ef);box-shadow:1px 0 0 var(--app-line,#0000001a)}
+ .has-rail .book-area{padding-left:0}
+}
+@media(prefers-reduced-motion:reduce){.page-thumb{transition:none}}

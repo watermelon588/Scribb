@@ -1,0 +1,51 @@
+/* Gallery and Editorial use one palette; layout and typography remain independent. */
+:root{--app-bg:#faf9f6;--app-panel:#eeeee7;--app-panel-alt:#e9ece3;--app-ink:#303b34;--app-muted:#71796c;--app-line:#d6dbcf;--app-selected:#e4eadb;--app-accent:#41533a;--app-button:#45543c;--app-button-ink:#fffdf6;--app-overlay:#faf9f6f2;color-scheme:light}
+:root[data-theme=dark]{--app-bg:#181c1a;--app-panel:#232925;--app-panel-alt:#2a312b;--app-ink:#e7e9df;--app-muted:#a5afa0;--app-line:#414b40;--app-selected:#354333;--app-accent:#c5d7b5;--app-button:#bfcead;--app-button-ink:#1b2619;--app-overlay:#181c1af2;color-scheme:dark}
+html,body,#root{background:var(--app-bg);color:var(--app-ink)}
+.portfolio-app.style-gallery,.portfolio-app.style-editorial{background:var(--app-bg);color:var(--app-ink)}
+.header-actions{display:flex;align-items:center;gap:14px}.theme-toggle{display:grid;place-items:center;min-width:44px;min-height:44px;border:1px solid var(--app-line);border-radius:50%;background:transparent;color:var(--app-ink)}
+.portfolio-app :is(.portfolio-header,.feed-toolbar,.feed-footer,.collection-toolbar,.reference-shelf-rail,.creation-controls,.collection-book,.creator-identity,.creator-cover){border-color:var(--app-line)}
+.portfolio-app :is(.portfolio-header nav button,.artist-details p,.artist-links,.eyebrow,.feed-intro p,.feed-intro-aside,.feed-author small,.feed-category,.feed-edition,.feed-open,.feed-search,.feed-card-caption>div>span,.feed-footer,.feed-side-note p,.feed-demo-label,.feed-creator-profile>div>span,.collection-book-caption:before,.collection-search,.empty-search,.upload-limits,.caption-field,.band-color-row,.cover-rail-controls,.creation-controls label,.placement-controls label,.crop-sliders label){color:var(--app-muted)}
+.portfolio-app :is(.wordmark,.artist-details h1,.artist-details h1 span,.collection-heading h2,.collection-book-caption h3,.feed-intro h1,.feed-card-caption h2,.feed-author,.feed-create-link,.feed-creator h1,.feed-side-note h2,.shelf-selection h3,.quiet-button,.creation-heading,.artwork-editor h2){color:var(--app-ink)}
+.portfolio-app .portfolio-header nav button[aria-current=page]{color:var(--app-accent)}
+.portfolio-app :is(.profile-avatar,.artist-portrait){background:var(--app-panel-alt);border-color:var(--app-line);color:var(--app-ink)}
+.portfolio-app :is(.collection-book-open,.feed-book-scene,.feed-card:nth-child(n) .feed-book-scene,.creation-preview,.canvas-editor,.book-stage,.art-upload-empty,.artwork-edit-preview){background:var(--app-panel)}
+.portfolio-app .book-stage{color:var(--app-muted)}
+.portfolio-app :is(.style-picker button,.collection-view-switch button,.feed-toolbar button,.binding-choices button,.visual-formats button,.visual-papers button,.motion-choices button,.outline-button,.feed-load,.canvas-actions button,.editor-done,.artwork-tools button,.art-order button,.canvas-layout-toggle button,.shelf-actions button){color:var(--app-muted);border-color:var(--app-line);background:transparent}
+.portfolio-app :is(.style-picker button,.collection-view-switch button,.feed-toolbar button,.binding-choices button,.visual-formats button,.visual-papers button,.motion-choices button,.canvas-actions button,.canvas-layout-toggle button)[aria-pressed=true]{background:var(--app-selected);border-color:var(--app-accent);color:var(--app-accent)}
+.portfolio-app :is(.solid-button,.crop-actions .solid-button){background:var(--app-button);color:var(--app-button-ink);border-color:var(--app-button)}
+.portfolio-app :is(.feed-reactions button,.icon-button,.cover-toggle){color:var(--app-muted)}
+.portfolio-app .feed-reactions button[aria-pressed=true]{color:#bd7e6c}
+.portfolio-app :is(.book-name-input,.caption-field input,.collection-search input,.feed-search input,.portfolio-dialog input,.placement-controls input){color:var(--app-ink);border-color:var(--app-line);background:transparent}
+.portfolio-app input::placeholder{color:var(--app-muted);opacity:.8}
+.portfolio-app :is(.portfolio-dialog,.notification){background:var(--app-bg);color:var(--app-ink);border-color:var(--app-line)}
+.portfolio-app .portfolio-dialog::backdrop{background:#0b110d99;backdrop-filter:blur(5px)}
+.portfolio-app .mobile-navigation{background:var(--app-overlay);border-color:var(--app-line)}
+.portfolio-app .mobile-navigation button{color:var(--app-muted)}.portfolio-app .mobile-navigation button[aria-current=page]{color:var(--app-accent)}
+.portfolio-app .feed-avatar-stack button{border-color:var(--app-bg)}
+.portfolio-app .style-picker{justify-content:flex-end}.portfolio-app .book-stage:fullscreen{background:var(--app-panel)}
+:root[data-theme=dark] .portfolio-app :is(.art-upload-empty,.artwork-edit-card,.placement-controls,.crop-editor,.canvas-layout-toggle,.shelf-selection,.collection-search){border-color:var(--app-line)}
+:root[data-theme=dark] .portfolio-app :is(.placement-controls,.canvas-layout-toggle){background:var(--app-panel);color:var(--app-ink)}
+:root[data-theme=dark] .portfolio-app .book-ground-shadow{opacity:.35}
+:root[data-theme=dark] .portfolio-app .book-stage::before{opacity:.06}
+.portfolio-app .binding-choices .binding-icon{background:var(--app-panel-alt);color:var(--app-muted);border-color:var(--app-muted)}
+@media(max-width:600px){.header-actions{gap:8px}.theme-toggle{width:40px;height:44px;border:0}.portfolio-app .style-picker{justify-content:center;gap:10px}.portfolio-app .style-picker button{padding:8px 16px}}
+:root{background:var(--app-bg);color:var(--app-ink);--line:var(--app-line)}
+.portfolio-app .art-upload-empty{color:var(--app-muted)}
+.portfolio-app .creator-colors button{border-color:var(--app-bg)}
+.portfolio-app .creator-colors button[aria-pressed=true]{outline-color:var(--app-accent)}
+/* Compact presentation switches retain accessible labels and focus indicators. */
+.portfolio-app .style-picker{margin:0 auto;padding:2px 5%;gap:2px;justify-content:flex-end;min-height:40px}
+.portfolio-app .style-picker button,.portfolio-app .style-picker button[aria-pressed=true]{display:grid;place-items:center;width:36px;height:36px;min-height:36px;padding:8px;border:0;border-radius:0;background:transparent;color:var(--app-muted);opacity:.55}
+.portfolio-app .style-picker button[aria-pressed=true]{color:var(--app-accent);opacity:1}
+.portfolio-app .style-picker .style-glyph{opacity:1;transform:none}
+.portfolio-app .feed-page{padding-top:12px}
+.style-gallery .feed-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 24px}
+.style-gallery .feed-book-scene{height:320px}
+.style-gallery .feed-card-heading{margin-bottom:12px}
+.style-gallery .feed-card-caption{padding:14px 0;align-items:flex-start;gap:8px}
+.style-gallery .feed-card-caption h2{font-size:18px;line-height:1.4}
+.style-gallery .feed-reactions{gap:0;flex-shrink:0}
+.style-gallery .feed-reactions button{min-width:36px}
+@media(max-width:1100px) and (min-width:601px){.style-gallery .feed-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.portfolio-app .style-picker{padding:0 20px;min-height:44px;gap:0}.portfolio-app .style-picker button{width:44px;height:44px;min-height:44px}.style-gallery .feed-grid{grid-template-columns:1fr;gap:24px}.style-gallery .feed-book-scene{height:390px}.style-gallery .feed-reactions button{min-width:44px}.portfolio-app .feed-page{padding-top:8px}}

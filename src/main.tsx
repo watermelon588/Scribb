@@ -3,9 +3,26 @@ import ReactDOM from 'react-dom/client'
 import '@fontsource-variable/manrope'
 import '@fontsource-variable/newsreader'
 import '@fontsource-variable/dm-sans'
-import App from './App'
+import '@fontsource-variable/newsreader/wght-italic.css'
+import '@fontsource-variable/dm-sans/wght-italic.css'
+import '@fontsource-variable/cormorant-garamond'
+import '@fontsource-variable/cormorant-garamond/wght-italic.css'
+import '@fontsource-variable/caveat'
+import '@fontsource/courier-prime/400.css'
+import '@fontsource/courier-prime/700.css'
+import '@fontsource/courier-prime/400-italic.css'
+import '@fontsource/zilla-slab/400.css'
+import '@fontsource/zilla-slab/700.css'
+import '@fontsource/zilla-slab/400-italic.css'
+import '@fontsource/shadows-into-light/400.css'
+import '@fontsource/la-belle-aurore/400.css'
+import '@fontsource/reenie-beanie/400.css'
+import Profile from './Profile'
 import './styles.css'
+import './theme.css'
+import './journal.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode><App /></React.StrictMode>,
+  <React.StrictMode><Profile /></React.StrictMode>,
 )
+

@@ -1,0 +1,3340 @@
+{
+  "version": 1,
+  "format": "image/png",
+  "maxEdge": 320,
+  "count": 204,
+  "totalBytes": 4260667,
+  "categories": [
+    {
+      "id": "anime",
+      "name": "Anime",
+      "count": 35
+    },
+    {
+      "id": "calendars",
+      "name": "Calendars",
+      "count": 12
+    },
+    {
+      "id": "cutesy",
+      "name": "Cutesy",
+      "count": 28
+    },
+    {
+      "id": "expressions",
+      "name": "Expressions",
+      "count": 19
+    },
+    {
+      "id": "gratitude",
+      "name": "Gratitude",
+      "count": 11
+    },
+    {
+      "id": "japanese",
+      "name": "Japanese",
+      "count": 14
+    },
+    {
+      "id": "music",
+      "name": "Music",
+      "count": 8
+    },
+    {
+      "id": "nature",
+      "name": "Nature",
+      "count": 6
+    },
+    {
+      "id": "philosophy",
+      "name": "Philosophy",
+      "count": 15
+    },
+    {
+      "id": "quotes",
+      "name": "Quotes",
+      "count": 27
+    },
+    {
+      "id": "retro-tech",
+      "name": "Retro Tech",
+      "count": 17
+    },
+    {
+      "id": "travel",
+      "name": "Travel",
+      "count": 2
+    },
+    {
+      "id": "vintage",
+      "name": "Vintage",
+      "count": 10
+    }
+  ],
+  "stickers": [
+    {
+      "id": "whitman-eyes",
+      "name": "Whitman Eyes",
+      "category": "quotes",
+      "src": "/stickers/quotes/whitman-eyes.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 19765,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        18,
+        18,
+        423,
+        122
+      ]
+    },
+    {
+      "id": "joyce-moments",
+      "name": "Joyce Moments",
+      "category": "quotes",
+      "src": "/stickers/quotes/joyce-moments.png",
+      "width": 210,
+      "height": 210,
+      "bytes": 10795,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        428,
+        19,
+        622,
+        82
+      ]
+    },
+    {
+      "id": "shakespeare-be-true",
+      "name": "Shakespeare Be True",
+      "category": "quotes",
+      "src": "/stickers/quotes/shakespeare-be-true.png",
+      "width": 190,
+      "height": 190,
+      "bytes": 14695,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        26,
+        144,
+        200,
+        302
+      ]
+    },
+    {
+      "id": "fitzgerald-intimacy",
+      "name": "Fitzgerald Intimacy",
+      "category": "quotes",
+      "src": "/stickers/quotes/fitzgerald-intimacy.png",
+      "width": 239,
+      "height": 239,
+      "bytes": 18123,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        211,
+        136,
+        434,
+        277
+      ]
+    },
+    {
+      "id": "augustine-love",
+      "name": "Augustine Love",
+      "category": "philosophy",
+      "src": "/stickers/philosophy/augustine-love.png",
+      "width": 264,
+      "height": 264,
+      "bytes": 20280,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        458,
+        87,
+        619,
+        335
+      ]
+    },
+    {
+      "id": "dickinson-nerve",
+      "name": "Dickinson Nerve",
+      "category": "quotes",
+      "src": "/stickers/quotes/dickinson-nerve.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 23161,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        627,
+        21,
+        772,
+        332
+      ]
+    },
+    {
+      "id": "gibran-winter",
+      "name": "Gibran Winter",
+      "category": "philosophy",
+      "src": "/stickers/philosophy/gibran-winter.png",
+      "width": 213,
+      "height": 213,
+      "bytes": 17541,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        19,
+        322,
+        216,
+        414
+      ]
+    },
+    {
+      "id": "fitzgerald-dreams",
+      "name": "Fitzgerald Dreams",
+      "category": "quotes",
+      "src": "/stickers/quotes/fitzgerald-dreams.png",
+      "width": 244,
+      "height": 244,
+      "bytes": 25031,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        226,
+        293,
+        454,
+        449
+      ]
+    },
+    {
+      "id": "woolf-stars",
+      "name": "Woolf Stars",
+      "category": "philosophy",
+      "src": "/stickers/philosophy/woolf-stars.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 43716,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        462,
+        348,
+        774,
+        505
+      ]
+    },
+    {
+      "id": "wilde-world",
+      "name": "Wilde World",
+      "category": "quotes",
+      "src": "/stickers/quotes/wilde-world.png",
+      "width": 218,
+      "height": 218,
+      "bytes": 18660,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        17,
+        429,
+        219,
+        522
+      ]
+    },
+    {
+      "id": "mandela-head-heart",
+      "name": "Mandela Head Heart",
+      "category": "philosophy",
+      "src": "/stickers/philosophy/mandela-head-heart.png",
+      "width": 236,
+      "height": 236,
+      "bytes": 32940,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        233,
+        462,
+        453,
+        638
+      ]
+    },
+    {
+      "id": "shakespeare-love",
+      "name": "Shakespeare Love",
+      "category": "quotes",
+      "src": "/stickers/quotes/shakespeare-love.png",
+      "width": 216,
+      "height": 216,
+      "bytes": 23915,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        18,
+        536,
+        218,
+        695
+      ]
+    },
+    {
+      "id": "hemingway-live",
+      "name": "Hemingway Live",
+      "category": "philosophy",
+      "src": "/stickers/philosophy/hemingway-live.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 42250,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        465,
+        516,
+        775,
+        673
+      ]
+    },
+    {
+      "id": "character-inferiors",
+      "name": "Character Inferiors",
+      "category": "quotes",
+      "src": "/stickers/quotes/character-inferiors.png",
+      "width": 246,
+      "height": 246,
+      "bytes": 21808,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        228,
+        650,
+        458,
+        751
+      ]
+    },
+    {
+      "id": "austen-quiet",
+      "name": "Austen Quiet",
+      "category": "quotes",
+      "src": "/stickers/quotes/austen-quiet.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 34944,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        465,
+        680,
+        775,
+        823
+      ]
+    },
+    {
+      "id": "oz-power",
+      "name": "Oz Power",
+      "category": "quotes",
+      "src": "/stickers/quotes/oz-power.png",
+      "width": 223,
+      "height": 223,
+      "bytes": 34294,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        14,
+        710,
+        221,
+        878
+      ]
+    },
+    {
+      "id": "lauren-eden-night",
+      "name": "Lauren Eden Night",
+      "category": "quotes",
+      "src": "/stickers/quotes/lauren-eden-night.png",
+      "width": 217,
+      "height": 217,
+      "bytes": 27609,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        242,
+        763,
+        443,
+        932
+      ]
+    },
+    {
+      "id": "austen-actions",
+      "name": "Austen Actions",
+      "category": "philosophy",
+      "src": "/stickers/philosophy/austen-actions.png",
+      "width": 206,
+      "height": 206,
+      "bytes": 24273,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        464,
+        833,
+        654,
+        1004
+      ]
+    },
+    {
+      "id": "whitman-together",
+      "name": "Whitman Together",
+      "category": "quotes",
+      "src": "/stickers/quotes/whitman-together.png",
+      "width": 187,
+      "height": 187,
+      "bytes": 11585,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        663,
+        835,
+        775,
+        1006
+      ]
+    },
+    {
+      "id": "van-gogh-love",
+      "name": "Van Gogh Love",
+      "category": "quotes",
+      "src": "/stickers/quotes/van-gogh-love.png",
+      "width": 217,
+      "height": 217,
+      "bytes": 23368,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        17,
+        890,
+        218,
+        1007
+      ]
+    },
+    {
+      "id": "keats-selfish-love",
+      "name": "Keats Selfish Love",
+      "category": "quotes",
+      "src": "/stickers/quotes/keats-selfish-love.png",
+      "width": 210,
+      "height": 210,
+      "bytes": 12380,
+      "source": "079921d57dec8cdf47c4a39ab104273a.jpg",
+      "crop": [
+        246,
+        936,
+        440,
+        1013
+      ]
+    },
+    {
+      "id": "black-lucky-cat",
+      "name": "Black Lucky Cat",
+      "category": "japanese",
+      "src": "/stickers/japanese/black-lucky-cat.png",
+      "width": 260,
+      "height": 260,
+      "bytes": 32370,
+      "source": "0ddf5ecd2bb85f0639ddeb0ec89c059c.jpg",
+      "crop": [
+        11,
+        20,
+        255,
+        232
+      ]
+    },
+    {
+      "id": "three-cats",
+      "name": "Three Cats",
+      "category": "japanese",
+      "src": "/stickers/japanese/three-cats.png",
+      "width": 260,
+      "height": 260,
+      "bytes": 27843,
+      "source": "0ddf5ecd2bb85f0639ddeb0ec89c059c.jpg",
+      "crop": [
+        274,
+        20,
+        486,
+        264
+      ]
+    },
+    {
+      "id": "red-poppies",
+      "name": "Red Poppies",
+      "category": "nature",
+      "src": "/stickers/nature/red-poppies.png",
+      "width": 254,
+      "height": 254,
+      "bytes": 30635,
+      "source": "0ddf5ecd2bb85f0639ddeb0ec89c059c.jpg",
+      "crop": [
+        499,
+        23,
+        708,
+        261
+      ]
+    },
+    {
+      "id": "white-lucky-cat",
+      "name": "White Lucky Cat",
+      "category": "japanese",
+      "src": "/stickers/japanese/white-lucky-cat.png",
+      "width": 258,
+      "height": 258,
+      "bytes": 32670,
+      "source": "0ddf5ecd2bb85f0639ddeb0ec89c059c.jpg",
+      "crop": [
+        14,
+        243,
+        256,
+        454
+      ]
+    },
+    {
+      "id": "standing-cat",
+      "name": "Standing Cat",
+      "category": "japanese",
+      "src": "/stickers/japanese/standing-cat.png",
+      "width": 254,
+      "height": 254,
+      "bytes": 27160,
+      "source": "0ddf5ecd2bb85f0639ddeb0ec89c059c.jpg",
+      "crop": [
+        271,
+        280,
+        478,
+        518
+      ]
+    },
+    {
+      "id": "ufo-polka-dots",
+      "name": "Ufo Polka Dots",
+      "category": "japanese",
+      "src": "/stickers/japanese/ufo-polka-dots.png",
+      "width": 260,
+      "height": 260,
+      "bytes": 29722,
+      "source": "0ddf5ecd2bb85f0639ddeb0ec89c059c.jpg",
+      "crop": [
+        501,
+        283,
+        713,
+        527
+      ]
+    },
+    {
+      "id": "sleeping-cat",
+      "name": "Sleeping Cat",
+      "category": "japanese",
+      "src": "/stickers/japanese/sleeping-cat.png",
+      "width": 254,
+      "height": 254,
+      "bytes": 29649,
+      "source": "0ddf5ecd2bb85f0639ddeb0ec89c059c.jpg",
+      "crop": [
+        15,
+        469,
+        253,
+        674
+      ]
+    },
+    {
+      "id": "cat-in-chair",
+      "name": "Cat In Chair",
+      "category": "japanese",
+      "src": "/stickers/japanese/cat-in-chair.png",
+      "width": 258,
+      "height": 258,
+      "bytes": 24512,
+      "source": "0ddf5ecd2bb85f0639ddeb0ec89c059c.jpg",
+      "crop": [
+        266,
+        536,
+        477,
+        778
+      ]
+    },
+    {
+      "id": "blue-bowl",
+      "name": "Blue Bowl",
+      "category": "japanese",
+      "src": "/stickers/japanese/blue-bowl.png",
+      "width": 259,
+      "height": 259,
+      "bytes": 27580,
+      "source": "0ddf5ecd2bb85f0639ddeb0ec89c059c.jpg",
+      "crop": [
+        500,
+        543,
+        709,
+        786
+      ]
+    },
+    {
+      "id": "kokeshi-dolls",
+      "name": "Kokeshi Dolls",
+      "category": "japanese",
+      "src": "/stickers/japanese/kokeshi-dolls.png",
+      "width": 252,
+      "height": 252,
+      "bytes": 28999,
+      "source": "0ddf5ecd2bb85f0639ddeb0ec89c059c.jpg",
+      "crop": [
+        18,
+        692,
+        254,
+        899
+      ]
+    },
+    {
+      "id": "goldfish-wind-chime",
+      "name": "Goldfish Wind Chime",
+      "category": "japanese",
+      "src": "/stickers/japanese/goldfish-wind-chime.png",
+      "width": 255,
+      "height": 255,
+      "bytes": 27417,
+      "source": "0ddf5ecd2bb85f0639ddeb0ec89c059c.jpg",
+      "crop": [
+        265,
+        790,
+        481,
+        1029
+      ]
+    },
+    {
+      "id": "paper-lantern",
+      "name": "Paper Lantern",
+      "category": "japanese",
+      "src": "/stickers/japanese/paper-lantern.png",
+      "width": 258,
+      "height": 258,
+      "bytes": 24867,
+      "source": "0ddf5ecd2bb85f0639ddeb0ec89c059c.jpg",
+      "crop": [
+        499,
+        806,
+        711,
+        1048
+      ]
+    },
+    {
+      "id": "summer-fans",
+      "name": "Summer Fans",
+      "category": "japanese",
+      "src": "/stickers/japanese/summer-fans.png",
+      "width": 259,
+      "height": 259,
+      "bytes": 28670,
+      "source": "0ddf5ecd2bb85f0639ddeb0ec89c059c.jpg",
+      "crop": [
+        34,
+        923,
+        245,
+        1166
+      ]
+    },
+    {
+      "id": "koinobori",
+      "name": "Koinobori",
+      "category": "japanese",
+      "src": "/stickers/japanese/koinobori.png",
+      "width": 248,
+      "height": 248,
+      "bytes": 29941,
+      "source": "0ddf5ecd2bb85f0639ddeb0ec89c059c.jpg",
+      "crop": [
+        273,
+        1053,
+        477,
+        1285
+      ]
+    },
+    {
+      "id": "red-happy-face",
+      "name": "Red Happy Face",
+      "category": "expressions",
+      "src": "/stickers/expressions/red-happy-face.png",
+      "width": 245,
+      "height": 245,
+      "bytes": 30846,
+      "source": "166d4d168838d9dc368ed1724347f8ce.jpg",
+      "crop": [
+        68,
+        151,
+        312,
+        365
+      ]
+    },
+    {
+      "id": "purple-laughing-face",
+      "name": "Purple Laughing Face",
+      "category": "expressions",
+      "src": "/stickers/expressions/purple-laughing-face.png",
+      "width": 285,
+      "height": 285,
+      "bytes": 32625,
+      "source": "166d4d168838d9dc368ed1724347f8ce.jpg",
+      "crop": [
+        330,
+        150,
+        611,
+        418
+      ]
+    },
+    {
+      "id": "blue-long-face",
+      "name": "Blue Long Face",
+      "category": "expressions",
+      "src": "/stickers/expressions/blue-long-face.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 34207,
+      "source": "166d4d168838d9dc368ed1724347f8ce.jpg",
+      "crop": [
+        609,
+        139,
+        799,
+        451
+      ]
+    },
+    {
+      "id": "olive-unimpressed-face",
+      "name": "Olive Unimpressed Face",
+      "category": "expressions",
+      "src": "/stickers/expressions/olive-unimpressed-face.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 40595,
+      "source": "166d4d168838d9dc368ed1724347f8ce.jpg",
+      "crop": [
+        79,
+        365,
+        399,
+        601
+      ]
+    },
+    {
+      "id": "yellow-star-eyes",
+      "name": "Yellow Star Eyes",
+      "category": "expressions",
+      "src": "/stickers/expressions/yellow-star-eyes.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 34847,
+      "source": "166d4d168838d9dc368ed1724347f8ce.jpg",
+      "crop": [
+        406,
+        419,
+        763,
+        641
+      ]
+    },
+    {
+      "id": "blue-sad-face",
+      "name": "Blue Sad Face",
+      "category": "expressions",
+      "src": "/stickers/expressions/blue-sad-face.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 46737,
+      "source": "166d4d168838d9dc368ed1724347f8ce.jpg",
+      "crop": [
+        78,
+        590,
+        337,
+        927
+      ]
+    },
+    {
+      "id": "red-shocked-face",
+      "name": "Red Shocked Face",
+      "category": "expressions",
+      "src": "/stickers/expressions/red-shocked-face.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 42910,
+      "source": "166d4d168838d9dc368ed1724347f8ce.jpg",
+      "crop": [
+        315,
+        612,
+        637,
+        880
+      ]
+    },
+    {
+      "id": "purple-surprised-face",
+      "name": "Purple Surprised Face",
+      "category": "expressions",
+      "src": "/stickers/expressions/purple-surprised-face.png",
+      "width": 313,
+      "height": 313,
+      "bytes": 27032,
+      "source": "166d4d168838d9dc368ed1724347f8ce.jpg",
+      "crop": [
+        637,
+        591,
+        801,
+        901
+      ]
+    },
+    {
+      "id": "lime-flat-face",
+      "name": "Lime Flat Face",
+      "category": "expressions",
+      "src": "/stickers/expressions/lime-flat-face.png",
+      "width": 300,
+      "height": 300,
+      "bytes": 22700,
+      "source": "166d4d168838d9dc368ed1724347f8ce.jpg",
+      "crop": [
+        85,
+        924,
+        382,
+        1097
+      ]
+    },
+    {
+      "id": "purple-dizzy-face",
+      "name": "Purple Dizzy Face",
+      "category": "expressions",
+      "src": "/stickers/expressions/purple-dizzy-face.png",
+      "width": 225,
+      "height": 225,
+      "bytes": 21955,
+      "source": "166d4d168838d9dc368ed1724347f8ce.jpg",
+      "crop": [
+        373,
+        868,
+        542,
+        1092
+      ]
+    },
+    {
+      "id": "orange-smirk-face",
+      "name": "Orange Smirk Face",
+      "category": "expressions",
+      "src": "/stickers/expressions/orange-smirk-face.png",
+      "width": 250,
+      "height": 250,
+      "bytes": 26175,
+      "source": "166d4d168838d9dc368ed1724347f8ce.jpg",
+      "crop": [
+        541,
+        902,
+        789,
+        1090
+      ]
+    },
+    {
+      "id": "jiji-friends-blue",
+      "name": "Jiji Friends Blue",
+      "category": "anime",
+      "src": "/stickers/anime/jiji-friends-blue.png",
+      "width": 230,
+      "height": 230,
+      "bytes": 35598,
+      "source": "54b7c9d14751385a50cb45f0b26a7ca5.jpg",
+      "crop": [
+        24,
+        32,
+        248,
+        256
+      ]
+    },
+    {
+      "id": "silver-mobile",
+      "name": "Silver Mobile",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/silver-mobile.png",
+      "width": 145,
+      "height": 145,
+      "bytes": 7526,
+      "source": "54b7c9d14751385a50cb45f0b26a7ca5.jpg",
+      "crop": [
+        260,
+        42,
+        353,
+        222
+      ]
+    },
+    {
+      "id": "blue-radio",
+      "name": "Blue Radio",
+      "category": "music",
+      "src": "/stickers/music/blue-radio.png",
+      "width": 210,
+      "height": 210,
+      "bytes": 20813,
+      "source": "54b7c9d14751385a50cb45f0b26a7ca5.jpg",
+      "crop": [
+        356,
+        30,
+        565,
+        233
+      ]
+    },
+    {
+      "id": "blue-starfish",
+      "name": "Blue Starfish",
+      "category": "nature",
+      "src": "/stickers/nature/blue-starfish.png",
+      "width": 112,
+      "height": 112,
+      "bytes": 3976,
+      "source": "54b7c9d14751385a50cb45f0b26a7ca5.jpg",
+      "crop": [
+        578,
+        36,
+        687,
+        142
+      ]
+    },
+    {
+      "id": "periwinkle-star",
+      "name": "Periwinkle Star",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/periwinkle-star.png",
+      "width": 147,
+      "height": 147,
+      "bytes": 3660,
+      "source": "54b7c9d14751385a50cb45f0b26a7ca5.jpg",
+      "crop": [
+        550,
+        116,
+        693,
+        260
+      ]
+    },
+    {
+      "id": "peanuts-dinner",
+      "name": "Peanuts Dinner",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/peanuts-dinner.png",
+      "width": 275,
+      "height": 275,
+      "bytes": 44169,
+      "source": "54b7c9d14751385a50cb45f0b26a7ca5.jpg",
+      "crop": [
+        0,
+        268,
+        275,
+        536
+      ]
+    },
+    {
+      "id": "jiji-head-blue",
+      "name": "Jiji Head Blue",
+      "category": "anime",
+      "src": "/stickers/anime/jiji-head-blue.png",
+      "width": 164,
+      "height": 164,
+      "bytes": 7339,
+      "source": "54b7c9d14751385a50cb45f0b26a7ca5.jpg",
+      "crop": [
+        274,
+        271,
+        407,
+        437
+      ]
+    },
+    {
+      "id": "hello-kitty-disc",
+      "name": "Hello Kitty Disc",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/hello-kitty-disc.png",
+      "width": 234,
+      "height": 234,
+      "bytes": 31973,
+      "source": "54b7c9d14751385a50cb45f0b26a7ca5.jpg",
+      "crop": [
+        434,
+        253,
+        671,
+        491
+      ]
+    },
+    {
+      "id": "great-wave-stamp",
+      "name": "Great Wave Stamp",
+      "category": "vintage",
+      "src": "/stickers/vintage/great-wave-stamp.png",
+      "width": 297,
+      "height": 297,
+      "bytes": 51183,
+      "source": "54b7c9d14751385a50cb45f0b26a7ca5.jpg",
+      "crop": [
+        242,
+        485,
+        525,
+        708
+      ]
+    },
+    {
+      "id": "blue-rabbit-carton",
+      "name": "Blue Rabbit Carton",
+      "category": "japanese",
+      "src": "/stickers/japanese/blue-rabbit-carton.png",
+      "width": 170,
+      "height": 170,
+      "bytes": 12375,
+      "source": "54b7c9d14751385a50cb45f0b26a7ca5.jpg",
+      "crop": [
+        25,
+        558,
+        138,
+        725
+      ]
+    },
+    {
+      "id": "blue-flower",
+      "name": "Blue Flower",
+      "category": "nature",
+      "src": "/stickers/nature/blue-flower.png",
+      "width": 148,
+      "height": 148,
+      "bytes": 10735,
+      "source": "54b7c9d14751385a50cb45f0b26a7ca5.jpg",
+      "crop": [
+        550,
+        520,
+        700,
+        660
+      ]
+    },
+    {
+      "id": "blue-teddy-bear",
+      "name": "Blue Teddy Bear",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/blue-teddy-bear.png",
+      "width": 232,
+      "height": 232,
+      "bytes": 25222,
+      "source": "54b7c9d14751385a50cb45f0b26a7ca5.jpg",
+      "crop": [
+        507,
+        679,
+        716,
+        901
+      ]
+    },
+    {
+      "id": "playland-ticket",
+      "name": "Playland Ticket",
+      "category": "vintage",
+      "src": "/stickers/vintage/playland-ticket.png",
+      "width": 247,
+      "height": 247,
+      "bytes": 22380,
+      "source": "54b7c9d14751385a50cb45f0b26a7ca5.jpg",
+      "crop": [
+        48,
+        735,
+        291,
+        860
+      ]
+    },
+    {
+      "id": "blue-safety-pins",
+      "name": "Blue Safety Pins",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/blue-safety-pins.png",
+      "width": 117,
+      "height": 117,
+      "bytes": 5779,
+      "source": "54b7c9d14751385a50cb45f0b26a7ca5.jpg",
+      "crop": [
+        398,
+        784,
+        506,
+        884
+      ]
+    },
+    {
+      "id": "toritetsu-train-poster",
+      "name": "Toritetsu Train Poster",
+      "category": "travel",
+      "src": "/stickers/travel/toritetsu-train-poster.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 54046,
+      "source": "54b7c9d14751385a50cb45f0b26a7ca5.jpg",
+      "crop": [
+        29,
+        883,
+        292,
+        1255
+      ]
+    },
+    {
+      "id": "mount-fuji-postage",
+      "name": "Mount Fuji Postage",
+      "category": "travel",
+      "src": "/stickers/travel/mount-fuji-postage.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 68149,
+      "source": "54b7c9d14751385a50cb45f0b26a7ca5.jpg",
+      "crop": [
+        336,
+        907,
+        651,
+        1272
+      ]
+    },
+    {
+      "id": "grateful-water",
+      "name": "Grateful Water",
+      "category": "gratitude",
+      "src": "/stickers/gratitude/grateful-water.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 43803,
+      "source": "81ba239b552b1aed487fd1d085b00bfb.jpg",
+      "crop": [
+        19,
+        21,
+        349,
+        222
+      ]
+    },
+    {
+      "id": "celestial-oval",
+      "name": "Celestial Oval",
+      "category": "gratitude",
+      "src": "/stickers/gratitude/celestial-oval.png",
+      "width": 219,
+      "height": 219,
+      "bytes": 5354,
+      "source": "81ba239b552b1aed487fd1d085b00bfb.jpg",
+      "crop": [
+        360,
+        20,
+        529,
+        223
+      ]
+    },
+    {
+      "id": "right-moment",
+      "name": "Right Moment",
+      "category": "gratitude",
+      "src": "/stickers/gratitude/right-moment.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 12860,
+      "source": "81ba239b552b1aed487fd1d085b00bfb.jpg",
+      "crop": [
+        540,
+        16,
+        822,
+        429
+      ]
+    },
+    {
+      "id": "more-beauty",
+      "name": "More Beauty",
+      "category": "gratitude",
+      "src": "/stickers/gratitude/more-beauty.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 8259,
+      "source": "81ba239b552b1aed487fd1d085b00bfb.jpg",
+      "crop": [
+        20,
+        232,
+        348,
+        435
+      ]
+    },
+    {
+      "id": "days-i-prayed",
+      "name": "Days I Prayed",
+      "category": "gratitude",
+      "src": "/stickers/gratitude/days-i-prayed.png",
+      "width": 218,
+      "height": 218,
+      "bytes": 6056,
+      "source": "81ba239b552b1aed487fd1d085b00bfb.jpg",
+      "crop": [
+        360,
+        233,
+        529,
+        435
+      ]
+    },
+    {
+      "id": "get-outside",
+      "name": "Get Outside",
+      "category": "gratitude",
+      "src": "/stickers/gratitude/get-outside.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 37804,
+      "source": "81ba239b552b1aed487fd1d085b00bfb.jpg",
+      "crop": [
+        16,
+        446,
+        338,
+        890
+      ]
+    },
+    {
+      "id": "waking-up",
+      "name": "Waking Up",
+      "category": "gratitude",
+      "src": "/stickers/gratitude/waking-up.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 9397,
+      "source": "81ba239b552b1aed487fd1d085b00bfb.jpg",
+      "crop": [
+        348,
+        445,
+        672,
+        890
+      ]
+    },
+    {
+      "id": "i-am-grateful",
+      "name": "I Am Grateful",
+      "category": "gratitude",
+      "src": "/stickers/gratitude/i-am-grateful.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 22074,
+      "source": "81ba239b552b1aed487fd1d085b00bfb.jpg",
+      "crop": [
+        681,
+        446,
+        839,
+        890
+      ]
+    },
+    {
+      "id": "happy-is-enough",
+      "name": "Happy Is Enough",
+      "category": "gratitude",
+      "src": "/stickers/gratitude/happy-is-enough.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 8473,
+      "source": "81ba239b552b1aed487fd1d085b00bfb.jpg",
+      "crop": [
+        17,
+        900,
+        422,
+        1101
+      ]
+    },
+    {
+      "id": "quiet-garden",
+      "name": "Quiet Garden",
+      "category": "nature",
+      "src": "/stickers/nature/quiet-garden.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 36914,
+      "source": "81ba239b552b1aed487fd1d085b00bfb.jpg",
+      "crop": [
+        434,
+        899,
+        839,
+        1101
+      ]
+    },
+    {
+      "id": "where-i-am",
+      "name": "Where I Am",
+      "category": "gratitude",
+      "src": "/stickers/gratitude/where-i-am.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 6131,
+      "source": "81ba239b552b1aed487fd1d085b00bfb.jpg",
+      "crop": [
+        17,
+        1112,
+        421,
+        1189
+      ]
+    },
+    {
+      "id": "grateful-stars",
+      "name": "Grateful Stars",
+      "category": "gratitude",
+      "src": "/stickers/gratitude/grateful-stars.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 4513,
+      "source": "81ba239b552b1aed487fd1d085b00bfb.jpg",
+      "crop": [
+        435,
+        1112,
+        838,
+        1189
+      ]
+    },
+    {
+      "id": "botanical-postage",
+      "name": "Botanical Postage",
+      "category": "vintage",
+      "src": "/stickers/vintage/botanical-postage.png",
+      "width": 258,
+      "height": 258,
+      "bytes": 45423,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        24,
+        11,
+        265,
+        291
+      ]
+    },
+    {
+      "id": "chrome-star-large",
+      "name": "Chrome Star Large",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/chrome-star-large.png",
+      "width": 144,
+      "height": 144,
+      "bytes": 6078,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        292,
+        9,
+        432,
+        172
+      ]
+    },
+    {
+      "id": "olive-spiral-large",
+      "name": "Olive Spiral Large",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/olive-spiral-large.png",
+      "width": 102,
+      "height": 102,
+      "bytes": 4189,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        282,
+        167,
+        386,
+        266
+      ]
+    },
+    {
+      "id": "girl-cardigan",
+      "name": "Girl Cardigan",
+      "category": "anime",
+      "src": "/stickers/anime/girl-cardigan.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 17990,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        449,
+        64,
+        569,
+        447
+      ]
+    },
+    {
+      "id": "boy-baggy-jacket",
+      "name": "Boy Baggy Jacket",
+      "category": "anime",
+      "src": "/stickers/anime/boy-baggy-jacket.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 15549,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        567,
+        4,
+        686,
+        446
+      ]
+    },
+    {
+      "id": "chrome-star-medium",
+      "name": "Chrome Star Medium",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/chrome-star-medium.png",
+      "width": 135,
+      "height": 135,
+      "bytes": 5249,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        13,
+        313,
+        144,
+        432
+      ]
+    },
+    {
+      "id": "rock-n-roll-guitar",
+      "name": "Rock N Roll Guitar",
+      "category": "music",
+      "src": "/stickers/music/rock-n-roll-guitar.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 16978,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        17,
+        309,
+        211,
+        682
+      ]
+    },
+    {
+      "id": "protect-the-planet",
+      "name": "Protect The Planet",
+      "category": "philosophy",
+      "src": "/stickers/philosophy/protect-the-planet.png",
+      "width": 230,
+      "height": 230,
+      "bytes": 32077,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        225,
+        308,
+        439,
+        508
+      ]
+    },
+    {
+      "id": "green-retro-tv",
+      "name": "Green Retro Tv",
+      "category": "anime",
+      "src": "/stickers/anime/green-retro-tv.png",
+      "width": 215,
+      "height": 215,
+      "bytes": 22972,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        469,
+        462,
+        670,
+        627
+      ]
+    },
+    {
+      "id": "boy-with-glasses",
+      "name": "Boy With Glasses",
+      "category": "anime",
+      "src": "/stickers/anime/boy-with-glasses.png",
+      "width": 282,
+      "height": 282,
+      "bytes": 22169,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        208,
+        512,
+        413,
+        788
+      ]
+    },
+    {
+      "id": "olive-spiral-small",
+      "name": "Olive Spiral Small",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/olive-spiral-small.png",
+      "width": 61,
+      "height": 61,
+      "bytes": 2214,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        410,
+        521,
+        462,
+        576
+      ]
+    },
+    {
+      "id": "chrome-star-small",
+      "name": "Chrome Star Small",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/chrome-star-small.png",
+      "width": 68,
+      "height": 68,
+      "bytes": 1421,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        398,
+        583,
+        458,
+        639
+      ]
+    },
+    {
+      "id": "black-starburst",
+      "name": "Black Starburst",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/black-starburst.png",
+      "width": 110,
+      "height": 110,
+      "bytes": 1307,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        151,
+        609,
+        270,
+        750
+      ]
+    },
+    {
+      "id": "white-dice",
+      "name": "White Dice",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/white-dice.png",
+      "width": 252,
+      "height": 252,
+      "bytes": 13444,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        441,
+        642,
+        693,
+        809
+      ]
+    },
+    {
+      "id": "girl-with-star",
+      "name": "Girl With Star",
+      "category": "anime",
+      "src": "/stickers/anime/girl-with-star.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 21456,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        21,
+        708,
+        273,
+        1262
+      ]
+    },
+    {
+      "id": "olive-spiral-tiny",
+      "name": "Olive Spiral Tiny",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/olive-spiral-tiny.png",
+      "width": 53,
+      "height": 53,
+      "bytes": 1601,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        216,
+        752,
+        266,
+        801
+      ]
+    },
+    {
+      "id": "botanical-open-book",
+      "name": "Botanical Open Book",
+      "category": "vintage",
+      "src": "/stickers/vintage/botanical-open-book.png",
+      "width": 183,
+      "height": 183,
+      "bytes": 16511,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        220,
+        845,
+        398,
+        1018
+      ]
+    },
+    {
+      "id": "milk-tea",
+      "name": "Milk Tea",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/milk-tea.png",
+      "width": 162,
+      "height": 162,
+      "bytes": 9880,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        391,
+        811,
+        510,
+        963
+      ]
+    },
+    {
+      "id": "black-cat-doodle",
+      "name": "Black Cat Doodle",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/black-cat-doodle.png",
+      "width": 281,
+      "height": 281,
+      "bytes": 11927,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        465,
+        802,
+        718,
+        1078
+      ]
+    },
+    {
+      "id": "illustrated-compact-disc",
+      "name": "Illustrated Compact Disc",
+      "category": "music",
+      "src": "/stickers/music/illustrated-compact-disc.png",
+      "width": 198,
+      "height": 198,
+      "bytes": 23613,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        229,
+        1018,
+        418,
+        1206
+      ]
+    },
+    {
+      "id": "chrome-star-tiny",
+      "name": "Chrome Star Tiny",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/chrome-star-tiny.png",
+      "width": 70,
+      "height": 70,
+      "bytes": 1457,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        396,
+        972,
+        461,
+        1039
+      ]
+    },
+    {
+      "id": "canon-camera",
+      "name": "Canon Camera",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/canon-camera.png",
+      "width": 265,
+      "height": 265,
+      "bytes": 32212,
+      "source": "a2ada1002f67b04c834093961e05a758.jpg",
+      "crop": [
+        427,
+        1092,
+        679,
+        1259
+      ]
+    },
+    {
+      "id": "kiki-well-done",
+      "name": "Kiki Well Done",
+      "category": "anime",
+      "src": "/stickers/anime/kiki-well-done.png",
+      "width": 243,
+      "height": 243,
+      "bytes": 38532,
+      "source": "b2d43e0e06eaa005fa0c010e5596a5dd.jpg",
+      "crop": [
+        10,
+        12,
+        240,
+        258
+      ]
+    },
+    {
+      "id": "jiji-and-lily",
+      "name": "Jiji And Lily",
+      "category": "anime",
+      "src": "/stickers/anime/jiji-and-lily.png",
+      "width": 243,
+      "height": 243,
+      "bytes": 41370,
+      "source": "b2d43e0e06eaa005fa0c010e5596a5dd.jpg",
+      "crop": [
+        251,
+        18,
+        491,
+        259
+      ]
+    },
+    {
+      "id": "jiji-congratulations",
+      "name": "Jiji Congratulations",
+      "category": "anime",
+      "src": "/stickers/anime/jiji-congratulations.png",
+      "width": 244,
+      "height": 244,
+      "bytes": 38134,
+      "source": "b2d43e0e06eaa005fa0c010e5596a5dd.jpg",
+      "crop": [
+        493,
+        18,
+        734,
+        266
+      ]
+    },
+    {
+      "id": "kiki-broom",
+      "name": "Kiki Broom",
+      "category": "anime",
+      "src": "/stickers/anime/kiki-broom.png",
+      "width": 247,
+      "height": 247,
+      "bytes": 23639,
+      "source": "b2d43e0e06eaa005fa0c010e5596a5dd.jpg",
+      "crop": [
+        1,
+        258,
+        169,
+        501
+      ]
+    },
+    {
+      "id": "kiki-checked",
+      "name": "Kiki Checked",
+      "category": "anime",
+      "src": "/stickers/anime/kiki-checked.png",
+      "width": 237,
+      "height": 237,
+      "bytes": 25865,
+      "source": "b2d43e0e06eaa005fa0c010e5596a5dd.jpg",
+      "crop": [
+        164,
+        245,
+        333,
+        483
+      ]
+    },
+    {
+      "id": "tombo-cheering",
+      "name": "Tombo Cheering",
+      "category": "anime",
+      "src": "/stickers/anime/tombo-cheering.png",
+      "width": 243,
+      "height": 243,
+      "bytes": 28515,
+      "source": "b2d43e0e06eaa005fa0c010e5596a5dd.jpg",
+      "crop": [
+        332,
+        266,
+        513,
+        506
+      ]
+    },
+    {
+      "id": "jiji-one-more-time",
+      "name": "Jiji One More Time",
+      "category": "anime",
+      "src": "/stickers/anime/jiji-one-more-time.png",
+      "width": 234,
+      "height": 234,
+      "bytes": 25756,
+      "source": "b2d43e0e06eaa005fa0c010e5596a5dd.jpg",
+      "crop": [
+        517,
+        266,
+        713,
+        510
+      ]
+    },
+    {
+      "id": "jiji-amazing",
+      "name": "Jiji Amazing",
+      "category": "anime",
+      "src": "/stickers/anime/jiji-amazing.png",
+      "width": 235,
+      "height": 235,
+      "bytes": 22956,
+      "source": "b2d43e0e06eaa005fa0c010e5596a5dd.jpg",
+      "crop": [
+        152,
+        518,
+        328,
+        750
+      ]
+    },
+    {
+      "id": "jiji-ok",
+      "name": "Jiji Ok",
+      "category": "anime",
+      "src": "/stickers/anime/jiji-ok.png",
+      "width": 254,
+      "height": 254,
+      "bytes": 24683,
+      "source": "b2d43e0e06eaa005fa0c010e5596a5dd.jpg",
+      "crop": [
+        333,
+        504,
+        529,
+        756
+      ]
+    },
+    {
+      "id": "jujutsu-friends-pets",
+      "name": "Jujutsu Friends Pets",
+      "category": "anime",
+      "src": "/stickers/anime/jujutsu-friends-pets.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 21377,
+      "source": "c3b63b326265493fc12396b6d295709b.jpg",
+      "crop": [
+        105,
+        1,
+        583,
+        251
+      ]
+    },
+    {
+      "id": "jujutsu-koi-pair",
+      "name": "Jujutsu Koi Pair",
+      "category": "anime",
+      "src": "/stickers/anime/jujutsu-koi-pair.png",
+      "width": 271,
+      "height": 271,
+      "bytes": 14308,
+      "source": "c3b63b326265493fc12396b6d295709b.jpg",
+      "crop": [
+        27,
+        263,
+        296,
+        462
+      ]
+    },
+    {
+      "id": "jujutsu-trio",
+      "name": "Jujutsu Trio",
+      "category": "anime",
+      "src": "/stickers/anime/jujutsu-trio.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 37072,
+      "source": "c3b63b326265493fc12396b6d295709b.jpg",
+      "crop": [
+        310,
+        242,
+        647,
+        503
+      ]
+    },
+    {
+      "id": "geto-with-cat",
+      "name": "Geto With Cat",
+      "category": "anime",
+      "src": "/stickers/anime/geto-with-cat.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 13196,
+      "source": "c3b63b326265493fc12396b6d295709b.jpg",
+      "crop": [
+        30,
+        495,
+        244,
+        935
+      ]
+    },
+    {
+      "id": "jujutsu-trio-panel",
+      "name": "Jujutsu Trio Panel",
+      "category": "anime",
+      "src": "/stickers/anime/jujutsu-trio-panel.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 25903,
+      "source": "c3b63b326265493fc12396b6d295709b.jpg",
+      "crop": [
+        251,
+        521,
+        629,
+        683
+      ]
+    },
+    {
+      "id": "gojo-chibi-head",
+      "name": "Gojo Chibi Head",
+      "category": "anime",
+      "src": "/stickers/anime/gojo-chibi-head.png",
+      "width": 108,
+      "height": 108,
+      "bytes": 3382,
+      "source": "c3b63b326265493fc12396b6d295709b.jpg",
+      "crop": [
+        255,
+        707,
+        380,
+        830
+      ]
+    },
+    {
+      "id": "yuji-chibi-head",
+      "name": "Yuji Chibi Head",
+      "category": "anime",
+      "src": "/stickers/anime/yuji-chibi-head.png",
+      "width": 93,
+      "height": 93,
+      "bytes": 1813,
+      "source": "c3b63b326265493fc12396b6d295709b.jpg",
+      "crop": [
+        246,
+        835,
+        355,
+        950
+      ]
+    },
+    {
+      "id": "jujutsu-bicycle",
+      "name": "Jujutsu Bicycle",
+      "category": "anime",
+      "src": "/stickers/anime/jujutsu-bicycle.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 19328,
+      "source": "c3b63b326265493fc12396b6d295709b.jpg",
+      "crop": [
+        363,
+        716,
+        651,
+        1162
+      ]
+    },
+    {
+      "id": "black-star-top",
+      "name": "Black Star Top",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/black-star-top.png",
+      "width": 120,
+      "height": 120,
+      "bytes": 1534,
+      "source": "c3b63b326265493fc12396b6d295709b.jpg",
+      "crop": [
+        17,
+        916,
+        141,
+        1024
+      ]
+    },
+    {
+      "id": "black-star-right",
+      "name": "Black Star Right",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/black-star-right.png",
+      "width": 119,
+      "height": 119,
+      "bytes": 1533,
+      "source": "c3b63b326265493fc12396b6d295709b.jpg",
+      "crop": [
+        130,
+        970,
+        246,
+        1080
+      ]
+    },
+    {
+      "id": "black-star-bottom",
+      "name": "Black Star Bottom",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/black-star-bottom.png",
+      "width": 120,
+      "height": 120,
+      "bytes": 1500,
+      "source": "c3b63b326265493fc12396b6d295709b.jpg",
+      "crop": [
+        32,
+        1033,
+        147,
+        1144
+      ]
+    },
+    {
+      "id": "megumi-chibi-head",
+      "name": "Megumi Chibi Head",
+      "category": "anime",
+      "src": "/stickers/anime/megumi-chibi-head.png",
+      "width": 114,
+      "height": 114,
+      "bytes": 3272,
+      "source": "c3b63b326265493fc12396b6d295709b.jpg",
+      "crop": [
+        240,
+        986,
+        358,
+        1116
+      ]
+    },
+    {
+      "id": "girl-overwhelmed",
+      "name": "Girl Overwhelmed",
+      "category": "expressions",
+      "src": "/stickers/expressions/girl-overwhelmed.png",
+      "width": 183,
+      "height": 183,
+      "bytes": 8199,
+      "source": "cad6938c41299618d40f324df7d8dd8a.jpg",
+      "crop": [
+        9,
+        198,
+        191,
+        353
+      ]
+    },
+    {
+      "id": "girl-thinking",
+      "name": "Girl Thinking",
+      "category": "expressions",
+      "src": "/stickers/expressions/girl-thinking.png",
+      "width": 172,
+      "height": 172,
+      "bytes": 6425,
+      "source": "cad6938c41299618d40f324df7d8dd8a.jpg",
+      "crop": [
+        207,
+        196,
+        361,
+        361
+      ]
+    },
+    {
+      "id": "girl-sighing",
+      "name": "Girl Sighing",
+      "category": "expressions",
+      "src": "/stickers/expressions/girl-sighing.png",
+      "width": 204,
+      "height": 204,
+      "bytes": 7231,
+      "source": "cad6938c41299618d40f324df7d8dd8a.jpg",
+      "crop": [
+        371,
+        204,
+        572,
+        349
+      ]
+    },
+    {
+      "id": "girl-annoyed",
+      "name": "Girl Annoyed",
+      "category": "expressions",
+      "src": "/stickers/expressions/girl-annoyed.png",
+      "width": 157,
+      "height": 157,
+      "bytes": 6445,
+      "source": "cad6938c41299618d40f324df7d8dd8a.jpg",
+      "crop": [
+        572,
+        201,
+        724,
+        350
+      ]
+    },
+    {
+      "id": "girl-side-eye",
+      "name": "Girl Side Eye",
+      "category": "expressions",
+      "src": "/stickers/expressions/girl-side-eye.png",
+      "width": 189,
+      "height": 189,
+      "bytes": 6895,
+      "source": "cad6938c41299618d40f324df7d8dd8a.jpg",
+      "crop": [
+        8,
+        365,
+        195,
+        530
+      ]
+    },
+    {
+      "id": "girl-sleepy",
+      "name": "Girl Sleepy",
+      "category": "expressions",
+      "src": "/stickers/expressions/girl-sleepy.png",
+      "width": 166,
+      "height": 166,
+      "bytes": 7359,
+      "source": "cad6938c41299618d40f324df7d8dd8a.jpg",
+      "crop": [
+        200,
+        365,
+        365,
+        527
+      ]
+    },
+    {
+      "id": "girl-dreaming",
+      "name": "Girl Dreaming",
+      "category": "expressions",
+      "src": "/stickers/expressions/girl-dreaming.png",
+      "width": 164,
+      "height": 164,
+      "bytes": 7537,
+      "source": "cad6938c41299618d40f324df7d8dd8a.jpg",
+      "crop": [
+        371,
+        365,
+        546,
+        534
+      ]
+    },
+    {
+      "id": "girl-unimpressed",
+      "name": "Girl Unimpressed",
+      "category": "expressions",
+      "src": "/stickers/expressions/girl-unimpressed.png",
+      "width": 169,
+      "height": 169,
+      "bytes": 6351,
+      "source": "cad6938c41299618d40f324df7d8dd8a.jpg",
+      "crop": [
+        559,
+        366,
+        730,
+        530
+      ]
+    },
+    {
+      "id": "january-2017-cats",
+      "name": "January 2017 Cats",
+      "category": "calendars",
+      "src": "/stickers/calendars/january-2017-cats.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 33667,
+      "source": "calender.jpg",
+      "crop": [
+        9,
+        17,
+        281,
+        411
+      ]
+    },
+    {
+      "id": "february-2017-leopard",
+      "name": "February 2017 Leopard",
+      "category": "calendars",
+      "src": "/stickers/calendars/february-2017-leopard.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 27743,
+      "source": "calender.jpg",
+      "crop": [
+        308,
+        14,
+        582,
+        412
+      ]
+    },
+    {
+      "id": "march-2017-black-cats",
+      "name": "March 2017 Black Cats",
+      "category": "calendars",
+      "src": "/stickers/calendars/march-2017-black-cats.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 23471,
+      "source": "calender.jpg",
+      "crop": [
+        611,
+        14,
+        887,
+        415
+      ]
+    },
+    {
+      "id": "april-2017-tigers",
+      "name": "April 2017 Tigers",
+      "category": "calendars",
+      "src": "/stickers/calendars/april-2017-tigers.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 30647,
+      "source": "calender.jpg",
+      "crop": [
+        910,
+        14,
+        1190,
+        416
+      ]
+    },
+    {
+      "id": "may-2017-leopards",
+      "name": "May 2017 Leopards",
+      "category": "calendars",
+      "src": "/stickers/calendars/may-2017-leopards.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 27876,
+      "source": "calender.jpg",
+      "crop": [
+        9,
+        440,
+        281,
+        834
+      ]
+    },
+    {
+      "id": "june-2017-calico",
+      "name": "June 2017 Calico",
+      "category": "calendars",
+      "src": "/stickers/calendars/june-2017-calico.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 24053,
+      "source": "calender.jpg",
+      "crop": [
+        309,
+        443,
+        582,
+        837
+      ]
+    },
+    {
+      "id": "july-2017-siamese",
+      "name": "July 2017 Siamese",
+      "category": "calendars",
+      "src": "/stickers/calendars/july-2017-siamese.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 15993,
+      "source": "calender.jpg",
+      "crop": [
+        612,
+        444,
+        886,
+        839
+      ]
+    },
+    {
+      "id": "august-2017-striped-cat",
+      "name": "August 2017 Striped Cat",
+      "category": "calendars",
+      "src": "/stickers/calendars/august-2017-striped-cat.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 32755,
+      "source": "calender.jpg",
+      "crop": [
+        910,
+        444,
+        1191,
+        842
+      ]
+    },
+    {
+      "id": "september-2017-lion",
+      "name": "September 2017 Lion",
+      "category": "calendars",
+      "src": "/stickers/calendars/september-2017-lion.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 28484,
+      "source": "calender.jpg",
+      "crop": [
+        9,
+        865,
+        284,
+        1261
+      ]
+    },
+    {
+      "id": "october-2017-cat-faces",
+      "name": "October 2017 Cat Faces",
+      "category": "calendars",
+      "src": "/stickers/calendars/october-2017-cat-faces.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 28515,
+      "source": "calender.jpg",
+      "crop": [
+        309,
+        870,
+        583,
+        1265
+      ]
+    },
+    {
+      "id": "november-2017-leopard",
+      "name": "November 2017 Leopard",
+      "category": "calendars",
+      "src": "/stickers/calendars/november-2017-leopard.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 30749,
+      "source": "calender.jpg",
+      "crop": [
+        612,
+        872,
+        884,
+        1269
+      ]
+    },
+    {
+      "id": "december-2017-red-cats",
+      "name": "December 2017 Red Cats",
+      "category": "calendars",
+      "src": "/stickers/calendars/december-2017-red-cats.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 35230,
+      "source": "calender.jpg",
+      "crop": [
+        908,
+        872,
+        1195,
+        1273
+      ]
+    },
+    {
+      "id": "paper-files",
+      "name": "Paper Files",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/paper-files.png",
+      "width": 291,
+      "height": 291,
+      "bytes": 3652,
+      "source": "compsci.png",
+      "crop": [
+        35,
+        132,
+        280,
+        420
+      ]
+    },
+    {
+      "id": "pixel-globe",
+      "name": "Pixel Globe",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/pixel-globe.png",
+      "width": 255,
+      "height": 255,
+      "bytes": 22954,
+      "source": "compsci.png",
+      "crop": [
+        300,
+        137,
+        554,
+        387
+      ]
+    },
+    {
+      "id": "pixel-computer",
+      "name": "Pixel Computer",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/pixel-computer.png",
+      "width": 247,
+      "height": 247,
+      "bytes": 7116,
+      "source": "compsci.png",
+      "crop": [
+        588,
+        131,
+        835,
+        377
+      ]
+    },
+    {
+      "id": "pixel-cassette-stack",
+      "name": "Pixel Cassette Stack",
+      "category": "music",
+      "src": "/stickers/music/pixel-cassette-stack.png",
+      "width": 235,
+      "height": 235,
+      "bytes": 4774,
+      "source": "compsci.png",
+      "crop": [
+        865,
+        132,
+        1098,
+        364
+      ]
+    },
+    {
+      "id": "pixel-recycle-bin",
+      "name": "Pixel Recycle Bin",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/pixel-recycle-bin.png",
+      "width": 266,
+      "height": 266,
+      "bytes": 6304,
+      "source": "compsci.png",
+      "crop": [
+        60,
+        443,
+        284,
+        707
+      ]
+    },
+    {
+      "id": "magnifying-glass",
+      "name": "Magnifying Glass",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/magnifying-glass.png",
+      "width": 259,
+      "height": 259,
+      "bytes": 15453,
+      "source": "compsci.png",
+      "crop": [
+        284,
+        399,
+        542,
+        655
+      ]
+    },
+    {
+      "id": "quicktime-movie",
+      "name": "Quicktime Movie",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/quicktime-movie.png",
+      "width": 254,
+      "height": 254,
+      "bytes": 17713,
+      "source": "compsci.png",
+      "crop": [
+        553,
+        390,
+        768,
+        643
+      ]
+    },
+    {
+      "id": "silver-camera-back",
+      "name": "Silver Camera Back",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/silver-camera-back.png",
+      "width": 234,
+      "height": 234,
+      "bytes": 9367,
+      "source": "compsci.png",
+      "crop": [
+        818,
+        401,
+        1046,
+        632
+      ]
+    },
+    {
+      "id": "classic-paint",
+      "name": "Classic Paint",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/classic-paint.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 15516,
+      "source": "compsci.png",
+      "crop": [
+        49,
+        721,
+        587,
+        1227
+      ]
+    },
+    {
+      "id": "what-would-you-edit",
+      "name": "What Would You Edit",
+      "category": "philosophy",
+      "src": "/stickers/philosophy/what-would-you-edit.png",
+      "width": 311,
+      "height": 311,
+      "bytes": 7451,
+      "source": "compsci.png",
+      "crop": [
+        594,
+        659,
+        856,
+        964
+      ]
+    },
+    {
+      "id": "blue-flip-phone",
+      "name": "Blue Flip Phone",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/blue-flip-phone.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 21755,
+      "source": "compsci.png",
+      "crop": [
+        797,
+        641,
+        1127,
+        1242
+      ]
+    },
+    {
+      "id": "pixel-cursor",
+      "name": "Pixel Cursor",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/pixel-cursor.png",
+      "width": 194,
+      "height": 194,
+      "bytes": 3540,
+      "source": "compsci.png",
+      "crop": [
+        620,
+        1015,
+        751,
+        1204
+      ]
+    },
+    {
+      "id": "window-question-dialog",
+      "name": "Window Question Dialog",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/window-question-dialog.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 16468,
+      "source": "compsci.png",
+      "crop": [
+        32,
+        1236,
+        414,
+        1612
+      ]
+    },
+    {
+      "id": "jpeg-file",
+      "name": "Jpeg File",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/jpeg-file.png",
+      "width": 273,
+      "height": 273,
+      "bytes": 20589,
+      "source": "compsci.png",
+      "crop": [
+        419,
+        1327,
+        690,
+        1598
+      ]
+    },
+    {
+      "id": "pixel-cursor-small",
+      "name": "Pixel Cursor Small",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/pixel-cursor-small.png",
+      "width": 208,
+      "height": 208,
+      "bytes": 4104,
+      "source": "compsci.png",
+      "crop": [
+        994,
+        1484,
+        1112,
+        1684
+      ]
+    },
+    {
+      "id": "virtual-pc-console",
+      "name": "Virtual Pc Console",
+      "category": "retro-tech",
+      "src": "/stickers/retro-tech/virtual-pc-console.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 13331,
+      "source": "compsci.png",
+      "crop": [
+        35,
+        1620,
+        612,
+        2028
+      ]
+    },
+    {
+      "id": "destiny-notepad",
+      "name": "Destiny Notepad",
+      "category": "philosophy",
+      "src": "/stickers/philosophy/destiny-notepad.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 25708,
+      "source": "compsci.png",
+      "crop": [
+        610,
+        1639,
+        1072,
+        2048
+      ]
+    },
+    {
+      "id": "framed-hands",
+      "name": "Framed Hands",
+      "category": "vintage",
+      "src": "/stickers/vintage/framed-hands.png",
+      "width": 192,
+      "height": 192,
+      "bytes": 21511,
+      "source": "download.jpg",
+      "crop": [
+        26,
+        25,
+        165,
+        204
+      ]
+    },
+    {
+      "id": "framed-piano",
+      "name": "Framed Piano",
+      "category": "vintage",
+      "src": "/stickers/vintage/framed-piano.png",
+      "width": 197,
+      "height": 197,
+      "bytes": 20026,
+      "source": "download.jpg",
+      "crop": [
+        171,
+        21,
+        342,
+        204
+      ]
+    },
+    {
+      "id": "framed-roses",
+      "name": "Framed Roses",
+      "category": "vintage",
+      "src": "/stickers/vintage/framed-roses.png",
+      "width": 201,
+      "height": 201,
+      "bytes": 18185,
+      "source": "download.jpg",
+      "crop": [
+        348,
+        20,
+        500,
+        210
+      ]
+    },
+    {
+      "id": "red-wax-seal",
+      "name": "Red Wax Seal",
+      "category": "vintage",
+      "src": "/stickers/vintage/red-wax-seal.png",
+      "width": 134,
+      "height": 134,
+      "bytes": 11198,
+      "source": "download.jpg",
+      "crop": [
+        520,
+        30,
+        648,
+        158
+      ]
+    },
+    {
+      "id": "brown-eyed-girl",
+      "name": "Brown Eyed Girl",
+      "category": "quotes",
+      "src": "/stickers/quotes/brown-eyed-girl.png",
+      "width": 186,
+      "height": 186,
+      "bytes": 3945,
+      "source": "download.jpg",
+      "crop": [
+        19,
+        217,
+        190,
+        271
+      ]
+    },
+    {
+      "id": "a-pretty-lady",
+      "name": "A Pretty Lady",
+      "category": "quotes",
+      "src": "/stickers/quotes/a-pretty-lady.png",
+      "width": 215,
+      "height": 215,
+      "bytes": 7757,
+      "source": "download.jpg",
+      "crop": [
+        200,
+        213,
+        399,
+        286
+      ]
+    },
+    {
+      "id": "old-soul",
+      "name": "Old Soul",
+      "category": "philosophy",
+      "src": "/stickers/philosophy/old-soul.png",
+      "width": 244,
+      "height": 244,
+      "bytes": 6918,
+      "source": "download.jpg",
+      "crop": [
+        419,
+        222,
+        647,
+        286
+      ]
+    },
+    {
+      "id": "lady-of-the-moon",
+      "name": "Lady Of The Moon",
+      "category": "quotes",
+      "src": "/stickers/quotes/lady-of-the-moon.png",
+      "width": 165,
+      "height": 165,
+      "bytes": 3314,
+      "source": "download.jpg",
+      "crop": [
+        21,
+        290,
+        170,
+        343
+      ]
+    },
+    {
+      "id": "beauty-and-rage",
+      "name": "Beauty And Rage",
+      "category": "quotes",
+      "src": "/stickers/quotes/beauty-and-rage.png",
+      "width": 284,
+      "height": 284,
+      "bytes": 4348,
+      "source": "download.jpg",
+      "crop": [
+        179,
+        290,
+        447,
+        344
+      ]
+    },
+    {
+      "id": "unforgettable",
+      "name": "Unforgettable",
+      "category": "quotes",
+      "src": "/stickers/quotes/unforgettable.png",
+      "width": 225,
+      "height": 225,
+      "bytes": 5314,
+      "source": "download.jpg",
+      "crop": [
+        454,
+        291,
+        664,
+        345
+      ]
+    },
+    {
+      "id": "heavenly",
+      "name": "Heavenly",
+      "category": "quotes",
+      "src": "/stickers/quotes/heavenly.png",
+      "width": 136,
+      "height": 136,
+      "bytes": 2905,
+      "source": "download.jpg",
+      "crop": [
+        21,
+        351,
+        141,
+        415
+      ]
+    },
+    {
+      "id": "intimacy-understood",
+      "name": "Intimacy Understood",
+      "category": "quotes",
+      "src": "/stickers/quotes/intimacy-understood.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 7643,
+      "source": "download.jpg",
+      "crop": [
+        145,
+        355,
+        520,
+        403
+      ]
+    },
+    {
+      "id": "esome-definition",
+      "name": "Esome Definition",
+      "category": "quotes",
+      "src": "/stickers/quotes/esome-definition.png",
+      "width": 150,
+      "height": 150,
+      "bytes": 3585,
+      "source": "download.jpg",
+      "crop": [
+        525,
+        349,
+        660,
+        411
+      ]
+    },
+    {
+      "id": "drapetomania-definition",
+      "name": "Drapetomania Definition",
+      "category": "philosophy",
+      "src": "/stickers/philosophy/drapetomania-definition.png",
+      "width": 250,
+      "height": 250,
+      "bytes": 7413,
+      "source": "download.jpg",
+      "crop": [
+        17,
+        422,
+        251,
+        496
+      ]
+    },
+    {
+      "id": "elysian-definition",
+      "name": "Elysian Definition",
+      "category": "quotes",
+      "src": "/stickers/quotes/elysian-definition.png",
+      "width": 188,
+      "height": 188,
+      "bytes": 5034,
+      "source": "download.jpg",
+      "crop": [
+        254,
+        425,
+        427,
+        493
+      ]
+    },
+    {
+      "id": "brutally-soft-woman",
+      "name": "Brutally Soft Woman",
+      "category": "quotes",
+      "src": "/stickers/quotes/brutally-soft-woman.png",
+      "width": 273,
+      "height": 273,
+      "bytes": 8626,
+      "source": "download.jpg",
+      "crop": [
+        7,
+        505,
+        264,
+        554
+      ]
+    },
+    {
+      "id": "love-letter-girl",
+      "name": "Love Letter Girl",
+      "category": "quotes",
+      "src": "/stickers/quotes/love-letter-girl.png",
+      "width": 217,
+      "height": 217,
+      "bytes": 5572,
+      "source": "download.jpg",
+      "crop": [
+        269,
+        505,
+        470,
+        572
+      ]
+    },
+    {
+      "id": "pretty-things-witty-words",
+      "name": "Pretty Things Witty Words",
+      "category": "quotes",
+      "src": "/stickers/quotes/pretty-things-witty-words.png",
+      "width": 235,
+      "height": 235,
+      "bytes": 7280,
+      "source": "download.jpg",
+      "crop": [
+        18,
+        567,
+        238,
+        635
+      ]
+    },
+    {
+      "id": "painted-eyes",
+      "name": "Painted Eyes",
+      "category": "vintage",
+      "src": "/stickers/vintage/painted-eyes.png",
+      "width": 223,
+      "height": 223,
+      "bytes": 10296,
+      "source": "download.jpg",
+      "crop": [
+        15,
+        638,
+        222,
+        711
+      ]
+    },
+    {
+      "id": "faceless-suit",
+      "name": "Faceless Suit",
+      "category": "philosophy",
+      "src": "/stickers/philosophy/faceless-suit.png",
+      "width": 301,
+      "height": 301,
+      "bytes": 24240,
+      "source": "download.jpg",
+      "crop": [
+        437,
+        412,
+        675,
+        699
+      ]
+    },
+    {
+      "id": "camus-seated",
+      "name": "Camus Seated",
+      "category": "philosophy",
+      "src": "/stickers/philosophy/camus-seated.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 31080,
+      "source": "download.jpg",
+      "crop": [
+        222,
+        570,
+        495,
+        925
+      ]
+    },
+    {
+      "id": "silver-cassette",
+      "name": "Silver Cassette",
+      "category": "music",
+      "src": "/stickers/music/silver-cassette.png",
+      "width": 178,
+      "height": 178,
+      "bytes": 14840,
+      "source": "download.jpg",
+      "crop": [
+        25,
+        716,
+        193,
+        824
+      ]
+    },
+    {
+      "id": "denon-cassette",
+      "name": "Denon Cassette",
+      "category": "music",
+      "src": "/stickers/music/denon-cassette.png",
+      "width": 188,
+      "height": 188,
+      "bytes": 13885,
+      "source": "download.jpg",
+      "crop": [
+        17,
+        827,
+        193,
+        936
+      ]
+    },
+    {
+      "id": "camus-story-quote",
+      "name": "Camus Story Quote",
+      "category": "philosophy",
+      "src": "/stickers/philosophy/camus-story-quote.png",
+      "width": 269,
+      "height": 269,
+      "bytes": 16174,
+      "source": "download.jpg",
+      "crop": [
+        196,
+        930,
+        450,
+        1045
+      ]
+    },
+    {
+      "id": "camus-portrait",
+      "name": "Camus Portrait",
+      "category": "philosophy",
+      "src": "/stickers/philosophy/camus-portrait.png",
+      "width": 252,
+      "height": 252,
+      "bytes": 13392,
+      "source": "download.jpg",
+      "crop": [
+        11,
+        947,
+        249,
+        1188
+      ]
+    },
+    {
+      "id": "sleeping-ginger-cat",
+      "name": "Sleeping Ginger Cat",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/sleeping-ginger-cat.png",
+      "width": 291,
+      "height": 291,
+      "bytes": 49551,
+      "source": "download.jpg",
+      "crop": [
+        455,
+        921,
+        675,
+        1200
+      ]
+    },
+    {
+      "id": "mob-shigeo-cafe",
+      "name": "Mob Shigeo Cafe",
+      "category": "anime",
+      "src": "/stickers/anime/mob-shigeo-cafe.png",
+      "width": 213,
+      "height": 213,
+      "bytes": 23313,
+      "source": "e4436189e087ea4e907f93a558331a76.jpg",
+      "crop": [
+        37,
+        129,
+        234,
+        286
+      ]
+    },
+    {
+      "id": "mob-reigen-cafe",
+      "name": "Mob Reigen Cafe",
+      "category": "anime",
+      "src": "/stickers/anime/mob-reigen-cafe.png",
+      "width": 212,
+      "height": 212,
+      "bytes": 21231,
+      "source": "e4436189e087ea4e907f93a558331a76.jpg",
+      "crop": [
+        245,
+        130,
+        441,
+        286
+      ]
+    },
+    {
+      "id": "mob-ekubo-cafe",
+      "name": "Mob Ekubo Cafe",
+      "category": "anime",
+      "src": "/stickers/anime/mob-ekubo-cafe.png",
+      "width": 210,
+      "height": 210,
+      "bytes": 23775,
+      "source": "e4436189e087ea4e907f93a558331a76.jpg",
+      "crop": [
+        451,
+        131,
+        646,
+        286
+      ]
+    },
+    {
+      "id": "mob-ritsu-cafe",
+      "name": "Mob Ritsu Cafe",
+      "category": "anime",
+      "src": "/stickers/anime/mob-ritsu-cafe.png",
+      "width": 211,
+      "height": 211,
+      "bytes": 20500,
+      "source": "e4436189e087ea4e907f93a558331a76.jpg",
+      "crop": [
+        38,
+        299,
+        234,
+        447
+      ]
+    },
+    {
+      "id": "mob-teruki-cafe",
+      "name": "Mob Teruki Cafe",
+      "category": "anime",
+      "src": "/stickers/anime/mob-teruki-cafe.png",
+      "width": 212,
+      "height": 212,
+      "bytes": 21263,
+      "source": "e4436189e087ea4e907f93a558331a76.jpg",
+      "crop": [
+        246,
+        299,
+        443,
+        447
+      ]
+    },
+    {
+      "id": "mob-serizawa-cafe",
+      "name": "Mob Serizawa Cafe",
+      "category": "anime",
+      "src": "/stickers/anime/mob-serizawa-cafe.png",
+      "width": 210,
+      "height": 210,
+      "bytes": 22159,
+      "source": "e4436189e087ea4e907f93a558331a76.jpg",
+      "crop": [
+        452,
+        299,
+        647,
+        447
+      ]
+    },
+    {
+      "id": "mob-tome-cafe",
+      "name": "Mob Tome Cafe",
+      "category": "anime",
+      "src": "/stickers/anime/mob-tome-cafe.png",
+      "width": 210,
+      "height": 210,
+      "bytes": 21386,
+      "source": "e4436189e087ea4e907f93a558331a76.jpg",
+      "crop": [
+        135,
+        466,
+        329,
+        616
+      ]
+    },
+    {
+      "id": "mob-ichi-cafe",
+      "name": "Mob Ichi Cafe",
+      "category": "anime",
+      "src": "/stickers/anime/mob-ichi-cafe.png",
+      "width": 211,
+      "height": 211,
+      "bytes": 22204,
+      "source": "e4436189e087ea4e907f93a558331a76.jpg",
+      "crop": [
+        343,
+        466,
+        538,
+        616
+      ]
+    },
+    {
+      "id": "swan-record-art",
+      "name": "Swan Record Art",
+      "category": "music",
+      "src": "/stickers/music/swan-record-art.png",
+      "width": 262,
+      "height": 262,
+      "bytes": 26674,
+      "source": "sticks.png",
+      "crop": [
+        48,
+        54,
+        294,
+        276
+      ]
+    },
+    {
+      "id": "blood-orange-slice",
+      "name": "Blood Orange Slice",
+      "category": "nature",
+      "src": "/stickers/nature/blood-orange-slice.png",
+      "width": 312,
+      "height": 312,
+      "bytes": 54647,
+      "source": "sticks.png",
+      "crop": [
+        421,
+        46,
+        730,
+        354
+      ]
+    },
+    {
+      "id": "serial-experiments-lain-cover",
+      "name": "Serial Experiments Lain Cover",
+      "category": "anime",
+      "src": "/stickers/anime/serial-experiments-lain-cover.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 40446,
+      "source": "sticks.png",
+      "crop": [
+        804,
+        76,
+        1077,
+        485
+      ]
+    },
+    {
+      "id": "japanese-skull-label",
+      "name": "Japanese Skull Label",
+      "category": "vintage",
+      "src": "/stickers/vintage/japanese-skull-label.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 52385,
+      "source": "sticks.png",
+      "crop": [
+        40,
+        359,
+        394,
+        593
+      ]
+    },
+    {
+      "id": "snufkin-oval",
+      "name": "Snufkin Oval",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/snufkin-oval.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 61372,
+      "source": "sticks.png",
+      "crop": [
+        440,
+        427,
+        756,
+        783
+      ]
+    },
+    {
+      "id": "lain-wired-collage",
+      "name": "Lain Wired Collage",
+      "category": "anime",
+      "src": "/stickers/anime/lain-wired-collage.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 66185,
+      "source": "sticks.png",
+      "crop": [
+        49,
+        675,
+        341,
+        1012
+      ]
+    },
+    {
+      "id": "ghost-bird",
+      "name": "Ghost Bird",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/ghost-bird.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 13090,
+      "source": "sticks.png",
+      "crop": [
+        805,
+        593,
+        1037,
+        944
+      ]
+    },
+    {
+      "id": "pink-cat-face",
+      "name": "Pink Cat Face",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/pink-cat-face.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 56863,
+      "source": "sticks.png",
+      "crop": [
+        444,
+        831,
+        749,
+        1177
+      ]
+    },
+    {
+      "id": "star-bunny",
+      "name": "Star Bunny",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/star-bunny.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 28677,
+      "source": "sticks.png",
+      "crop": [
+        797,
+        1001,
+        1100,
+        1348
+      ]
+    },
+    {
+      "id": "scarf-bird",
+      "name": "Scarf Bird",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/scarf-bird.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 7055,
+      "source": "sticks.png",
+      "crop": [
+        43,
+        1097,
+        274,
+        1614
+      ]
+    },
+    {
+      "id": "walking-star",
+      "name": "Walking Star",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/walking-star.png",
+      "width": 294,
+      "height": 294,
+      "bytes": 17134,
+      "source": "sticks.png",
+      "crop": [
+        303,
+        1160,
+        543,
+        1452
+      ]
+    },
+    {
+      "id": "blur-logo",
+      "name": "Blur Logo",
+      "category": "music",
+      "src": "/stickers/music/blur-logo.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 14909,
+      "source": "sticks.png",
+      "crop": [
+        253,
+        1495,
+        612,
+        1637
+      ]
+    },
+    {
+      "id": "red-bunny-badge",
+      "name": "Red Bunny Badge",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/red-bunny-badge.png",
+      "width": 264,
+      "height": 264,
+      "bytes": 25391,
+      "source": "sticks.png",
+      "crop": [
+        624,
+        1357,
+        891,
+        1624
+      ]
+    },
+    {
+      "id": "standing-black-cat",
+      "name": "Standing Black Cat",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/standing-black-cat.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 10632,
+      "source": "sticks.png",
+      "crop": [
+        910,
+        1483,
+        1085,
+        1924
+      ]
+    },
+    {
+      "id": "crossed-roses-oval",
+      "name": "Crossed Roses Oval",
+      "category": "nature",
+      "src": "/stickers/nature/crossed-roses-oval.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 29880,
+      "source": "sticks.png",
+      "crop": [
+        23,
+        1670,
+        278,
+        2014
+      ]
+    },
+    {
+      "id": "sun-cat",
+      "name": "Sun Cat",
+      "category": "cutesy",
+      "src": "/stickers/cutesy/sun-cat.png",
+      "width": 320,
+      "height": 320,
+      "bytes": 34301,
+      "source": "sticks.png",
+      "crop": [
+        385,
+        1682,
+        788,
+        2014
+      ]
+    }
+  ]
+}

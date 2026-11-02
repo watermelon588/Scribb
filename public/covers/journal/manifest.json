@@ -1,0 +1,592 @@
+{
+  "collection": "journal",
+  "format": "webp",
+  "ratios": [
+    "16:9",
+    "1:1",
+    "4:3",
+    "3:4"
+  ],
+  "items": [
+    {
+      "id": "cobalt-rift",
+      "collection": "journal",
+      "group": "journal",
+      "name": "Cobalt Rift",
+      "src": "/covers/journal/cobalt-rift.webp",
+      "width": 910,
+      "height": 1200,
+      "bytes": 315206,
+      "objectPosition": {
+        "16:9": [
+          50,
+          70
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          70
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "daydream-bull",
+      "collection": "journal",
+      "group": "journal",
+      "name": "Daydream Bull",
+      "src": "/covers/journal/daydream-bull.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 979042,
+      "objectPosition": {
+        "16:9": [
+          50,
+          48
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          48
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "dream-plan-create",
+      "collection": "journal",
+      "group": "journal",
+      "name": "Dream Plan Create",
+      "src": "/covers/journal/dream-plan-create.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 789748,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "Dream. Plan. Create."
+    },
+    {
+      "id": "every-day",
+      "collection": "journal",
+      "group": "journal",
+      "name": "Every Day",
+      "src": "/covers/journal/every-day.webp",
+      "width": 1116,
+      "height": 1116,
+      "bytes": 1447014,
+      "objectPosition": {
+        "16:9": [
+          50,
+          10
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          10
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "EVERY DAY IS A NEW DAY"
+    },
+    {
+      "id": "heres-the-plan",
+      "collection": "journal",
+      "group": "journal",
+      "name": "Heres The Plan",
+      "src": "/covers/journal/heres-the-plan.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 2071610,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "OK, here’s the plan..."
+    },
+    {
+      "id": "indigo-flowers",
+      "collection": "journal",
+      "group": "journal",
+      "name": "Indigo Flowers",
+      "src": "/covers/journal/indigo-flowers.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1368806,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "ivory-tiger",
+      "collection": "journal",
+      "group": "journal",
+      "name": "Ivory Tiger",
+      "src": "/covers/journal/ivory-tiger.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 909288,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "leaf-ladder",
+      "collection": "journal",
+      "group": "journal",
+      "name": "Leaf Ladder",
+      "src": "/covers/journal/leaf-ladder.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1087806,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "olive-shape",
+      "collection": "journal",
+      "group": "journal",
+      "name": "Olive Shape",
+      "src": "/covers/journal/olive-shape.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1047760,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "paper-flight",
+      "collection": "journal",
+      "group": "journal",
+      "name": "Paper Flight",
+      "src": "/covers/journal/paper-flight.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 986654,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "plum-arcs",
+      "collection": "journal",
+      "group": "journal",
+      "name": "Plum Arcs",
+      "src": "/covers/journal/plum-arcs.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1722726,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "quiet-bench",
+      "collection": "journal",
+      "group": "journal",
+      "name": "Quiet Bench",
+      "src": "/covers/journal/quiet-bench.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1664858,
+      "objectPosition": {
+        "16:9": [
+          50,
+          100
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          100
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "thoughts-notes-ideas",
+      "collection": "journal",
+      "group": "journal",
+      "name": "Thoughts Notes Ideas",
+      "src": "/covers/journal/thoughts-notes-ideas.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 917852,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "Thoughts Notes & Ideas"
+    },
+    {
+      "id": "tiger-voyage",
+      "collection": "journal",
+      "group": "journal",
+      "name": "Tiger Voyage",
+      "src": "/covers/journal/tiger-voyage.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 2300468,
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "yellow-day",
+      "collection": "journal",
+      "group": "journal",
+      "name": "Yellow Day",
+      "src": "/covers/journal/yellow-day.webp",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1842520,
+      "objectPosition": {
+        "16:9": [
+          20,
+          0
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          20,
+          0
+        ],
+        "3:4": [
+          20,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "blue-stairway",
+      "collection": "journal",
+      "group": "anime",
+      "name": "Blue Stairway",
+      "src": "/covers/journal/anime/blue-stairway.webp",
+      "width": 928,
+      "height": 1086,
+      "bytes": 850004,
+      "objectPosition": {
+        "16:9": [
+          35,
+          75
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          35,
+          75
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "sparklers",
+      "collection": "journal",
+      "group": "anime",
+      "name": "Sparklers",
+      "src": "/covers/journal/anime/sparklers.webp",
+      "width": 904,
+      "height": 1200,
+      "bytes": 897462,
+      "objectPosition": {
+        "16:9": [
+          50,
+          30
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          30
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "summer-evening",
+      "collection": "journal",
+      "group": "anime",
+      "name": "Summer Evening",
+      "src": "/covers/journal/anime/summer-evening.webp",
+      "width": 960,
+      "height": 960,
+      "bytes": 769786,
+      "objectPosition": {
+        "16:9": [
+          50,
+          80
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          80
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": ""
+    },
+    {
+      "id": "torii-light",
+      "collection": "journal",
+      "group": "anime",
+      "name": "Torii Light",
+      "src": "/covers/journal/anime/torii-light.webp",
+      "width": 1200,
+      "height": 1600,
+      "bytes": 3082384,
+      "objectPosition": {
+        "16:9": [
+          50,
+          65
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          65
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "Architectural shrine inscriptions"
+    },
+    {
+      "id": "winter-lanterns",
+      "collection": "journal",
+      "group": "anime",
+      "name": "Winter Lanterns",
+      "src": "/covers/journal/anime/winter-lanterns.webp",
+      "width": 1200,
+      "height": 741,
+      "bytes": 900774,
+      "objectPosition": {
+        "16:9": [
+          43,
+          50
+        ],
+        "1:1": [
+          43,
+          50
+        ],
+        "4:3": [
+          43,
+          50
+        ],
+        "3:4": [
+          43,
+          50
+        ]
+      },
+      "textPreserved": ""
+    }
+  ]
+}

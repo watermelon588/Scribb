@@ -1,0 +1,1483 @@
+{
+  "version": 1,
+  "preparedOn": "2026-11-02",
+  "format": "webp",
+  "encoding": "lossless RGB; metadata removed",
+  "ratios": [
+    "16:9",
+    "1:1",
+    "4:3",
+    "3:4"
+  ],
+  "notes": "One WebP master per design. 21 standalone originals retain their decoded RGB pixels exactly; 19 covers use built-in image edits for flattening, credit removal or framing. These AI reconstructions are not pixel-identical extractions. No CLI/API fallback used. Single-master crops trim different outer parts of the composition; see recommended object positions and review sheets.",
+  "items": [
+    {
+      "group": "journal",
+      "index": 12,
+      "id": "cobalt-rift",
+      "collection": "journal",
+      "method": "lossless-transcode",
+      "source": "journal inspiration/cover/395d100bb4a5f32682e6e867cf4f0e7f.jpg",
+      "width": 910,
+      "height": 1200,
+      "sourceSha256": "cb04e3fc2834265785bd1a6d4d385740ea12607c48a16edce481a1aa67ebd87d",
+      "src": "/covers/journal/cobalt-rift.webp",
+      "file": "public/covers/journal/cobalt-rift.webp",
+      "bytes": 315206,
+      "sha256": "8cf71bf7bf2f1a4db970ada8c3bd95229fc235aa1a3c288d11f89a17d2dfb804",
+      "name": "Cobalt Rift",
+      "objectPosition": {
+        "16:9": [
+          50,
+          70
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          70
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "id": "daydream-bull",
+      "collection": "journal",
+      "source": "journal inspiration/cover/6b795725d050e31a92a4ef6baae13668.jpg",
+      "prompt": "Single targeted size correction to the attached EDIT TARGET. ONE high-resolution square flat cover graphic, same art, same palette. Substantial empty background is intentional. Leave the OUTER QUARTER of the canvas blank on every side. Do NOT zoom in to fill the canvas. No mockup, text, signature or watermark. Keep this exact whimsical charcoal black bull face, white horns, droopy eyes and peach muzzle on cyan. Scale the complete bull's head down to 50% of canvas height and 55% of canvas width. Keep both horn tips and the complete rounded muzzle visible, with the whole face in x=23%..77%, y=26%..74%. Continue the same cyan backdrop to all four square edges. Only complete the chin a little if necessary; no body or new details.",
+      "instruction": "Keep this exact whimsical charcoal black bull face, white horns, droopy eyes and peach muzzle on cyan. Scale the complete bull's head down to 50% of canvas height and 55% of canvas width. Keep both horn tips and the complete rounded muzzle visible, with the whole face in x=23%..77%, y=26%..74%. Continue the same cyan backdrop to all four square edges. Only complete the chin a little if necessary; no body or new details.",
+      "method": "built-in-image-edit",
+      "revision": true,
+      "group": "journal",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "edb34d32748e1642aaf05fcb0cd0220ae9f7a76e8adb06abedc765d78c01d4f9",
+      "src": "/covers/journal/daydream-bull.webp",
+      "file": "public/covers/journal/daydream-bull.webp",
+      "bytes": 979042,
+      "sha256": "fa71911e9ef636df855adc422cfa87f229ad4bbafd9df17194768e4d9beb311c",
+      "name": "Daydream Bull",
+      "objectPosition": {
+        "16:9": [
+          50,
+          48
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          48
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "collection": "journal",
+      "id": "dream-plan-create",
+      "source": "journal inspiration/cover/ab53e24af36ef8082363db9ecdb14409.jpg",
+      "instruction": "Extract blue and ivory waves, preserve Dream. Plan. Create., remove notebook surround; square master with crop-safe quote.",
+      "method": "built-in-image-edit",
+      "group": "journal",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "de52c2bdab6748d657b916f8e947ed4ea3e01f0d41b491c9551dec4a9eabfd9f",
+      "src": "/covers/journal/dream-plan-create.webp",
+      "file": "public/covers/journal/dream-plan-create.webp",
+      "bytes": 789748,
+      "sha256": "ff6430fa6298e86355e7ef8ff22fbde0055784dc8026ad92585dd24e4f678723",
+      "name": "Dream Plan Create",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "Dream. Plan. Create.",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "journal",
+      "index": 19,
+      "id": "every-day",
+      "collection": "journal",
+      "method": "lossless-transcode",
+      "source": "journal inspiration/cover/60105f31eb6a705eae2f33e806b1d67a.jpg",
+      "width": 1116,
+      "height": 1116,
+      "sourceSha256": "bc754dff00caea7b1c3d7bbc6b5120afc53b161d783d35ddd7531cac4581e887",
+      "src": "/covers/journal/every-day.webp",
+      "file": "public/covers/journal/every-day.webp",
+      "bytes": 1447014,
+      "sha256": "c5c82401104da360e5f2bbd50c836b865d0ed71c7b77355384542f320f617f64",
+      "name": "Every Day",
+      "objectPosition": {
+        "16:9": [
+          50,
+          10
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          10
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "EVERY DAY IS A NEW DAY",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "collection": "journal",
+      "id": "heres-the-plan",
+      "source": "journal inspiration/cover/65fa0757786f629ab58dc35b3b6144f5.jpg",
+      "instruction": "Extract only the flat blue front cover graphic. Preserve the original thin white handwritten 'OK,' and smaller 'here’s the plan...' underneath as inspirational text, not other text. Square full-bleed medium cobalt-blue canvas; put the original two-line lettering near the center, with all text inside central 50% width and height. Remove book edges, spine, shadows, background and physical curvature. Keep original informal lettering and blue texture.",
+      "prompt": "Use case: precise-object-edit. Asset: flat front-cover print. The attached local photograph/artwork is the EDIT TARGET. Preserve the original visual language faithfully. Output ONE high-resolution square, full bleed. Preserve the explicitly requested normal quote text exactly; remove commercial names, creator names, logos and watermarks. No physical book, spine, ribbon, scene, perspective, shadow or mockup. Extract only the flat blue front cover graphic. Preserve the original thin white handwritten 'OK,' and smaller 'here’s the plan...' underneath as inspirational text, not other text. Square full-bleed medium cobalt-blue canvas; put the original two-line lettering near the center, with all text inside central 50% width and height. Remove book edges, spine, shadows, background and physical curvature. Keep original informal lettering and blue texture.",
+      "method": "built-in-image-edit",
+      "group": "journal",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "21a50474ab5cb0add702540f7b94674a6a733710c7341a494050b23f2ca2bb10",
+      "src": "/covers/journal/heres-the-plan.webp",
+      "file": "public/covers/journal/heres-the-plan.webp",
+      "bytes": 2071610,
+      "sha256": "6bc5723fcd4063a996b37021ba65ed28a04f0422014a456bef91d09ff4076a1e",
+      "name": "Heres The Plan",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "OK, here’s the plan...",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "collection": "journal",
+      "id": "indigo-flowers",
+      "source": "journal inspiration/cover/946f24b2c366afe060cc3d1c055cf832.jpg",
+      "instruction": "Remove the small black artist signature near bottom right. Preserve the four large hand-cut navy-indigo flowers with yellow dotted circular centers, irregular five-petal forms and warm taupe paper background. Square master with the four flowers in the same two-by-two arrangement, slightly smaller to avoid clipping any important flower centers in wide crops. Keep the simple original shapes; no invented elements.",
+      "prompt": "Use case: precise-object-edit. Asset: flat front-cover artwork. The attached image is the EDIT TARGET; edit faithfully rather than redesign. Preserve exact original shapes, color relationships and texture. One high-resolution square image. Remove all artist signatures/monograms, commercial names, logos and watermarks. No new text, border or mockup. Remove the small black artist signature near bottom right. Preserve the four large hand-cut navy-indigo flowers with yellow dotted circular centers, irregular five-petal forms and warm taupe paper background. Square master with the four flowers in the same two-by-two arrangement, slightly smaller to avoid clipping any important flower centers in wide crops. Keep the simple original shapes; no invented elements.",
+      "method": "built-in-image-edit",
+      "group": "journal",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "68668a89be087f18f8c35b995cc14c97f768bf1e611b8fdfdc60f8fe8db1d46f",
+      "src": "/covers/journal/indigo-flowers.webp",
+      "file": "public/covers/journal/indigo-flowers.webp",
+      "bytes": 1368806,
+      "sha256": "a564f695a04f28e06d776f1dafb7fc421435518bff84e0a3ad62b8cc5275effb",
+      "name": "Indigo Flowers",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "collection": "journal",
+      "id": "ivory-tiger",
+      "source": "journal inspiration/cover/7b7c881e6f693c0246a6bc4f366353ff.jpg",
+      "instruction": "Scale the ENTIRE cream tiger, including curled tail, face and all paws, to 60% of its current size, centered. The complete tiger must fit within x=32%..68%, y=27%..73% of the same square. Extend the same blue, lightly speckled background everywhere else. Preserve every stripe, shape, pose and color. No monogram.",
+      "prompt": "Single targeted size correction to the attached EDIT TARGET. ONE high-resolution square flat cover graphic, same art, same palette. Substantial empty background is intentional. Leave the OUTER QUARTER of the canvas blank on every side. Do NOT zoom in to fill the canvas. No mockup, text, signature or watermark. Scale the ENTIRE cream tiger, including curled tail, face and all paws, to 60% of its current size, centered. The complete tiger must fit within x=32%..68%, y=27%..73% of the same square. Extend the same blue, lightly speckled background everywhere else. Preserve every stripe, shape, pose and color. No monogram.",
+      "previousPrompt": "Use case: precise-object-edit. Asset: flat front-cover artwork. The attached image is the EDIT TARGET; edit faithfully rather than redesign. Preserve exact original shapes, color relationships and texture. One high-resolution square image. Remove all artist signatures/monograms, commercial names, logos and watermarks. No new text, border or mockup. Remove only the small white artist monogram just to the right of the tiger's tail and replace it with matching blue. Preserve exactly the cream tiger's playful curving downward pose, black flowing stripes, face, curled tail and tiny claws on the muted cobalt-blue ground. Square master, centered tiger slightly smaller to keep its face and tail comfortably inside the center region. Retain the original grain.",
+      "method": "built-in-image-edit",
+      "revision": true,
+      "group": "journal",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "01ca4f02cd02fbe95ebd77fe379b57bf3ab637727e2e488b32e66cabe9f08d9b",
+      "src": "/covers/journal/ivory-tiger.webp",
+      "file": "public/covers/journal/ivory-tiger.webp",
+      "bytes": 909288,
+      "sha256": "447112786f9ce83c948c4a61d55d9b8f6ec80d7bc4785d295939fbc04b3c6ef0",
+      "name": "Ivory Tiger",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "collection": "journal",
+      "id": "leaf-ladder",
+      "source": "journal inspiration/cover/44bcf0c84dae98462d2bf76a28721c1b.jpg",
+      "instruction": "Scale the entire existing green leaf AND full black ladder to 60% of current size, centered. Keep the leaf tip and lowest ladder rung intact. The entire motif must fit within x=33%..67%, y=27%..73% of the square. Extend the SAME plain ivory paper texture everywhere else. Do not add letters.",
+      "prompt": "Single targeted size correction to the attached EDIT TARGET. ONE high-resolution square flat cover graphic, same art, same palette. Substantial empty background is intentional. Leave the OUTER QUARTER of the canvas blank on every side. Do NOT zoom in to fill the canvas. No mockup, text, signature or watermark. Scale the entire existing green leaf AND full black ladder to 60% of current size, centered. Keep the leaf tip and lowest ladder rung intact. The entire motif must fit within x=33%..67%, y=27%..73% of the square. Extend the SAME plain ivory paper texture everywhere else. Do not add letters.",
+      "previousPrompt": "Use case: precise-object-edit. Asset: flat cover print. The attached image is the EDIT TARGET. Preserve its actual design, shapes and colors closely. Output one high-resolution square full-bleed artwork only. Remove commercial names, creator names, logos and watermarks. Remove all book edges, spine, ribbons, stack, shadows and outside scene. No mockup. Extract the single simple green leaf with a thin black ladder reaching into it on pale ivory from the photographed front cover. Remove creator name 'Calvino' and commercial book title along the bottom. Preserve the exact asymmetric green leaf shape, little stem and ladder silhouette, flat airy cream paper feel. Center leaf and full ladder on a square, compact enough for all ratios. No letters. Remove all book edges, shadows and outside scene.",
+      "method": "built-in-image-edit",
+      "revision": true,
+      "group": "journal",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "e37d0b691a717f905298c6a67dd779be98649e6133eecc7ad06197f68565af75",
+      "src": "/covers/journal/leaf-ladder.webp",
+      "file": "public/covers/journal/leaf-ladder.webp",
+      "bytes": 1087806,
+      "sha256": "178966ca53d6e9f2fe1e8b5aa71576d40cd38cc72f34f066f4e9756ca33e383d",
+      "name": "Leaf Ladder",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "collection": "journal",
+      "id": "olive-shape",
+      "source": "journal inspiration/cover/15e6e261de4209219e9b8a4f706e8539.jpg",
+      "instruction": "Scale the exact olive-green uneven oval to 60% of its current size, centered. Its complete outline must lie within x=30%..70%, y=27%..73% of the square. Extend the SAME warm ivory paper texture around it. Keep the original color, rounded irregular outline and texture. Do not add anything.",
+      "prompt": "Single targeted size correction to the attached EDIT TARGET. ONE high-resolution square flat cover graphic, same art, same palette. Substantial empty background is intentional. Leave the OUTER QUARTER of the canvas blank on every side. Do NOT zoom in to fill the canvas. No mockup, text, signature or watermark. Scale the exact olive-green uneven oval to 60% of its current size, centered. Its complete outline must lie within x=30%..70%, y=27%..73% of the square. Extend the SAME warm ivory paper texture around it. Keep the original color, rounded irregular outline and texture. Do not add anything.",
+      "previousPrompt": "Use case: precise-object-edit. Asset: flat front-cover artwork. The attached image is the EDIT TARGET; edit faithfully rather than redesign. Preserve exact original shapes, color relationships and texture. One high-resolution square image. Remove all artist signatures/monograms, commercial names, logos and watermarks. No new text, border or mockup. Remove only the tiny faint artist signature at bottom right. Preserve the single large uneven olive-green rounded oval shape on warm light ivory paper and its subtle printed texture. Center it on a square canvas and slightly reduce its height so the rounded shape reads in a 16:9 crop as well as portrait. No text or other motifs.",
+      "method": "built-in-image-edit",
+      "revision": true,
+      "group": "journal",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "60f45ac40c4fa5aa603dc6362de74e45f990bab51e8eefddf4af9d259d983044",
+      "src": "/covers/journal/olive-shape.webp",
+      "file": "public/covers/journal/olive-shape.webp",
+      "bytes": 1047760,
+      "sha256": "8cd30b4940590c204bd2c67d276c831c2e9ef646bdfb4476cc7bb541542252fa",
+      "name": "Olive Shape",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "collection": "journal",
+      "id": "paper-flight",
+      "source": "journal inspiration/cover/eb7922eb90e55a8ea17714edb58036f0.jpg",
+      "instruction": "Extract the simple hand-drawn red paper airplane on pale ivory from this front-cover photograph. Remove the creator name 'Calvino' and commercial title along the bottom. Preserve the exact thin red linework, angular bright-red plane orientation and cream background. One centered plane with plenty of clear ivory space on a square flat canvas. No book, physical edge, shadow, scene or text.",
+      "prompt": "Use case: precise-object-edit. Asset: flat cover print. The attached image is the EDIT TARGET. Preserve its actual design, shapes and colors closely. Output one high-resolution square full-bleed artwork only. Remove commercial names, creator names, logos and watermarks. Remove all book edges, spine, ribbons, stack, shadows and outside scene. No mockup. Extract the simple hand-drawn red paper airplane on pale ivory from this front-cover photograph. Remove the creator name 'Calvino' and commercial title along the bottom. Preserve the exact thin red linework, angular bright-red plane orientation and cream background. One centered plane with plenty of clear ivory space on a square flat canvas. No book, physical edge, shadow, scene or text.",
+      "method": "built-in-image-edit",
+      "group": "journal",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "c977af47c24ada0e1a2de55091203606037c2d93801465e84b3e95dcdaeda140",
+      "src": "/covers/journal/paper-flight.webp",
+      "file": "public/covers/journal/paper-flight.webp",
+      "bytes": 986654,
+      "sha256": "4e38228c0ba7547a29d70b31dfc338cd761d0457ee74a1d6920eab06c22ff273",
+      "name": "Paper Flight",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "collection": "journal",
+      "id": "plum-arcs",
+      "source": "journal inspiration/cover/55a5f0e67f8f012402ede608013a659e.jpg",
+      "instruction": "Extract ONLY the TOP lavender-purple front-cover design from the stack. Preserve the thin large overlapping dark plum circular arcs across the matte lavender surface. Remove the white commercial wordmark 'idoro' entirely, reconstructing plain lavender and any interrupted arc. Flatten to a full-bleed square print with the same simple sweeping arcs. Remove the elastic band, notebook edges, spine, stack, shadows and scene. No text.",
+      "prompt": "Use case: precise-object-edit. Asset: flat cover print. The attached image is the EDIT TARGET. Preserve its actual design, shapes and colors closely. Output one high-resolution square full-bleed artwork only. Remove commercial names, creator names, logos and watermarks. Remove all book edges, spine, ribbons, stack, shadows and outside scene. No mockup. Extract ONLY the TOP lavender-purple front-cover design from the stack. Preserve the thin large overlapping dark plum circular arcs across the matte lavender surface. Remove the white commercial wordmark 'idoro' entirely, reconstructing plain lavender and any interrupted arc. Flatten to a full-bleed square print with the same simple sweeping arcs. Remove the elastic band, notebook edges, spine, stack, shadows and scene. No text.",
+      "method": "built-in-image-edit",
+      "group": "journal",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "b89cb9b1bc3e1ce354de7e54625b8da0f4dffa008721e10b5f60e1dc9e20ba22",
+      "src": "/covers/journal/plum-arcs.webp",
+      "file": "public/covers/journal/plum-arcs.webp",
+      "bytes": 1722726,
+      "sha256": "7b100d9e799c6097024411d971df66f5fd0fa2a909efeda82419fcd4753eb8aa",
+      "name": "Plum Arcs",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "collection": "journal",
+      "id": "quiet-bench",
+      "source": "journal inspiration/cover/9f214dae75df5a12005e67be27cffd37.jpg",
+      "instruction": "Remove the small faint artist signature at bottom right. Preserve the minimalist large olive-green rectangular field on warm cream paper, two tiny seated figures seen from behind on a dark bench at the field's lower edge, and their long olive shadow. Square master with figures at about 65% down, leaving them visible in a wide center crop. Keep the small scale of figures, colors and paper texture. No added words.",
+      "prompt": "Use case: precise-object-edit. Asset: flat front-cover print. The attached local photograph/artwork is the EDIT TARGET. Preserve the original visual language faithfully. Output ONE high-resolution square, full bleed. Preserve the explicitly requested normal quote text exactly; remove commercial names, creator names, logos and watermarks. No physical book, spine, ribbon, scene, perspective, shadow or mockup. Remove the small faint artist signature at bottom right. Preserve the minimalist large olive-green rectangular field on warm cream paper, two tiny seated figures seen from behind on a dark bench at the field's lower edge, and their long olive shadow. Square master with figures at about 65% down, leaving them visible in a wide center crop. Keep the small scale of figures, colors and paper texture. No added words.",
+      "method": "built-in-image-edit",
+      "group": "journal",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "fa3481c63f305f463d2ed476f6e2f77a5c72f5449a5a52e7baa17197172ca95d",
+      "src": "/covers/journal/quiet-bench.webp",
+      "file": "public/covers/journal/quiet-bench.webp",
+      "bytes": 1664858,
+      "sha256": "ca67afd67f289b812207ee5f0a0f9a3332c77bba94e6c7260646f91a14fe6688",
+      "name": "Quiet Bench",
+      "objectPosition": {
+        "16:9": [
+          50,
+          100
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          100
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "collection": "journal",
+      "id": "thoughts-notes-ideas",
+      "source": "journal inspiration/cover/4d7b3955d8b1b8ab3e84d02a9968cefc.jpg",
+      "instruction": "This is a single targeted SCALE correction. Keep the EXACT lettering 'Thoughts Notes & Ideas', its three lines, hand-painted irregular strokes, cream ink, and cobalt-blue color. Scale the COMPLETE existing cream lettering group to 60% of its current width and height and center it on the SAME size square. Extend the existing flat blue ground to fill everywhere. All cream lettering must fit inside x=28%..72% and y=28%..72% of the canvas. Leave more than a quarter of the canvas pure blue on ALL FOUR sides. Do not zoom in. No other changes. Do not remove, crop or respell any word.",
+      "prompt": "Use case: precise-object-edit. Asset: flat cover print. The attached image is the EDIT TARGET. Preserve its actual design, shapes and colors closely. Output one high-resolution square full-bleed artwork only. Remove commercial names, creator names, logos and watermarks. Remove all book edges, spine, ribbons, stack, shadows and outside scene. No mockup. This is a single targeted SCALE correction. Keep the EXACT lettering 'Thoughts Notes & Ideas', its three lines, hand-painted irregular strokes, cream ink, and cobalt-blue color. Scale the COMPLETE existing cream lettering group to 60% of its current width and height and center it on the SAME size square. Extend the existing flat blue ground to fill everywhere. All cream lettering must fit inside x=28%..72% and y=28%..72% of the canvas. Leave more than a quarter of the canvas pure blue on ALL FOUR sides. Do not zoom in. No other changes. Do not remove, crop or respell any word.",
+      "revision": true,
+      "previousPrompt": "Use case: precise-object-edit. Asset: flat front-cover print. The attached local photograph/artwork is the EDIT TARGET. Preserve the original visual language faithfully. Output ONE high-resolution square, full bleed. Preserve the explicitly requested normal quote text exactly; remove commercial names, creator names, logos and watermarks. No physical book, spine, ribbon, scene, perspective, shadow or mockup. Extract only the blue front-cover artwork from this book photograph. Keep the generous cream brush script 'Thoughts\\nNotes\\n& Ideas' as the main design on deep cobalt. Remove the tiny commercial specifications at the top ('LINED NOTEBOOK' etc). Refit the exact phrase in a compact beautiful original-style three-line cream brush-script composition entirely within the central 66% width and central 48% height of a square blue canvas so it survives all four center crops. No notebook edges, ribbon or scene.",
+      "method": "built-in-image-edit",
+      "group": "journal",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "c5eb23afd527d09b5779c7b306229514d6aca3fb1d12138bfacafc8504e31451",
+      "src": "/covers/journal/thoughts-notes-ideas.webp",
+      "file": "public/covers/journal/thoughts-notes-ideas.webp",
+      "bytes": 917852,
+      "sha256": "4fee86169dbe8278343c1ce5e6a2c6a83b2ca4908d52326a6ce2de1a5e3da57c",
+      "name": "Thoughts Notes Ideas",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "Thoughts Notes & Ideas",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "collection": "journal",
+      "id": "tiger-voyage",
+      "source": "journal inspiration/cover/0405c45d7c0f56c39dc4baaaca482a71.jpg",
+      "instruction": "Remove the commercial book title 'Life of Pi' and creator name 'Yann Martel'. Preserve the exact deep-indigo ocean, many delicate pale-aqua sea turtles, and small cream canoe with orange tiger and dark figure. Reconstruct turtle/ocean artwork where lettering was. Adapt as a square full-bleed illustration, with the canoe and some turtles centrally placed and the remaining turtles flowing naturally to the edges.",
+      "prompt": "Use case: precise-object-edit. Asset: flat front-cover artwork, never a book mockup. The attached image is the EDIT TARGET. Preserve its actual illustration, colors and brushwork closely; do not invent a new design. Output ONE high-resolution square master. No creator/commercial wording, logo, watermark or notebook mockup. Remove the commercial book title 'Life of Pi' and creator name 'Yann Martel'. Preserve the exact deep-indigo ocean, many delicate pale-aqua sea turtles, and small cream canoe with orange tiger and dark figure. Reconstruct turtle/ocean artwork where lettering was. Adapt as a square full-bleed illustration, with the canoe and some turtles centrally placed and the remaining turtles flowing naturally to the edges.",
+      "method": "built-in-image-edit",
+      "group": "journal",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "1374bf2a5ca1a5d1c33563bb077080adff4f08732e26f8f2487d45d3e9d97949",
+      "src": "/covers/journal/tiger-voyage.webp",
+      "file": "public/covers/journal/tiger-voyage.webp",
+      "bytes": 2300468,
+      "sha256": "430d269c6322c5eeb6a8af8a8ca12eefe59db0026d258ad6259f14d2a56e9ca9",
+      "name": "Tiger Voyage",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "collection": "journal",
+      "id": "yellow-day",
+      "source": "journal inspiration/cover/0e48cd31bd2f30636fefb6165dad9edd.jpg",
+      "instruction": "Faithfully clean and improve resolution of the simple illustration of a very small man pushing a red lawnmower across a huge textured mustard-yellow rectangle against ivory paper. Preserve the silhouette, original dry-brush texture and color. Square master: position the man's feet and mower at approximately 35% down the square so both remain inside a 16:9 center crop. The yellow area continues down to the lower edge. No added text.",
+      "prompt": "Use case: precise-object-edit. Asset: flat front-cover artwork, never a book mockup. The attached image is the EDIT TARGET. Preserve its actual illustration, colors and brushwork closely; do not invent a new design. Output ONE high-resolution square master. No creator/commercial wording, logo, watermark or notebook mockup. Faithfully clean and improve resolution of the simple illustration of a very small man pushing a red lawnmower across a huge textured mustard-yellow rectangle against ivory paper. Preserve the silhouette, original dry-brush texture and color. Square master: position the man's feet and mower at approximately 35% down the square so both remain inside a 16:9 center crop. The yellow area continues down to the lower edge. No added text.",
+      "method": "built-in-image-edit",
+      "group": "journal",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "5c81c651277d359dbe282a3c775c679d3b66a5bc24c632f6477e7f543eb56fd0",
+      "src": "/covers/journal/yellow-day.webp",
+      "file": "public/covers/journal/yellow-day.webp",
+      "bytes": 1842520,
+      "sha256": "2709fa7c1516eeac213791ceb15b0f07bb286878911789c51f3de8e3ec184e70",
+      "name": "Yellow Day",
+      "objectPosition": {
+        "16:9": [
+          20,
+          0
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          20,
+          0
+        ],
+        "3:4": [
+          20,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "anime",
+      "index": 12,
+      "id": "blue-stairway",
+      "collection": "journal",
+      "method": "lossless-transcode",
+      "source": "journal inspiration/cover/anime/7ebc97087cd882d154debb8b36a80b7c.jpg",
+      "width": 928,
+      "height": 1086,
+      "sourceSha256": "b2dca62959ab9e02b8feb99c660ba6e50dbc5f43c37cd75b8f70311139a0d04e",
+      "src": "/covers/journal/anime/blue-stairway.webp",
+      "file": "public/covers/journal/anime/blue-stairway.webp",
+      "bytes": 850004,
+      "sha256": "50f6c5ebfd17d0d0a0bdcf36eb70bfbc800087151f2ea0ab75ea28b79389ff46",
+      "name": "Blue Stairway",
+      "objectPosition": {
+        "16:9": [
+          35,
+          75
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          35,
+          75
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "anime",
+      "index": 11,
+      "id": "sparklers",
+      "collection": "journal",
+      "method": "lossless-transcode",
+      "source": "journal inspiration/cover/anime/7a6aaf61e72ca1108b8af179d01a0503.jpg",
+      "width": 904,
+      "height": 1200,
+      "sourceSha256": "dd54540832b05861eca9eebd286548d90727daca26e793cc2ae6266bce1d5fdd",
+      "src": "/covers/journal/anime/sparklers.webp",
+      "file": "public/covers/journal/anime/sparklers.webp",
+      "bytes": 897462,
+      "sha256": "808f3996f3236b546b035089fe1fa5402808cc199dc5ad3375b70c1706cd9ffb",
+      "name": "Sparklers",
+      "objectPosition": {
+        "16:9": [
+          50,
+          30
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          30
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "anime",
+      "index": 7,
+      "id": "summer-evening",
+      "collection": "journal",
+      "method": "lossless-transcode",
+      "source": "journal inspiration/cover/anime/463b4081b31a9cb671364c81b9d13cd6.jpg",
+      "width": 960,
+      "height": 960,
+      "sourceSha256": "6ad6099822e8025208a22e8607c7c968cc3f02438813ec484150ebe93291ed44",
+      "src": "/covers/journal/anime/summer-evening.webp",
+      "file": "public/covers/journal/anime/summer-evening.webp",
+      "bytes": 769786,
+      "sha256": "122bd68bdd8b55ec2dbbc83f471d5bc8132e7eb812b112e269102aa5b1307d98",
+      "name": "Summer Evening",
+      "objectPosition": {
+        "16:9": [
+          50,
+          80
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          80
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "anime",
+      "index": 2,
+      "id": "torii-light",
+      "collection": "journal",
+      "method": "lossless-transcode",
+      "source": "journal inspiration/cover/anime/165dfd8897522cf291efdf77e48e739e.jpg",
+      "width": 1200,
+      "height": 1600,
+      "sourceSha256": "a35c75ca93afac712a1e12c2fa271d55769b44cb5a438bf674e0bcbec826035e",
+      "src": "/covers/journal/anime/torii-light.webp",
+      "file": "public/covers/journal/anime/torii-light.webp",
+      "bytes": 3082384,
+      "sha256": "92bf0838315279bf808e146e68e44392c191af7c80e5c76168d66eb6792cdade",
+      "name": "Torii Light",
+      "objectPosition": {
+        "16:9": [
+          50,
+          65
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          65
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "Architectural shrine inscriptions",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "anime",
+      "index": 3,
+      "id": "winter-lanterns",
+      "collection": "journal",
+      "method": "lossless-transcode",
+      "source": "journal inspiration/cover/anime/2527b0e2f52a9f3f5a64a91090da3bd4.jpg",
+      "width": 1200,
+      "height": 741,
+      "sourceSha256": "f9fd31d92cdccd753efa15f818ce9fde28730b674b5631a1062f3f3c07d00ae7",
+      "src": "/covers/journal/anime/winter-lanterns.webp",
+      "file": "public/covers/journal/anime/winter-lanterns.webp",
+      "bytes": 900774,
+      "sha256": "405860c79319b66426b1bb0973f685f4fd07be5afed2a61037c02830b45c47d6",
+      "name": "Winter Lanterns",
+      "objectPosition": {
+        "16:9": [
+          43,
+          50
+        ],
+        "1:1": [
+          43,
+          50
+        ],
+        "4:3": [
+          43,
+          50
+        ],
+        "3:4": [
+          43,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "sketchbook",
+      "index": 23,
+      "id": "bicycle-balance",
+      "collection": "sketchbook",
+      "method": "lossless-transcode",
+      "source": "texture and cover layout and colour reference/cover/65495d6e85f07adcf8f6fe7934f916e4.jpg",
+      "width": 1200,
+      "height": 1003,
+      "sourceSha256": "385c0fcaff4e60549fa528bc9403c19a3bb74df8998d349bd880acc3bc4fe11e",
+      "src": "/covers/sketchbook/bicycle-balance.webp",
+      "file": "public/covers/sketchbook/bicycle-balance.webp",
+      "bytes": 725142,
+      "sha256": "8093443e6baef3bf17cf2bf13d8b86edb26947255c673ff1c96c8a702b1d6959",
+      "name": "Bicycle Balance",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "sketchbook",
+      "index": 45,
+      "id": "blue-cat",
+      "collection": "sketchbook",
+      "method": "lossless-transcode",
+      "source": "texture and cover layout and colour reference/cover/fb6702db400a9224e37efa44ea200846.jpg",
+      "width": 1200,
+      "height": 1200,
+      "sourceSha256": "9784b23af7f5522c09c0bf5cadc6c4971561b01cf311cdd3e608a96655dfb961",
+      "src": "/covers/sketchbook/blue-cat.webp",
+      "file": "public/covers/sketchbook/blue-cat.webp",
+      "bytes": 124918,
+      "sha256": "fe130381a9aad6ea7b3f975524994ef663619ea90304a9c946f2d38de99be9b5",
+      "name": "Blue Cat",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "sketchbook",
+      "index": 37,
+      "id": "blue-garden",
+      "collection": "sketchbook",
+      "method": "lossless-transcode",
+      "source": "texture and cover layout and colour reference/cover/9edde8e4a2e0bdec5e54ab2d5ea10c61.jpg",
+      "width": 400,
+      "height": 538,
+      "sourceSha256": "3acf9027ca66d64aab97a76e8a795e42947a1c1dee000be0493d96cedbea5c2c",
+      "src": "/covers/sketchbook/blue-garden.webp",
+      "file": "public/covers/sketchbook/blue-garden.webp",
+      "bytes": 281754,
+      "sha256": "8312d8e485232a8e5a0c5cac901c228e8a95d1c12a7f6df66fc3d7fc411fe0e4",
+      "name": "Blue Garden",
+      "objectPosition": {
+        "16:9": [
+          50,
+          0
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          0
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "sketchbook",
+      "index": 44,
+      "id": "blue-table",
+      "collection": "sketchbook",
+      "method": "lossless-transcode",
+      "source": "texture and cover layout and colour reference/cover/e77e666792a1279581d8ef1e16461263.jpg",
+      "width": 1199,
+      "height": 708,
+      "sourceSha256": "5dc11e5e32a3f0f0a305df03381b3ecb56cc8d9d7e0125f34b82d8157287cc33",
+      "src": "/covers/sketchbook/blue-table.webp",
+      "file": "public/covers/sketchbook/blue-table.webp",
+      "bytes": 590812,
+      "sha256": "ca9548c71ef6e0e21645ec3509ec564b6f526c38de56bec4262a57818f1afda1",
+      "name": "Blue Table",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          55,
+          50
+        ]
+      },
+      "textPreserved": "食器ほしい。。。",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "sketchbook",
+      "index": 9,
+      "id": "charcoal-cat",
+      "collection": "sketchbook",
+      "method": "lossless-transcode",
+      "source": "texture and cover layout and colour reference/cover/241ffbe7d4af635a79fe66084654c842.jpg",
+      "width": 720,
+      "height": 906,
+      "sourceSha256": "00e6b7973c2b043c98672a05630b12c4ea0d572b1ab5217f1479afed649fe7b5",
+      "src": "/covers/sketchbook/charcoal-cat.webp",
+      "file": "public/covers/sketchbook/charcoal-cat.webp",
+      "bytes": 433192,
+      "sha256": "1c1ce3b3d27771fe3ae9276d5a2d011f5a189d5745c8e8ba03b7b19fbbf242f7",
+      "name": "Charcoal Cat",
+      "objectPosition": {
+        "16:9": [
+          50,
+          55
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          55
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "collection": "sketchbook",
+      "id": "cherry-blossom",
+      "source": "texture and cover layout and colour reference/cover/711dbd62cc8792280ef16c9de3943155.jpg",
+      "instruction": "Remove only the small white artist signature near the bottom left of the cherry blossom painting. Preserve the exact thick branch, pale pink flowers, mint and turquoise background, broad polygonal brushwork and colors. Complete the existing flat scene into a square canvas by extending matching blossoms/background, without adding new subjects.",
+      "prompt": "Use case: precise-object-edit. Asset: flat front-cover artwork, never a book mockup. The attached local image is the EDIT TARGET. Match its actual illustration, palette, brushwork and composition faithfully; do not invent a new design. Preserve visible paper and physical paint texture within the artwork. Output ONE high-resolution square master image. No added decorative heading, commercial/creator text, logo, watermark, border or mockup. Remove only the small white artist signature near the bottom left of the cherry blossom painting. Preserve the exact thick branch, pale pink flowers, mint and turquoise background, broad polygonal brushwork and colors. Complete the existing flat scene into a square canvas by extending matching blossoms/background, without adding new subjects.",
+      "method": "built-in-image-edit",
+      "group": "sketchbook",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "6e94422be8de846a5d08ce1c29ed1095984a38bfa54a0b1c6892291bd20e3a77",
+      "src": "/covers/sketchbook/cherry-blossom.webp",
+      "file": "public/covers/sketchbook/cherry-blossom.webp",
+      "bytes": 2051328,
+      "sha256": "ab4d57547ff9861448222f118e7d10a7fd845f4d36cebdc675dca18b9a382f26",
+      "name": "Cherry Blossom",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "id": "cobalt-house",
+      "file": "public/covers/sketchbook/cobalt-house.webp",
+      "instruction": "Preserve this exact narrow pale mint house, its uneven painted brick patches, cream door, dark windows, roof and little satellite dish, and its cobalt-blue background. Scale the entire house down so that the COMPLETE silhouette from chimney to front steps fits within x=38%..62%, y=27%..73% of a SQUARE canvas. Extend only the same cobalt ground around it. Remove the thin black bottom image border. The tiny generic TV lettering on the satellite dish may remain as part of the scene. No added lettering or objects.",
+      "collection": "sketchbook",
+      "source": "texture and cover layout and colour reference/cover/9b1efaaf3b35f435652abe7194911393.jpg",
+      "prompt": "One mechanical SCALE correction only to the supplied flat blue artwork. Scale the WHOLE EXISTING HOUSE to 65% of its CURRENT SIZE, and center it precisely in the SAME square canvas. Preserve every painted detail, house shape, colors, chimney, dish, roof and front steps. Keep the complete silhouette visible, no cropping. Fill the rest with the EXACT SAME flat cobalt blue. The house must occupy NO MORE than 43% of the square's height. A large plain blue empty outer margin is intentional and REQUIRED. No close-up, no zooming, no added house, no additional text, no watermark, no mockup, no scene. Output ONE square image.",
+      "method": "built-in-image-edit",
+      "group": "sketchbook",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "06861e8e40bb70b290070622dc77137cd827a112494bfb8498a1e0d9322b8b28",
+      "src": "/covers/sketchbook/cobalt-house.webp",
+      "bytes": 859686,
+      "sha256": "646f5e890b3647ef2d44d98e570f95146b267ce6e5b3f42934ce2224c66d5c0d",
+      "name": "Cobalt House",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "TV (incidental painted dish label)",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original.",
+      "previousPrompt": "Use case: precise-object-edit. The attached artwork is the EDIT TARGET, not a loose inspiration. Single faithful framing/scale adjustment. Output ONE high-resolution SQUARE flat cover graphic. Keep the actual reference drawing/painting, its colors and texture. Intentional large empty background on ALL sides: keep every subject inside central 46% of canvas HEIGHT. Do NOT zoom in, crop the subject, add content, create a book or mockup, add text, logo, signature or watermark. Preserve this exact narrow pale mint house, its uneven painted brick patches, cream door, dark windows, roof and little satellite dish, and its cobalt-blue background. Scale the entire house down so that the COMPLETE silhouette from chimney to front steps fits within x=38%..62%, y=27%..73% of a SQUARE canvas. Extend only the same cobalt ground around it. Remove the thin black bottom image border. The tiny generic TV lettering on the satellite dish may remain as part of the scene. No added lettering or objects."
+    },
+    {
+      "group": "sketchbook",
+      "index": 32,
+      "id": "color-orbit",
+      "collection": "sketchbook",
+      "method": "lossless-transcode",
+      "source": "texture and cover layout and colour reference/cover/8db6e2a61af339d610814535615475c9.jpg",
+      "width": 736,
+      "height": 1104,
+      "sourceSha256": "4735c1bc453e56c9d0b71fee9f8e454a4558dc95684c6b931ffe123b556d4371",
+      "src": "/covers/sketchbook/color-orbit.webp",
+      "file": "public/covers/sketchbook/color-orbit.webp",
+      "bytes": 267874,
+      "sha256": "5b6fec1effffb015c873d7ec7fa04a99419d7ea4be771d351bbc43718912537c",
+      "name": "Color Orbit",
+      "objectPosition": {
+        "16:9": [
+          50,
+          65
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          65
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "sketchbook",
+      "index": 39,
+      "id": "distant-hills",
+      "collection": "sketchbook",
+      "method": "lossless-transcode",
+      "source": "texture and cover layout and colour reference/cover/a8cbc20d2fe5b1111dae27c3632ac01e.jpg",
+      "width": 1116,
+      "height": 1116,
+      "sourceSha256": "09be8211fc4ae61b6de1036d3c8dd012d9d37960363cb991b0142e945d5787dc",
+      "src": "/covers/sketchbook/distant-hills.webp",
+      "file": "public/covers/sketchbook/distant-hills.webp",
+      "bytes": 1071920,
+      "sha256": "bf347f956adfdf7c46e2def88128447c0bf21b0eaf9728a831faca8d43922f3e",
+      "name": "Distant Hills",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "sketchbook",
+      "index": 29,
+      "id": "evening-bus",
+      "collection": "sketchbook",
+      "method": "lossless-transcode",
+      "source": "texture and cover layout and colour reference/cover/7f08dab8bfee48e27d6079282ca3c7eb.jpg",
+      "width": 1199,
+      "height": 1255,
+      "sourceSha256": "bd0618635921396f77863705885831c93442f7b5c434c9e88c94b6bc2832fc34",
+      "src": "/covers/sketchbook/evening-bus.webp",
+      "file": "public/covers/sketchbook/evening-bus.webp",
+      "bytes": 518118,
+      "sha256": "a0948d422c13393c896c6342fab4b60e8c17995374d70feba1db9a61b218e895",
+      "name": "Evening Bus",
+      "objectPosition": {
+        "16:9": [
+          50,
+          80
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          80
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "sketchbook",
+      "index": 16,
+      "id": "floating-face",
+      "collection": "sketchbook",
+      "method": "lossless-transcode",
+      "source": "texture and cover layout and colour reference/cover/46a6eed522f4e2fb99a517f13701ffd7.jpg",
+      "width": 742,
+      "height": 742,
+      "sourceSha256": "250a1b09a591ab80e3e10920c2768239c43e37c6dcd5291c1d2e7f43873dfc36",
+      "src": "/covers/sketchbook/floating-face.webp",
+      "file": "public/covers/sketchbook/floating-face.webp",
+      "bytes": 95928,
+      "sha256": "850320506a8b57619c620c38cd3d2c961f0ff9a8464c00a2b71c157ca9f8a4e4",
+      "name": "Floating Face",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "sketchbook",
+      "index": 1,
+      "id": "hands-and-kitten",
+      "collection": "sketchbook",
+      "method": "lossless-transcode",
+      "source": "texture and cover layout and colour reference/cover/02649983303da65a4cdabcb1789340f1.jpg",
+      "width": 480,
+      "height": 640,
+      "sourceSha256": "e0dd2703ebb029be15c86bc157b19e7633f37ec71b4532577e97981e8907a9b6",
+      "src": "/covers/sketchbook/hands-and-kitten.webp",
+      "file": "public/covers/sketchbook/hands-and-kitten.webp",
+      "bytes": 287688,
+      "sha256": "8d7ffcf693186823e1840c179e5b3e13b1d7ff68183eec051ea4d2de8b78328b",
+      "name": "Hands And Kitten",
+      "objectPosition": {
+        "16:9": [
+          50,
+          25
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          25
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "sketchbook",
+      "index": 26,
+      "id": "lemon-road",
+      "collection": "sketchbook",
+      "method": "lossless-transcode",
+      "source": "texture and cover layout and colour reference/cover/75deb41fcbd806fcd83cfddea489cfd3.jpg",
+      "width": 960,
+      "height": 926,
+      "sourceSha256": "9c8ebd2de81fb193de35bf08cd0b054279727cb502d7e91b0c0ddffe07e409e8",
+      "src": "/covers/sketchbook/lemon-road.webp",
+      "file": "public/covers/sketchbook/lemon-road.webp",
+      "bytes": 542778,
+      "sha256": "c9063add2f360ac6ab80aeb891f1f8546b86a2a980b3a951b137f84517940ffb",
+      "name": "Lemon Road",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "collection": "sketchbook",
+      "id": "lotus-children",
+      "source": "texture and cover layout and colour reference/cover/94b0641625f313319da1840612fe7c04.jpg",
+      "instruction": "Remove the creator text 'Taeko’s Illustration' at the bottom. Preserve the two children with short dark hair amongst huge mint and turquoise lotus leaves, orange faces, cream shirts and muted cream background exactly. Adapt to square by extending the same lotus leaves sideways, keeping both children's heads and leaves comfortably in the central crop region.",
+      "prompt": "Use case: precise-object-edit. Asset: flat front-cover artwork, never a book mockup. The attached local image is the EDIT TARGET. Match its actual illustration, palette, brushwork and composition faithfully; do not invent a new design. Preserve visible paper and physical paint texture within the artwork. Output ONE high-resolution square master image. No added decorative heading, commercial/creator text, logo, watermark, border or mockup. Remove the creator text 'Taeko’s Illustration' at the bottom. Preserve the two children with short dark hair amongst huge mint and turquoise lotus leaves, orange faces, cream shirts and muted cream background exactly. Adapt to square by extending the same lotus leaves sideways, keeping both children's heads and leaves comfortably in the central crop region.",
+      "method": "built-in-image-edit",
+      "group": "sketchbook",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "3d2173d127f3ccab87b3d400ead200fe8926c5b1e39b0429e2c8e9cf98603c91",
+      "src": "/covers/sketchbook/lotus-children.webp",
+      "file": "public/covers/sketchbook/lotus-children.webp",
+      "bytes": 1861554,
+      "sha256": "3fb9504308a4bdf641a9af064f117fe3841aec62d8619e954720cfaa392cdcf7",
+      "name": "Lotus Children",
+      "objectPosition": {
+        "16:9": [
+          50,
+          85
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          85
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "sketchbook",
+      "index": 30,
+      "id": "patterned-child",
+      "collection": "sketchbook",
+      "method": "lossless-transcode",
+      "source": "texture and cover layout and colour reference/cover/805d47a62371990413a2c4cb95a101ef.jpg",
+      "width": 861,
+      "height": 960,
+      "sourceSha256": "d91a2e4a6655c645d2f3f31d5b536a2f79759a2545452b1936495a3a751602c6",
+      "src": "/covers/sketchbook/patterned-child.webp",
+      "file": "public/covers/sketchbook/patterned-child.webp",
+      "bytes": 494956,
+      "sha256": "a9f27466c8656f2c54cc9cfc72d6abe2bdbc1c89bfbafb4f5d5127f5d8d81c96",
+      "name": "Patterned Child",
+      "objectPosition": {
+        "16:9": [
+          50,
+          15
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          15
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "id": "red-poppies",
+      "file": "public/covers/sketchbook/red-poppies.webp",
+      "instruction": "Preserve the exact three red watercolor poppy blossoms, black centers, thin brown-green stems and delicate pigment blooms of this reference. Scale the entire bouquet including stem ends to fit in x=33%..67%, y=27%..73% of a SQUARE white-paper canvas. Keep all three flower heads, petals and stems intact. Extend only matching plain white paper around the central artwork. Do not add flowers or other elements.",
+      "collection": "sketchbook",
+      "source": "texture and cover layout and colour reference/cover/237b0e4b9125e6220b1daec89f2ac056.jpg",
+      "prompt": "Use case: precise-object-edit. The attached artwork is the EDIT TARGET, not a loose inspiration. Single faithful framing/scale adjustment. Output ONE high-resolution SQUARE flat cover graphic. Keep the actual reference drawing/painting, its colors and texture. Intentional large empty background on ALL sides: keep every subject inside central 46% of canvas HEIGHT. Do NOT zoom in, crop the subject, add content, create a book or mockup, add text, logo, signature or watermark. Preserve the exact three red watercolor poppy blossoms, black centers, thin brown-green stems and delicate pigment blooms of this reference. Scale the entire bouquet including stem ends to fit in x=33%..67%, y=27%..73% of a SQUARE white-paper canvas. Keep all three flower heads, petals and stems intact. Extend only matching plain white paper around the central artwork. Do not add flowers or other elements.",
+      "method": "built-in-image-edit",
+      "group": "sketchbook",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "12563f5cf0d508d0704ba5a484eb40b8b4237cff431542dc2b9d3e7884c194c4",
+      "src": "/covers/sketchbook/red-poppies.webp",
+      "bytes": 703690,
+      "sha256": "ced17e2b0b38f5974003be7dbe67c29c76fc86687189fbdbbc0b1f667459752b",
+      "name": "Red Poppies",
+      "objectPosition": {
+        "16:9": [
+          50,
+          20
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          20
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "id": "small-study",
+      "file": "public/covers/sketchbook/small-study.webp",
+      "instruction": "Preserve the EXACT blond child's bowed head, face, blue-purple clothing and rough ochre/blue pastel strokes from the reference, without changing their features or expression. Scale the whole existing painterly study down into x=29%..71%, y=27%..73% of a SQUARE canvas, and extend the same plain white paper background everywhere else. Keep ALL of the child's hair, face and chin visible inside that central group. Do not crop the painting, zoom in, invent facial details or smooth the strokes.",
+      "collection": "sketchbook",
+      "source": "texture and cover layout and colour reference/cover/1a0b64fa21fc365d2dc21944296b6d42.jpg",
+      "prompt": "Use case: precise-object-edit. The attached artwork is the EDIT TARGET, not a loose inspiration. Single faithful framing/scale adjustment. Output ONE high-resolution SQUARE flat cover graphic. Keep the actual reference drawing/painting, its colors and texture. Intentional large empty background on ALL sides: keep every subject inside central 46% of canvas HEIGHT. Do NOT zoom in, crop the subject, add content, create a book or mockup, add text, logo, signature or watermark. Preserve the EXACT blond child's bowed head, face, blue-purple clothing and rough ochre/blue pastel strokes from the reference, without changing their features or expression. Scale the whole existing painterly study down into x=29%..71%, y=27%..73% of a SQUARE canvas, and extend the same plain white paper background everywhere else. Keep ALL of the child's hair, face and chin visible inside that central group. Do not crop the painting, zoom in, invent facial details or smooth the strokes.",
+      "method": "built-in-image-edit",
+      "group": "sketchbook",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "d443a9de0c60c149773d93df842761b4369729c89cffea8533627adfda669463",
+      "src": "/covers/sketchbook/small-study.webp",
+      "bytes": 902996,
+      "sha256": "7a01d589ee8ed7f48bdb5a561ba2af9146d91e32fed1f2a831791eae31267188",
+      "name": "Small Study",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "sketchbook",
+      "index": 18,
+      "id": "tidal-ink",
+      "collection": "sketchbook",
+      "method": "lossless-transcode",
+      "source": "texture and cover layout and colour reference/cover/4d5cc0cb8d47d80b7e740ba36fd07b26.jpg",
+      "width": 600,
+      "height": 803,
+      "sourceSha256": "3190421df4b28af9a9aa2274604f5fd2f13b4ed0b0a35d10d7b2e5171a6f098d",
+      "src": "/covers/sketchbook/tidal-ink.webp",
+      "file": "public/covers/sketchbook/tidal-ink.webp",
+      "bytes": 214896,
+      "sha256": "ad3978c7e04588ed36f8c6dd3ffd42dd8dcde5d488bc8fcbb1000bcbe0bfcfce",
+      "name": "Tidal Ink",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "collection": "sketchbook",
+      "id": "watercolor-koi",
+      "source": "texture and cover layout and colour reference/cover/95cf7a408c8c316ac045fe2adc7c00da.jpg",
+      "instruction": "Remove the tiny artist signature at bottom left. Preserve the same school of orange, blue-grey and ivory koi, their poses, translucent watercolor and paper texture. Fit the complete group, scaled somewhat smaller, centered on a square sheet of matching ivory watercolor paper so the essential fish remain in a wide 16:9 center crop. Do not introduce more fish.",
+      "prompt": "Use case: precise-object-edit. Asset: flat front-cover artwork, never a book mockup. The attached local image is the EDIT TARGET. Match its actual illustration, palette, brushwork and composition faithfully; do not invent a new design. Preserve visible paper and physical paint texture within the artwork. Output ONE high-resolution square master image. No added decorative heading, commercial/creator text, logo, watermark, border or mockup. Remove the tiny artist signature at bottom left. Preserve the same school of orange, blue-grey and ivory koi, their poses, translucent watercolor and paper texture. Fit the complete group, scaled somewhat smaller, centered on a square sheet of matching ivory watercolor paper so the essential fish remain in a wide 16:9 center crop. Do not introduce more fish.",
+      "method": "built-in-image-edit",
+      "group": "sketchbook",
+      "width": 1254,
+      "height": 1254,
+      "sourceSha256": "38241cbd647fd8f388939d7483828a1d2283222b63100ebbeb75ffe1e3e52fd2",
+      "src": "/covers/sketchbook/watercolor-koi.webp",
+      "file": "public/covers/sketchbook/watercolor-koi.webp",
+      "bytes": 1976418,
+      "sha256": "6fb0bf32970e86d18fb6f8ac4cc839a30fd1f1ace401bfbbae5f701051c6759a",
+      "name": "Watercolor Koi",
+      "objectPosition": {
+        "16:9": [
+          50,
+          50
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          50,
+          50
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    },
+    {
+      "group": "sketchbook",
+      "index": 15,
+      "id": "watercolor-portrait",
+      "collection": "sketchbook",
+      "method": "lossless-transcode",
+      "source": "texture and cover layout and colour reference/cover/4657ee41015962d0f652feefe47f83e5.jpg",
+      "width": 1200,
+      "height": 1200,
+      "sourceSha256": "94486000736dddf47fe1930678d907f381e65a0949d9abbdc048b2bcc38edaa0",
+      "src": "/covers/sketchbook/watercolor-portrait.webp",
+      "file": "public/covers/sketchbook/watercolor-portrait.webp",
+      "bytes": 709544,
+      "sha256": "b71c0c6ba04f0a3ba88c06f38f5ecf18769d48919a3c1744e85b0a243b8f2929",
+      "name": "Watercolor Portrait",
+      "objectPosition": {
+        "16:9": [
+          45,
+          65
+        ],
+        "1:1": [
+          50,
+          50
+        ],
+        "4:3": [
+          45,
+          65
+        ],
+        "3:4": [
+          50,
+          50
+        ]
+      },
+      "textPreserved": "",
+      "reviewNote": "Single master: outer composition changes with ratio. Use the supplied object position; preserve native ratio to show the entire original."
+    }
+  ]
+}
