@@ -1,6 +1,6 @@
-"""Scribb AI on Render. Woken only when someone opens "Ask my journal"; Scribb never pings it on load.
+"""Scribb AI, a Vercel service at /ai (also runs standalone). Woken only when someone opens "Ask my journal"; Scribb never pings it on load.
 
-GET  /health  public, no database: the frontend polls it while Render wakes
+GET  /health  public, no database: the frontend polls it while the service wakes
 POST /ask     ticket (mode "ask") in Authorization: Bearer; body {question, today, history}
 Listen (/speak) and live calls (/call) follow, ported from Koe.
 Logs never include questions, answers or journal text."""
@@ -11,7 +11,7 @@ import os
 from datetime import date, datetime, timedelta, timezone
 from typing import Literal
 
-from fastapi import FastAPI, Header, Request
+from fastapi import APIRouter, FastAPI, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
@@ -25,6 +25,10 @@ ANSWER_SECONDS = 30
 app = FastAPI(title="Scribb AI", docs_url=None, redoc_url=None, openapi_url=None)
 app.add_middleware(CORSMiddleware, allow_methods=["GET", "POST"], allow_headers=["authorization", "content-type"],
                    allow_origins=[o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "http://localhost:5173").split(",") if o.strip()])
+
+# Routes answer at the root (local, tests) and under /ai, the public path on Vercel,
+# where a service receives the original request path including its prefix.
+router = APIRouter()
 
 
 def error(status: int, code: str, message: str) -> JSONResponse:
@@ -53,12 +57,12 @@ def ticket_from(authorization: str | None) -> str:
     return authorization.removeprefix("Bearer ")
 
 
-@app.get("/health")
+@router.get("/health")
 async def health():
     return {"ok": True}
 
 
-@app.post("/ask")
+@router.post("/ask")
 async def ask(body: Ask, request: Request, authorization: str | None = Header(None)):
     user_id = tickets.verify(ticket_from(authorization), "ask")
     utc_today = datetime.now(timezone.utc).date()
@@ -137,3 +141,7 @@ async def answer_events(body: Ask, user_id: str):
             await task
         except asyncio.CancelledError:
             pass
+
+
+app.include_router(router)
+app.include_router(router, prefix="/ai")

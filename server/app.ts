@@ -6,7 +6,7 @@ import { sql } from './db.js'
 import { media } from './media.js'
 import { people } from './people.js'
 
-/** The Scribb core API. Vercel runs it as one function behind /api (api/index.ts); dev.ts runs it locally. */
+/** The Scribb core API. Vercel runs it as the `api` service behind /api (vercel.json); dev.ts runs it locally. */
 const app = express()
 app.disable('x-powered-by')
 // On Vercel the edge sets X-Forwarded-For, so req.ip is the visitor. Locally the header is not trusted.

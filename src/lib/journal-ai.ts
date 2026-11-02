@@ -3,7 +3,8 @@ import {api,ApiError} from './api'
 export type Turn={role:'user'|'assistant';text:string}
 export type Source={entryId:string;date:string}
 type Events={delta:(text:string)=>void;sources:(sources:Source[])=>void}
-function serviceUrl(value:string){const url=new URL(value);if(url.protocol!=='https:'&&!(url.protocol==='http:'&&['localhost','127.0.0.1'].includes(url.hostname)))throw new Error('The AI service address is not valid.');return url.href.replace(/\/$/,'')}
+// AI_URL is a same-origin path on Vercel (/ai) or an absolute address when the service runs elsewhere.
+function serviceUrl(value:string){const url=new URL(value,location.origin);if(url.protocol!=='https:'&&!(url.protocol==='http:'&&['localhost','127.0.0.1'].includes(url.hostname)))throw new Error('The AI service address is not valid.');return url.href.replace(/\/$/,'')}
 async function problem(res:Response){const data=await res.json().catch(()=>null);return new ApiError(res.status,data?.error?.code??'ai_error',data?.error?.message??'The AI service could not answer. Please try again.')}
 function localDate(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 const pause=(ms:number,signal:AbortSignal)=>new Promise<void>((resolve,reject)=>{signal.throwIfAborted();const abort=()=>{clearTimeout(timer);reject(signal.reason)};const timer=setTimeout(()=>{signal.removeEventListener('abort',abort);resolve()},ms);signal.addEventListener('abort',abort,{once:true})})

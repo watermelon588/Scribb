@@ -69,7 +69,7 @@ This is a known risk you are accepting. Switching to the paid tier later changes
 ## Technical decisions
 
 ### Repo and hosting
-- Same repo, one Vercel project. `server/` holds the Express app, `api/index.ts` re-exports it, and `/api/*` rewrites to it. `ai/` holds the Python service, deployed by Render from that folder.
+- Same repo, one Vercel project. Vercel services (vercel.json): `app` (Vite) at `/`, `api` (Express, `server/app.ts`) at `/api/*`, `scribb-ai` (FastAPI, `ai/`) at `/ai/*`. Render remains an option for the AI service.
 - Same origin for the app and API means no CORS, and the auth cookie stays first-party.
 - Render accepts browser requests only from `scribb.xyz`, plus `localhost:5173` in development.
 - Local development keeps Vite on 5173 and proxies `/api` to Express on 3001.

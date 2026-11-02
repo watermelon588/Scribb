@@ -7,6 +7,8 @@ client = TestClient(app)
 
 def test_health_needs_nothing():
     assert client.get("/health").json() == {"ok": True}
+    # Vercel routes /ai/* to this service without stripping the prefix.
+    assert client.get("/ai/health").json() == {"ok": True}
 
 
 def test_ask_without_a_ticket_is_refused():
