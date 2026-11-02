@@ -1,5 +1,6 @@
+import Feedback from './Feedback'
 const geminiTerms='https://ai.google.dev/gemini-api/terms'
-export function SiteFooter(){return <footer className="site-footer"><span className="footer-brand"><img className="brand-mark" src="/brand/scribb-mark.png" alt="" width="22" height="22"/><b>Scribb</b> A space of your own.</span><nav aria-label="Information"><a href="#ask">Ask my journal</a><a href="#privacy">Privacy</a><a href="#terms">Terms</a></nav></footer>}
+export function SiteFooter(){return <footer className="site-footer"><span className="footer-brand"><img className="brand-mark" src="/brand/scribb-mark.png" alt="" width="22" height="22"/><b>Scribb</b> A space of your own.</span><nav aria-label="Information"><a href="#ask">Ask my journal</a><a href="#privacy">Privacy</a><a href="#terms">Terms</a><a href="/about/">About</a><Feedback/></nav></footer>}
 
 export default function Legal({page}:{page:'privacy'|'terms'}){
  const privacy=page==='privacy'

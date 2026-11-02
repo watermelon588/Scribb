@@ -1,194 +1,242 @@
-> Revision: books stay straight, with no presentation rotation or tilt. Current designs: Linen, Spiral (visible wire loops), and Watercolor (elastic closure). Float is removed. Five muted and five bright cover colors; four original reference textures plus a dotted pattern. This revision supersedes earlier preset/motion descriptions below.
+<div align="center">
 
-# Scribb — sketchbooks and journals
+<img src="public/brand/scribb-mark.png" alt="Scribb companion" width="96" height="96" />
 
-A design prototype for an artist portfolio built around tactile digital
-sketchbooks. **Scribb** is the product name; its mark is the companion's hand-drawn face (public/brand/). This milestone explores the book;
-the future feed and artist profiles are deliberately deferred.
+# Scribb
 
-## Run locally
+**A little space for what's on your mind.**
 
-Requires Node.js 22.12+ and npm.
+Free digital sketchbooks and journals with real page turns, covers and bindings.
+Keep them private, or publish them to your profile at `scribb.xyz/@you`.
 
-```sh
+[Live site](https://scribb.xyz) · [Explore](https://scribb.xyz/explore) · [About](https://scribb.xyz/about/)
+
+![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
+![Express](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)
+![Postgres](https://img.shields.io/badge/Neon-Postgres-00E599?logo=postgresql&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-AI%20service-009688?logo=fastapi&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-deployed-000000?logo=vercel&logoColor=white)
+
+<img src="docs/readme/explore-light.jpg" alt="Explore: public sketchbooks and journals from every artist" width="900" />
+
+</div>
+
+---
+
+## Contents
+
+1. [Tour](#tour)
+2. [Features](#features)
+3. [Assets](#assets)
+4. [Project structure](#project-structure)
+5. [Run it locally](#run-it-locally)
+6. [Tests](#tests)
+7. [Deploy](#deploy)
+8. [Feedback](#feedback)
+
+---
+
+## Tour
+
+| Welcome | Welcome (dark) |
+| --- | --- |
+| <img src="docs/readme/welcome-light.jpg" alt="Welcome page in light mode" /> | <img src="docs/readme/welcome-dark.jpg" alt="Welcome page in dark mode" /> |
+
+| Turn the pages | An artist's profile |
+| --- | --- |
+| <img src="docs/readme/book-preview.jpg" alt="A sketchbook open in the preview, showing a two-page spread" /> | <img src="docs/readme/profile.jpg" alt="Mira's profile with her sketchbooks" /> |
+
+| Sketchbook studio | Journal studio |
+| --- | --- |
+| <img src="docs/readme/studio-sketchbook.jpg" alt="Sketchbook studio with cover, binding and visibility controls" /> | <img src="docs/readme/studio-journal.jpg" alt="Journal studio" /> |
+
+| Explore (dark) | Feedback |
+| --- | --- |
+| <img src="docs/readme/explore-dark.jpg" alt="Explore in dark mode" /> | <img src="docs/readme/feedback.jpg" alt="Feedback dialog with a five-star rating and a note" /> |
+
+<p align="center">
+  <img src="docs/readme/mobile-explore.jpg" alt="Explore on a phone" width="260" />
+  &nbsp;&nbsp;
+  <img src="docs/readme/mobile-profile.jpg" alt="A profile on a phone" width="260" />
+</p>
+
+---
+
+## Features
+
+**Sketchbooks**
+- Up to 40 artworks per book, on single pages or full two-page spreads across the fold
+- Three bindings: **Linen**, **Spiral** (real wire loops) and **Watercolor** (ribbed elastic that recoils, releases and opens the cover)
+- Cover art presets or your own image, solid colors, a 48-character cover caption, papers and page-turn styles
+- Direct crop and placement for every artwork, with keyboard and slider alternatives
+
+**Journals**
+- Dated entries with 18 page layouts in four groups (Minimal, Long, Layered, Spread)
+- One font, size and ink per journal, ruled lines drawn from font metrics
+- Pictures, stickers, hand-drawn scribbles (rough.js) and voice typing
+- **Ask my journal**: a companion that answers questions about your own entries
+
+**Social**
+- Profiles at `/@username`, every public book at `/@username/<book id>`
+- Explore feed with likes, saves, follows and notifications
+- Books are private until you publish them
+
+**Built for search and AI search**
+- Server-rendered profile, book and Explore pages with JSON-LD, Open Graph and a live sitemap
+- `robots.txt` lets search and AI-search crawlers in and keeps AI-training crawlers out
+- `llms.txt`, an About page with a FAQ, and IndexNow pings when a book is published
+
+**Everything else**
+- Accounts with username and password or Google, email verification and password reset
+- Persistent light and dark themes, Gallery and Editorial styles, Gallery and Bookshelf views
+- In-app feedback with a 1–5 rating, mailed straight to the founder
+- Reduced motion respected everywhere
+
+---
+
+## Assets
+
+All artwork ships in `public/` as prepared, flat images.
+
+### Profile pictures
+12 preset avatars, chosen in Edit profile (`public/avatars/a01`–`a12`).
+
+<img src="docs/readme/avatars.jpg" alt="The twelve preset profile pictures" width="760" />
+
+### The companion
+Scribb's mark and the Ask my journal companion's moods (`public/brand/`, `public/persona/`).
+
+<img src="docs/readme/companion.jpg" alt="The companion: calm, thinking and worried, plus the Scribb mark" width="560" />
+
+### Cover art
+42 flat cover images for sketchbooks and journals (`public/covers/sketchbook/`, `public/covers/journal/`), plus your own uploads.
+
+<img src="docs/readme/covers.jpg" alt="A selection of sketchbook and journal cover art" width="760" />
+
+| Sketchbook covers | Journal covers |
+| --- | --- |
+| <img src="docs/cover-previews/sketchbook.jpg" alt="Sketchbook cover collection" /> | <img src="docs/cover-previews/journal.jpg" alt="Journal cover collection" /> |
+
+### Stickers
+204 stickers in 13 vibes (`public/stickers/<vibe>/`), placed on journal covers and pages.
+
+<img src="docs/stickers/preview.jpg" alt="A sample of Scribb stickers" width="560" />
+
+<details>
+<summary>Every sticker sheet</summary>
+
+| | | |
+| --- | --- | --- |
+| <img src="docs/stickers/anime.jpg" alt="Anime stickers" /> | <img src="docs/stickers/cutesy.jpg" alt="Cutesy stickers" /> | <img src="docs/stickers/expressions.jpg" alt="Expression stickers" /> |
+| <img src="docs/stickers/nature.jpg" alt="Nature stickers" /> | <img src="docs/stickers/music.jpg" alt="Music stickers" /> | <img src="docs/stickers/japanese.jpg" alt="Japanese stickers" /> |
+| <img src="docs/stickers/gratitude.jpg" alt="Gratitude stickers" /> | <img src="docs/stickers/vintage.jpg" alt="Vintage stickers" /> | <img src="docs/stickers/travel.jpg" alt="Travel stickers" /> |
+
+</details>
+
+Sample artworks in `public/artworks/` are public-domain paintings from The Met Open Access (`credits.json`).
+
+---
+
+## Project structure
+
+```text
+.
+├── index.html            App shell: meta tags, JSON-LD, prerendered homepage text
+├── vercel.json           One Vercel project, three services (app, api, scribb-ai)
+├── src/                  React app
+│   ├── Profile.tsx       Root: routing, profile, studio, dialogs
+│   ├── components/       Sketchbook (book renderer), Journal, Feed, Account, Feedback…
+│   ├── data/             Presets, journal layouts, covers, stickers
+│   ├── lib/              API client, image ingest, rich text, voice
+│   └── *.css             Theme tokens (theme.css) and UI system (system.css)
+├── server/               Express API (Vercel service "api")
+│   ├── app.ts            Routes: auth, people, books, media, AI tickets, feedback
+│   ├── seo.ts            Crawlable /@name, /@name/<id>, /explore and /sitemap.xml
+│   ├── feedback.ts       In-app feedback, mailed to the founder
+│   └── *.test.ts         API tests on an in-memory Postgres (PGlite)
+├── ai/                   FastAPI service for Ask my journal (Vercel service "scribb-ai")
+├── db/migrations/        SQL migrations
+├── public/
+│   ├── avatars/          Preset profile pictures
+│   ├── brand/            Logo, favicons, share card
+│   ├── covers/           Cover art (sketchbook/, journal/)
+│   ├── stickers/         Stickers by vibe + manifest.json
+│   ├── persona/          Companion moods
+│   ├── artworks/         Public-domain sample art
+│   ├── about/            About and FAQ page
+│   └── robots.txt, llms.txt, 404.html
+├── tests/                Playwright browser tests
+├── scripts/              Asset preparation and the page-flip patch
+└── docs/                 Design notes, asset docs, README images
+```
+
+---
+
+## Run it locally
+
+Requires Node.js 22 and npm.
+
+```bash
 npm install
+```
+
+```bash
+npm run dev:api
+```
+
+```bash
 npm run dev
 ```
 
-Open [the local studio](http://localhost:5173/).
+Open http://localhost:5173. Without a `.env`, the API uses a local Postgres in `.data/pglite`, keeps uploads in `.data/uploads` and prints emails to the console, so nothing external is needed.
 
-```sh
-npm run build   # TypeScript check and production build
-npm run preview # Serve the production build on port 4173
-npm test        # Browser integration tests using installed Google Chrome
+To use real services, copy `.env.example` to `.env` and fill in what you need:
+
+| Variable | What it does |
+| --- | --- |
+| `DATABASE_URL` | Neon Postgres connection string |
+| `SESSION_SECRET` | Signs the session cookie (32+ random bytes) |
+| `APP_ORIGIN` | Public origin, used for canonical URLs and email links |
+| `GOOGLE_CLIENT_ID`, `VITE_GOOGLE_CLIENT_ID` | Sign in with Google |
+| `RESEND_API_KEY`, `MAIL_FROM` | Account emails and feedback mail |
+| `FEEDBACK_TO` | Where feedback goes (defaults to the founder) |
+| `CLOUDINARY_*` | Image hosting |
+| `AI_TICKET_SECRET`, `AI_URL`, `GEMINI_API_KEY` | Ask my journal |
+
+Run migrations against a real database with `npm run migrate`.
+
+---
+
+## Tests
+
+```bash
+npm run build
 ```
 
-If Google Chrome is unavailable, install Chromium with `npx playwright install
-chromium`, then remove `channel: 'chrome'` from `playwright.config.ts`.
-
-## The three studies
-
-| Preset | Cover | Typography | Default turn |
-| --- | --- | --- | --- |
-| The Linen | Woven cloth, small artwork plate | Manrope | Curl |
-| The Archive | Fine-grain leather, inset frame | Newsreader | Hinge |
-| The Softcover | Uncoated stock, graphic rules | DM Sans | Float |
-
-Every preset supports all three turn styles, five color swatches and a custom
-color picker, four page proportions, an editable cover title, and optional paper
-grain. Changes are remembered locally. Selecting another preset loads its defaults.
-
-The preview opens to the first spread. Use **View cover** to inspect the binding,
-then **Open book**. Drag a page corner, swipe, use the arrow buttons, or focus the
-book and use the left/right arrow keys. Home returns to the front cover.
-Fullscreen is available from the preview's upper-right corner; Escape exits it.
-Reduced-motion mode uses immediate page changes through the buttons and keyboard.
-
-**Try your own artwork** replaces the samples with up to 12 JPG, PNG, WebP, or AVIF
-images (15 MB each). Their selected order becomes the page order. This is a local
-preview: uploads are not sent to a server and disappear on reload. Restore the
-samples with the link below the upload control.
-
-## One component
-
-```tsx
-<Sketchbook
-  preset={presets[0]}
-  coverColor="#526756"
-  aspectRatio={3 / 4}
-  turnStyle="curl"
-  title="In good nature"
-  artworks={sampleArtworks}
-  texture={true}
-/>
+```bash
+npm test
 ```
 
-`SketchbookProps` and `Artwork` are typed in the source. New presets belong in
-`src/data/presets.ts`; their material styles live in `src/styles.css`. All books
-share the same renderer and lifecycle. See [the design contract](docs/DESIGN.md)
-and [reference analysis](docs/REFERENCE-NOTES.md) before changing the interaction.
+`npm test` runs the API tests (Node test runner on in-memory Postgres) and then Playwright, which starts its own app and API on ports 5174 and 3101 with `LOCAL_ONLY`, so it never touches real services.
 
-## Files
+---
 
-```text
-src/
-  App.tsx                   Studio and customization controls
-  components/Sketchbook.tsx Shared page, cover, and interaction renderer
-  data/presets.ts           Typed presets and sample artwork data
-  styles.css                Layout, materials, paper, typography, responsiveness
-  page-flip.d.ts            Used subset of the untyped library API
-public/
-  artworks/                 Bundled public-domain samples and credits
-  paper.svg                 Deterministic subtle grain
-docs/                       Design rules, product scope, reference observations
-scripts/patch-page-flip.mjs  Reproducible upstream animation-loop cleanup fix
-tests/studio.spec.ts        Integration checks in a real browser
-AGENTS.md                   Instructions for continued project work
-```
+## Deploy
 
-## Assets and dependencies
+One Vercel project with three services (`vercel.json`):
 
-Sample paintings are CC0 public-domain images from The Metropolitan Museum of
-Art's Open Access collection. Attribution and source URLs are in
-`public/artworks/credits.json`. Fonts are self-hosted through Fontsource; their
-OFL licenses ship with the respective packages. No live image/font service is
-needed at runtime.
+| Service | Serves | Source |
+| --- | --- | --- |
+| `app` | `/` | Vite build |
+| `api` | `/api/*`, `/@*`, `/explore`, `/sitemap.xml` | `server/app.ts` |
+| `scribb-ai` | `/ai/*` | `ai/` (FastAPI) |
 
-Page turns use [StPageFlip](https://nodlik.github.io/StPageFlip/); book positioning
-and the floating turn use [GSAP](https://gsap.com/resources/React/). A small
-idempotent postinstall patch stops StPageFlip 2.0.7's render loop on destruction.
-It checks the exact upstream source and fails clearly if an upgrade needs review.
+The production branch is `main`. Set the variables above in Vercel, with `APP_ORIGIN=https://scribb.xyz`.
 
-The local MP4 references remain untouched. Generated analysis images and QA
-captures are ignored in `.reference-analysis/`. No backend or hosting is configured.
+---
 
+## Feedback
 
-## Current application
-- `/` or `/#portfolio`: your artist profile and locally saved sketchbooks and journals.
-- `/#feed`: Explore, with 12 demo sketchbooks and four fictional artists. Open books, visit artist collections, filter/search, like and bookmark. Reactions persist only on this device.
-- `/#new` and legacy `/#studio`: one creation/editing flow that switches between Sketchbook and Journal. Drafts autosave on this device.
-
-Journals have 10 fonts, 10 layouts that adapt to all four formats, and a Writing page that continues across pages. Pictures are reduced under 200 KB. See `journaling-plan.md` for the parts still to come.
-
-Gallery and Editorial have coordinated profile, editor and feed layouts with a shared palette. Both include Gallery and Bookshelf previews. Library has been removed.
-The style switch preserves the draft. Phone navigation links Explore, Create and
-Portfolio; Create resumes an in-memory draft when switching sections.
-
-21 prepared/standalone covers, custom cover upload and solid colors are available.
-All four formats apply to thumbnails and the interactive renderer. Front artwork
-fills the cover; backs remain plain. An optional 48-character caption is printed
-on the front. The elastic keeps its existing stretch/release/opening sequence and
-is removed immediately when opening completes, without fading.
-
-Cover and artwork editors support dragging, resizing and keyboard/range controls.
-Artwork also supports explicit cropping and continuous two-page spreads with a
-center fold. JPG/PNG/WebP uploads are validated before decoding and re-encoded:
-10 MiB/file, 40 MiB/batch, 20 MP, 8192 pixels/edge and 40 artworks/book.
-See docs/UPLOADS.md and docs/COVER-ASSETS.md.
-
-The reference-inspired Bookshelf uses close-set spines and an expanding selected
-front cover. Scrollbars are hidden while scrolling remains enabled. Phone layouts
-use safe-area navigation, full-screen book dialogs and appropriately sized inputs.
-
-Books/images use IndexedDB; profile, style and feed reactions use localStorage.
-There is no backend, authentication or cloud sync. Clearing browser storage removes
-saved work. Reference artwork is included for this local design exploration.
-
-Run `npm run build` and `npm test` for validation. Browser checks cover desktop and
-320/390px phone viewports, touch input, reduced motion, formats, persistence,
-upload rejection, covers and spreads. Real-device testing remains a separate check.
-
-Appearance: the header sun/moon button switches the entire application between light
-and dark, remembers the preference, and initializes before paint. Artwork and paper
-retain their original colors. New Sketchbook is available in the collection and
-phone Create tab, not the top navbar.
-
-Motion: Lenis 1.3.27 smooths desktop wheel scrolling through the existing GSAP ticker
-(https://github.com/darkroomengineering/lenis). Touch, book gestures and nested
-editors remain native. Reduced motion disables smoothing and entrance tweens.
-Entrance motion is limited to transform/opacity and 360ms, with scoped cleanup.
-
-Original olive light/dark appearance is restored. Explore opens directly to its
-filters and books; Gallery uses three compact desktop columns, two on tablets
-and one on phones. The Gallery/Editorial selector uses compact labeled icons.
-
-## Backend (local)
-
-The plan is in `backend-plan.md`. Copy `.env.example` to `.env` and fill in the keys.
-
-- `npm run migrate` applies `db/migrations` to `DATABASE_URL`.
-- `npm run dev:api` runs the Express API on port 3001; `npm run dev` proxies `/api` to it.
-- `npm run test:api` runs the API tests against an in-process Postgres, so no database is needed.
-- AI service: `cd ai`, `py -3 -m venv .venv`, `.venv/Scripts/pip install -r requirements.txt pytest`, then `.venv/Scripts/python -m pytest` or `.venv/Scripts/uvicorn scribb_ai.main:app --port 8000`.
-- After the first migration, give the AI role a password once: `alter role scribb_ai login password '...'`, and use it in `AI_DATABASE_URL`.
-
-## Welcome, information and journal questions
-
-Guests see a centered animation and account prompt on `/`. The original supplied
-GIF is preserved. `public/media/welcome-light.mp4` and `welcome-dark.mp4` are silent,
-looping H.264 conversions with a background matched to each appearance; WebP stills
-serve as posters. The animation pauses for reduced motion and has a play/pause button.
-
-`/#privacy` and `/#terms` use the shared olive theme and Gallery/Editorial typography.
-Links appear in the footer and account creation form. The privacy page documents
-the current media-deletion limitation and Gemini free-tier processing rather than
-promising complete deletion or confidential AI processing.
-
-`/#ask` opens Ask my journal. A verified email and explicit AI consent are required.
-`GET /api/ai/status` checks access and returns the configured service URL without
-spending a turn. On submission the client polls `/health` for up to 90 seconds,
-then mints a fresh, one-time 60-second ticket. No AI service is contacted on ordinary
-app loads or while merely reading the consent notice. AI is disabled in local-only tests.
-
-The AI `/ask` endpoint retains JSON compatibility and accepts
-`Accept: text/event-stream` for real Gemini chunks (`delta`, `done` with journal source
-dates, and `error`). Disconnecting cancels the generation task. Conversations live
-only in page memory; retry, cancellation, consent withdrawal and route changes
-do not write them into journal entries or device storage. Deploy the updated AI
-service alongside the app to enable streamed answers; older services still return JSON.
-
-Gemini data-use wording was checked against https://ai.google.dev/gemini-api/terms
-on 2 November 2026. Operator-specific legal details and a provider change need a
-content review before a public launch. `tests/pages.spec.ts` checks the new flows
-with mocked AI responses; `ai/tests/test_streaming.py` tests the streaming boundary
-without external model calls.
+Use **Feedback** in the footer of the app: pick a rating, write what could be better, and it lands in the founder's inbox.
