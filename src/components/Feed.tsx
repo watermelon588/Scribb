@@ -32,11 +32,11 @@ function OpenSpread({book}:{book:Book}){
 
 const CATEGORIES=['All','Watercolor','Illustration','Sketches']
 /** Explore and Following come from the API; guests can read, and liking or saving asks them to sign in. */
-export default function Feed({user,onOpen,onPerson,onSignIn}:{user:User|null|undefined;onOpen:(b:Book)=>void;onPerson:(handle:string)=>void;onSignIn:()=>void}){
+export default function Feed({user,onOpen,onPerson,onSignIn,onNotice}:{user:User|null|undefined;onOpen:(b:Book)=>void;onPerson:(handle:string)=>void;onSignIn:()=>void;onNotice:import('./Notice').Notify}){
  const [tab,setTab]=useState<Tab>('explore'),[category,setCategory]=useState('All'),[query,setQuery]=useState('')
  // Cards lie open at the newest post; the icon closes one to its cover and opens it again.
  const [closed,setClosed]=useState<Set<string>>(()=>new Set())
- const [books,setBooks]=useState<Book[]>([]),[next,setNext]=useState<string|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState(''),[notice,setNotice]=useState('')
+ const [books,setBooks]=useState<Book[]>([]),[next,setNext]=useState<string|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState('')
  const path=tab==='saved'?'/me/saved':`/feed?tab=${tab}${category==='All'?'':`&category=${encodeURIComponent(category)}`}`
  async function load(cursor?:string|null){
   setLoading(true);setError('')
@@ -50,8 +50,8 @@ export default function Feed({user,onOpen,onPerson,onSignIn}:{user:User|null|und
   const on=kind==='like'?!book.liked:!book.saved
   const patch=(b:Book):Book=>kind==='like'?{...b,liked:on,likeCount:(b.likeCount??0)+(on?1:-1)}:{...b,saved:on,saveCount:(b.saveCount??0)+(on?1:-1)}
   setBooks(list=>list.map(b=>b.id===book.id?patch(b):b))
-  try{const r=await api<{likeCount:number;saveCount:number}>(on?'PUT':'DELETE',`/books/${book.id}/${kind}`);setBooks(list=>list.map(b=>b.id===book.id?{...b,likeCount:r.likeCount,saveCount:r.saveCount}:b))}
-  catch(e){setBooks(list=>list.map(b=>b.id===book.id?book:b));setNotice(message(e))}
+  try{const r=await api<{likeCount:number;saveCount:number}>(on?'PUT':'DELETE',`/books/${book.id}/${kind}`);setBooks(list=>list.map(b=>b.id===book.id?{...b,likeCount:r.likeCount,saveCount:r.saveCount}:b));if(kind==='save')onNotice(on?'Book saved to your saved shelf.':'Book removed from your saved shelf.','success')}
+  catch(e){setBooks(list=>list.map(b=>b.id===book.id?book:b));onNotice(message(e),'error')}
  }
  const shown=books.filter(b=>`${b.title} ${b.owner?.displayName} ${b.owner?.username}`.toLowerCase().includes(query.toLowerCase()))
  function toggle(id:string){setClosed(set=>{const next=new Set(set);if(!next.delete(id))next.add(id);return next})}
@@ -68,6 +68,6 @@ export default function Feed({user,onOpen,onPerson,onSignIn}:{user:User|null|und
  {error&&<div className="feed-empty" role="alert"><h2>The feed could not be loaded.</h2><p>{error}</p><button className="button-secondary" onClick={()=>void load()}>Try again</button></div>}
  {!error&&!loading&&!shown.length&&<div className="feed-empty"><img className="brand-mark" src="/brand/scribb-mark.png" alt="" width="64" height="64"/><h2>{tab==='saved'?'Your saved shelf is waiting.':tab==='following'?'Nothing from people you follow yet.':query?'No books found.':'Nothing published here yet.'}</h2><p>{tab==='saved'?'Tap the bookmark on a book to keep it here.':tab==='following'?'Follow artists from their portfolios to see their new books here.':query?'Try another name.':'Published sketchbooks and journals appear here.'}</p>{(tab!=='explore'||query||category!=='All')&&<button className="button-secondary" onClick={()=>{setQuery('');setCategory('All');setTab('explore')}}>Explore everyone</button>}</div>}
  {next&&!error&&<button className="button-secondary feed-load" disabled={loading} onClick={()=>void load(next)}><Plus/> {loading?'Loading…':'More to discover'}</button>}
- <footer className="feed-footer"><span>Made by hand. Shared with care.</span></footer>{notice&&<p role="status" className="feed-notice">{notice}</p>}
+ <footer className="feed-footer"><span>Made by hand. Shared with care.</span></footer>
  </main>
 }

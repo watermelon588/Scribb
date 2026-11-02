@@ -3,6 +3,7 @@ import { Router, type NextFunction, type Request, type Response } from 'express'
 import { createRemoteJWKSet, jwtVerify, SignJWT, type JWTVerifyGetKey } from 'jose'
 import { limit, pgCode, sql, type Row } from './db.js'
 import { isCreator, profileAvatar } from './creator.js'
+import { passwordResetEmail, verificationEmail, verifiedEmail } from './emails.js'
 
 /** Minimal accounts: username + password or Google. Email is optional and only unlocks password reset (and AI). */
 export const auth = Router()
@@ -85,7 +86,7 @@ export async function requireUser(req: Request, res: Response, next: NextFunctio
 
 // ---- Email: optional, only for verification and resets. Without RESEND_API_KEY, development prints the message instead.
 export const mailer = {
-  async send(to: string, subject: string, body: string) {
+  async send(to: string, subject: string, body: string, html?: string) {
     const key = process.env.RESEND_API_KEY
     if (!key) {
       if (process.env.NODE_ENV === 'production') throw new Error('RESEND_API_KEY is not set.')
@@ -93,7 +94,7 @@ export const mailer = {
     }
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST', headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
-      body: JSON.stringify({ from: process.env.MAIL_FROM ?? 'Scribb <hello@scribb.xyz>', to, subject, text: body }),
+      body: JSON.stringify({ from: process.env.MAIL_FROM ?? 'Scribb <hello@scribb.xyz>', to, subject, text: body, html }),
     })
     if (!res.ok) throw new Error(`Resend answered ${res.status}`)
   },
@@ -202,7 +203,8 @@ auth.post('/auth/forgot', async (req, res) => {
   const [user] = await sql()`select id from users where email = ${email} and email_verified_at is not null`
   if (user) {
     const token = await issueToken(user.id, 'reset', email, 3600)
-    await mailer.send(email, 'Reset your Scribb password', `Choose a new password here (this link works once, for one hour):\n${origin(req)}/#reset/${token}\n\nIf you did not ask for this, ignore this email.`)
+    const content = passwordResetEmail(origin(req), token)
+    await mailer.send(email, content.subject, content.text, content.html)
   }
   res.status(202).json({ ok: true })
 })
@@ -226,16 +228,23 @@ auth.post('/auth/reset', async (req, res) => {
 auth.post('/auth/verify-email', async (req, res) => {
   const token = text(req.body?.token)
   if (!(await limit(`verify-ip:${req.ip}`, 20, 3600))) return tooMany(res)
+  let verifiedAddress: string
   try {
     const [row] = await sql()`
       with t as (update email_tokens set used_at = now()
                  where token_hash = ${sha256(token)} and purpose = 'verify' and used_at is null and expires_at > now() returning user_id, email)
-      update users u set email = t.email, email_verified_at = now() from t where u.id = t.user_id returning u.id`
+      update users u set email = t.email, email_verified_at = now() from t where u.id = t.user_id returning u.id, u.email`
     if (!row) return fail(res, 400, 'bad_token', 'This link has expired or was already used.')
+    verifiedAddress = row.email
   } catch (err) {
     if (pgCode(err) === '23505') return fail(res, 409, 'email_in_use', 'That email is already linked to another account.')
     throw err
   }
+  // A delivery problem must never undo verification or turn a consumed link into a failed screen.
+  try {
+    const content = verifiedEmail(origin(req))
+    await mailer.send(verifiedAddress, content.subject, content.text, content.html)
+  } catch { console.error('Email verified, but the confirmation email could not be delivered.') }
   res.json({ ok: true })
 })
 
@@ -244,9 +253,10 @@ auth.put('/me/email', requireUser, async (req, res) => {
   const user = res.locals.user as Row, email = text(req.body?.email).toLowerCase()
   if (!EMAIL.test(email) || email.length > 254) return fail(res, 400, 'bad_email', 'Enter a valid email address.')
   if (!(await limit(`email:${user.id}`, 5, 3600))) return tooMany(res)
-  if (email === user.email && user.email_verified_at) return void res.json({ ok: true })
+  if (email === user.email && user.email_verified_at) return void res.json({ ok: true, alreadyVerified: true })
   const token = await issueToken(user.id, 'verify', email, 24 * 3600)
-  await mailer.send(email, 'Verify your email for Scribb', `Confirm this address for @${user.handle} (this link works once, for 24 hours):\n${origin(req)}/#verify-email/${token}`)
+  const content = verificationEmail(origin(req), user.handle, token)
+  await mailer.send(email, content.subject, content.text, content.html)
   res.status(202).json({ ok: true })
 })
 

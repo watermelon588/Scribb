@@ -33,12 +33,12 @@ test('caption and applied crop persist in the notebook',async({page})=>{
 
 test('rejects renamed active content, oversized files and oversized pixel dimensions',async({page})=>{
  await page.goto('/#new');const input=page.locator('input[type=file]').last();
- await input.setInputFiles({name:'pretend.png',mimeType:'image/png',buffer:Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>')});await expect(page.getByRole('status')).toContainText('not a supported image');await expect(page.locator('.artwork-edit-card')).toHaveCount(0);
- await input.setInputFiles({name:'large.jpg',mimeType:'image/jpeg',buffer:Buffer.alloc(10*1024*1024+1)});await expect(page.getByRole('status')).toContainText('10 MB');
+ await input.setInputFiles({name:'pretend.png',mimeType:'image/png',buffer:Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>')});await expect(page.getByRole('alert')).toContainText('not a supported image');await expect(page.locator('.artwork-edit-card')).toHaveCount(0);
+ await input.setInputFiles({name:'large.jpg',mimeType:'image/jpeg',buffer:Buffer.alloc(10*1024*1024+1)});await expect(page.getByRole('alert')).toContainText('10 MB');
  const png=Buffer.alloc(33);Buffer.from([137,80,78,71,13,10,26,10]).copy(png);png.write('IHDR',12);png.writeUInt32BE(9000,16);png.writeUInt32BE(9000,20);
- await input.setInputFiles({name:'huge.png',mimeType:'image/png',buffer:png});await expect(page.getByRole('status')).toContainText('20 megapixels');
+ await input.setInputFiles({name:'huge.png',mimeType:'image/png',buffer:png});await expect(page.getByRole('alert')).toContainText('20 megapixels');
  await input.setInputFiles('public/artworks/roses.jpg');await expect(page.locator('.artwork-edit-card')).toHaveCount(1);await expect(page.locator('.artwork-edit-preview img')).toHaveAttribute('src',/^data:image\/webp/);
- await page.locator('input[type=file]').first().setInputFiles({name:'bad.jpg',mimeType:'image/jpeg',buffer:Buffer.from('<html>no image</html>')});await expect(page.getByRole('status')).toContainText('not a supported image');
+ await page.locator('input[type=file]').first().setInputFiles({name:'bad.jpg',mimeType:'image/jpeg',buffer:Buffer.from('<html>no image</html>')});await expect(page.getByRole('alert')).toContainText('not a supported image');
 });
 
 test('all profile and editor directions fit mobile',async({page})=>{

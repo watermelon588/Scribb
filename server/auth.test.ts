@@ -14,8 +14,8 @@ process.env.GOOGLE_CLIENT_ID = 'scribb-test.apps.googleusercontent.com'
 
 let pg: PGlite, base = ''
 const server = app.listen(0)
-const mail: { to: string; body: string }[] = []
-mailer.send = async (to, _subject, body) => void mail.push({ to, body })
+const mail: { to: string; subject: string; body: string; html?: string }[] = []
+mailer.send = async (to, subject, body, html) => void mail.push({ to, subject, body, html })
 before(async () => { pg = await testDatabase(); base = `http://localhost:${(server.address() as AddressInfo).port}` })
 beforeEach(async () => { await pg.exec('delete from rate_limits') })
 after(() => { server.close() })
@@ -71,9 +71,22 @@ test('optional email: verify in settings, then forgot and reset work once', asyn
   assert.equal((await call('PUT', '/me/email', { email: 'Leo@Example.com' }, leo.cookie)).status, 202)
   const verify = mail.at(-1)!
   assert.equal(verify.to, 'leo@example.com')
+  assert.match(verify.html ?? '', /scribb-mark\.png/, 'verification mail carries the brand mark')
+  assert.match(verify.html ?? '', /Verify my email/)
+  assert.match(verify.body, /24 hours/)
   assert.equal((await call('POST', '/auth/verify-email', { token: tokenFrom(verify.body) })).status, 200)
+  const welcome = mail.at(-1)!
+  assert.equal(welcome.to, verify.to)
+  assert.match(welcome.subject, /verified/)
+  assert.match(welcome.html ?? '', /Congratulations/)
+  assert.match(welcome.html ?? '', /Go to homepage/)
+  assert.doesNotMatch(welcome.body, /#verify-email\//, 'the confirmation never repeats a used token')
+  const afterWelcome = mail.length
   assert.equal((await call('POST', '/auth/verify-email', { token: tokenFrom(verify.body) })).body.error.code, 'bad_token', 'single use')
+  assert.equal(mail.length, afterWelcome, 'used tokens never send another welcome')
   assert.equal((await call('GET', '/auth/me', undefined, leo.cookie)).body.user.emailVerified, true)
+  assert.equal((await call('PUT', '/me/email', { email: 'leo@example.com' }, leo.cookie)).body.alreadyVerified, true)
+  assert.equal(mail.length, afterWelcome, 'an already verified address never claims another email was sent')
 
   const sent = mail.length
   assert.equal((await call('POST', '/auth/forgot', { email: 'stranger@example.com' })).status, 202, 'unknown emails get the same answer')
@@ -90,6 +103,17 @@ test('optional email: verify in settings, then forgot and reset work once', asyn
   const ines = await call('POST', '/auth/register', { username: 'ines', password: 'first password' })
   await call('PUT', '/me/email', { email: 'leo@example.com' }, ines.cookie)
   assert.equal((await call('POST', '/auth/verify-email', { token: tokenFrom(mail.at(-1)!.body) })).body.error.code, 'email_in_use')
+})
+
+test('verification stays successful when only the congratulations email cannot be delivered', async t => {
+  const account = await call('POST', '/auth/register', { username: 'mail.delivery', password: 'first password' })
+  await call('PUT', '/me/email', { email: 'delivery@example.com' }, account.cookie)
+  const token = tokenFrom(mail.at(-1)!.body)
+  t.mock.method(mailer, 'send', async () => { throw new Error('delivery unavailable') })
+  t.mock.method(console, 'error', () => {})
+  assert.equal((await call('POST', '/auth/verify-email', { token })).status, 200)
+  assert.equal((await call('GET', '/auth/me', undefined, account.cookie)).body.user.emailVerified, true)
+  assert.equal((await call('POST', '/auth/verify-email', { token })).body.error.code, 'bad_token')
 })
 
 test('Google sign-in: verified tokens only, and linking only to a verified email', async () => {

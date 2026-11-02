@@ -1,14 +1,15 @@
 import {useEffect,useRef,useState,type FormEvent} from 'react'
 import {BehanceLogo,CaretDown,DribbbleLogo,GlobeSimple,InstagramLogo,LinkedinLogo,PaintBrush,PinterestLogo,Plus,TiktokLogo,X,XLogo,YoutubeLogo,type Icon} from '@phosphor-icons/react'
 import {AVATARS,LINK_KINDS,api,avatarSrc,message,type LinkKind,type Person,type User} from '../lib/api'
+import type {Notify} from './Notice'
 
 /** Sign-in, password reset, settings and notifications. Each renders inside the portfolio dialog. */
 const GOOGLE_CLIENT_ID=import.meta.env.VITE_GOOGLE_CLIENT_ID as string|undefined
 type Google={accounts:{id:{initialize(o:{client_id:string;callback:(r:{credential:string})=>void}):void;renderButton(el:HTMLElement,o:Record<string,unknown>):void}}}
 
-function useBusy(){
+function useBusy(onNotice?:Notify){
  const [busy,setBusy]=useState(false),[error,setError]=useState('')
- async function run(task:()=>Promise<void>){setBusy(true);setError('');try{await task()}catch(e){setError(message(e))}finally{setBusy(false)}}
+ async function run(task:()=>Promise<void>){setBusy(true);setError('');try{await task()}catch(e){const text=message(e);setError(text);onNotice?.(text,'error')}finally{setBusy(false)}}
  return {busy,error,run,setError}
 }
 const Problem=({text}:{text:string})=>text?<p className="form-error" role="alert">{text}</p>:null
@@ -29,12 +30,13 @@ function GoogleButton({onUser}:{onUser:(u:User)=>void}){
  return <><div className="google-slot" ref={slot}/><Problem text={error}/><p className="form-divider"><span>or</span></p></>
 }
 
-export function SignIn({initial='signin',onUser,onLegal}:{initial?:'signin'|'signup';onUser:(u:User)=>void;onLegal?:()=>void}){
+export function SignIn({initial='signin',onUser,onLegal,onNotice}:{initial?:'signin'|'signup';onUser:(u:User)=>void;onLegal?:()=>void;onNotice?:Notify}){
  const [mode,setMode]=useState<'signin'|'signup'|'forgot'>(initial),[username,setUsername]=useState(''),[password,setPassword]=useState(''),[email,setEmail]=useState(''),[sent,setSent]=useState(false)
- const {busy,error,run,setError}=useBusy()
+ const {busy,error,run,setError}=useBusy(onNotice)
  function submit(e:FormEvent){e.preventDefault();void run(async()=>{
-  if(mode==='forgot'){await api('POST','/auth/forgot',{email});setSent(true);return}
+  if(mode==='forgot'){await api('POST','/auth/forgot',{email});setSent(true);onNotice?.('If that email is verified on an account, a password reset link is on its way.','success');return}
   onUser((await api<{user:User}>('POST',mode==='signup'?'/auth/register':'/auth/login',{username,password})).user)
+  if(mode==='signup')onNotice?.('Account created successfully. Welcome to Scribb!','success')
  })}
  function switchTo(next:typeof mode){setMode(next);setError('');setSent(false)}
  if(mode==='forgot')return <form className="account-form" onSubmit={submit}><img className="brand-mark account-mark" src="/brand/scribb-mark.png" alt="" width="56" height="56"/><h2>Reset your password</h2>
@@ -52,8 +54,8 @@ export function SignIn({initial='signin',onUser,onLegal}:{initial?:'signin'|'sig
  </form>
 }
 
-export function ResetPassword({token,onUser}:{token:string;onUser:(u:User)=>void}){
- const [password,setPassword]=useState(''),{busy,error,run}=useBusy()
+export function ResetPassword({token,onUser,onNotice}:{token:string;onUser:(u:User)=>void;onNotice?:Notify}){
+ const [password,setPassword]=useState(''),{busy,error,run}=useBusy(onNotice)
  return <form className="account-form" onSubmit={e=>{e.preventDefault();void run(async()=>onUser((await api<{user:User}>('POST','/auth/reset',{token,password})).user))}}><h2>Choose a new password</h2>
   <label>New password<input type="password" autoComplete="new-password" required minLength={8} maxLength={128} value={password} onChange={e=>setPassword(e.target.value)}/></label>
   <p className="form-note">Every device signed in to your account will be signed out.</p><Problem text={error}/><button className="button-primary" disabled={busy}>{busy?'Saving…':'Save password'}</button></form>
@@ -80,15 +82,15 @@ function LinkEditor({rows,onChange}:{rows:LinkRow[];onChange:(rows:LinkRow[])=>v
  </fieldset>
 }
 
-export function Settings({user,person,onUser,onPerson,onSignedOut,onNotice}:{user:User;person:Person;onUser:(u:User)=>void;onPerson:(p:Person)=>void;onSignedOut:()=>void;onNotice:(text:string)=>void}){
+export function Settings({user,person,onUser,onPerson,onSignedOut,onNotice}:{user:User;person:Person;onUser:(u:User)=>void;onPerson:(p:Person)=>void;onSignedOut:()=>void;onNotice:Notify}){
  const [form,setForm]=useState({username:person.username,bio:person.bio,avatar:person.avatar})
  const [rows,setRows]=useState<LinkRow[]>(()=>LINK_KINDS.filter(([k])=>person.links[k]).map(([kind])=>({id:kind,kind,url:person.links[kind]!})))
  const [email,setEmail]=useState(user.email??''),[current,setCurrent]=useState(''),[password,setPassword]=useState(''),[confirm,setConfirm]=useState('')
- const profile=useBusy(),mail=useBusy(),secret=useBusy(),danger=useBusy()
+ const profile=useBusy(onNotice),mail=useBusy(onNotice),secret=useBusy(onNotice),danger=useBusy(onNotice),session=useBusy(onNotice)
  // Profiles show the username only, so the display name follows it.
  const links=Object.fromEntries(rows.filter(r=>r.url.trim()).map(r=>[r.kind,r.url.trim()]))
  return <div className="account-settings"><h2>Settings</h2>
-  <form className="account-form profile-form" onSubmit={e=>{e.preventDefault();void profile.run(async()=>{const {profile:p}=await api<{profile:Person}>('PATCH','/me/profile',{...form,displayName:form.username,links});onPerson(p);onUser({...user,username:p.username,displayName:p.displayName,avatar:p.avatar});onNotice('Profile saved.')})}}>
+  <form className="account-form profile-form" onSubmit={e=>{e.preventDefault();void profile.run(async()=>{const {profile:p}=await api<{profile:Person}>('PATCH','/me/profile',{...form,displayName:form.username,links});onPerson(p);onUser({...user,username:p.username,displayName:p.displayName,avatar:p.avatar});onNotice('Profile saved successfully.','success')})}}>
    <h3>Profile</h3>
    <div className="profile-card"><img src={avatarSrc(form.avatar)} alt=""/><div><strong>@{form.username||'username'}</strong><span>{form.bio||'A line about you'}</span></div></div>
    <fieldset className="avatar-choices"><legend>Profile picture</legend>{[...AVATARS,...(user.isCreator?['mine']:[])].map(id=><button type="button" key={id} aria-label={id==='mine'?'Mine, creator profile picture':`Profile picture ${Number(id.slice(1))}`} aria-pressed={form.avatar===id} onClick={()=>setForm({...form,avatar:id})}><img src={avatarSrc(id)} alt=""/></button>)}</fieldset>
@@ -97,19 +99,19 @@ export function Settings({user,person,onUser,onPerson,onSignedOut,onNotice}:{use
    <LinkEditor rows={rows} onChange={setRows}/>
    <Problem text={profile.error}/><button className="button-primary" disabled={profile.busy}>{profile.busy?'Saving…':'Save profile'}</button>
   </form>
-  <form className="account-form" onSubmit={e=>{e.preventDefault();void mail.run(async()=>{await api('PUT','/me/email',{email});onNotice(`Check ${email} for a link to verify it.`)})}}>
+  <form className="account-form" onSubmit={e=>{e.preventDefault();void mail.run(async()=>{const result=await api<{alreadyVerified?:boolean}>('PUT','/me/email',{email});onNotice(result.alreadyVerified?'This email is already verified.':`Verification link sent to ${email.trim().toLowerCase()}. Check your inbox and spam folder.`,result.alreadyVerified?'info':'success')})}}>
    <h3>Email</h3><p className="form-note">{user.email&&user.emailVerified?`${user.email} is verified.`:user.email?`${user.email} is not verified yet.`:'Optional. A verified email lets you reset your password and use Scribb AI.'}</p>
    <label>Email<input type="email" autoComplete="email" required maxLength={254} value={email} onChange={e=>setEmail(e.target.value)}/></label>
-   <Problem text={mail.error}/><button className="button-secondary" disabled={mail.busy}>{mail.busy?'Sending…':user.emailVerified&&email===user.email?'Send again':'Verify email'}</button>
+   <Problem text={mail.error}/><button className="button-secondary" disabled={mail.busy||(user.emailVerified&&email.trim().toLowerCase()===user.email)}>{mail.busy?'Sending…':user.emailVerified&&email.trim().toLowerCase()===user.email?'Email verified':'Verify email'}</button>
   </form>
-  <form className="account-form" onSubmit={e=>{e.preventDefault();void secret.run(async()=>{const {user:u}=await api<{user:User}>('PUT','/me/password',{current,password});onUser(u);setCurrent('');setPassword('');onNotice('Password saved. Other devices are signed out.')})}}>
+  <form className="account-form" onSubmit={e=>{e.preventDefault();void secret.run(async()=>{const {user:u}=await api<{user:User}>('PUT','/me/password',{current,password});onUser(u);setCurrent('');setPassword('');onNotice('Password saved successfully. Other devices are signed out.','success')})}}>
    <h3>{user.hasPassword?'Change password':'Add a password'}</h3>
    {user.hasPassword&&<label>Current password<input type="password" autoComplete="current-password" required maxLength={128} value={current} onChange={e=>setCurrent(e.target.value)}/></label>}
    <label>New password<input type="password" autoComplete="new-password" required minLength={8} maxLength={128} value={password} onChange={e=>setPassword(e.target.value)}/></label>
    <Problem text={secret.error}/><button className="button-secondary" disabled={secret.busy}>{secret.busy?'Saving…':'Save password'}</button>
   </form>
-  <div className="account-form"><h3>Session</h3><button type="button" className="button-secondary" onClick={()=>void api('POST','/auth/logout').finally(onSignedOut)}>Sign out</button></div>
-  <form className="account-form danger-zone" onSubmit={e=>{e.preventDefault();if(!window.confirm('Delete your account, every book and every journal? This cannot be undone.'))return;void danger.run(async()=>{await api('DELETE','/me',user.hasPassword?{password:confirm}:{confirm});onSignedOut();onNotice('Your account was deleted.')})}}>
+  <div className="account-form"><h3>Session</h3><Problem text={session.error}/><button type="button" className="button-secondary" disabled={session.busy} onClick={()=>void session.run(async()=>{await api('POST','/auth/logout');onSignedOut();onNotice('Signed out successfully.','success')})}>{session.busy?'Signing out…':'Sign out'}</button></div>
+  <form className="account-form danger-zone" onSubmit={e=>{e.preventDefault();if(!window.confirm('Delete your account, every book and every journal? This cannot be undone.'))return;void danger.run(async()=>{await api('DELETE','/me',user.hasPassword?{password:confirm}:{confirm});onSignedOut();onNotice('Your account was deleted successfully.','success')})}}>
    <h3>Delete account</h3><p className="form-note">Removes your profile, books, journals, likes and follows.</p>
    <label>{user.hasPassword?'Password':'Type your username to confirm'}<input type={user.hasPassword?'password':'text'} autoComplete={user.hasPassword?'current-password':'off'} required maxLength={128} value={confirm} onChange={e=>setConfirm(e.target.value)}/></label>
    <Problem text={danger.error}/><button className="button-secondary" disabled={danger.busy}>{danger.busy?'Deleting…':'Delete account'}</button>

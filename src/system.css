@@ -116,3 +116,13 @@ button:disabled{opacity:.4;cursor:default}
 .portfolio-app .footer-brand b{font-family:'Caveat Variable',cursive;font-size:20px;font-weight:700;color:var(--app-ink)}
 .portfolio-app .feed-empty .brand-mark{width:64px;height:64px}
 @media(prefers-reduced-motion:reduce){.portfolio-app .wordmark .brand-mark{transition:none}}
+
+/* Feedback lives in the top layer, including above Settings and book dialogs. */
+.portfolio-app .notification{display:none;position:fixed;inset:auto auto var(--space-5) 50%;transform:translateX(-50%);margin:0;width:max-content;max-width:min(560px,calc(100vw - 32px));box-sizing:border-box;border:0;padding:var(--space-3) var(--space-4);gap:var(--space-3);align-items:center;background:var(--app-selected);color:var(--app-ink);box-shadow:0 8px 32px #0003;font-family:'DM Sans Variable',sans-serif;line-height:1.5}
+.portfolio-app .notification:popover-open{display:flex}
+.portfolio-app .notification .notice-icon{flex-shrink:0;color:var(--app-accent)}
+.portfolio-app .notification.notice-error .notice-icon{color:var(--app-danger)}
+.portfolio-app .notification .notice-copy{min-width:0;overflow-wrap:anywhere}
+.portfolio-app .notification .button-quiet{flex-shrink:0;margin-left:auto;color:var(--app-ink)}
+.portfolio-app .email-verified p{font-size:var(--text-md);line-height:1.6}
+@media(max-width:600px){.portfolio-app .notification{bottom:calc(85px + env(safe-area-inset-bottom));padding:var(--space-3);gap:var(--space-2)}}
