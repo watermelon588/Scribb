@@ -2,7 +2,7 @@
 
 GET  /health  public, no database: the frontend polls it while the service wakes
 POST /ask     ticket (mode "ask") in Authorization: Bearer; body {question, today, history}
-Listen (/speak) and live calls (/call) follow, ported from Koe.
+Browser voice conversation uses the same /ask route; no /call or /speak endpoint is exposed.
 Logs never include questions, answers or journal text."""
 import asyncio
 import json
@@ -23,8 +23,16 @@ log = logging.getLogger("scribb_ai")
 ANSWER_SECONDS = 30
 
 app = FastAPI(title="Scribb AI", docs_url=None, redoc_url=None, openapi_url=None)
+def allowed_origins():
+    origins = {o.strip().rstrip('/') for o in os.environ.get('ALLOWED_ORIGINS', 'http://localhost:5173').split(',') if o.strip()}
+    # Production redirects may land on either spelling. Never use a wildcard for private journal requests.
+    if origins & {'https://scribb.xyz', 'https://www.scribb.xyz'}:
+        origins.update({'https://scribb.xyz', 'https://www.scribb.xyz'})
+    return sorted(origins)
+
+
 app.add_middleware(CORSMiddleware, allow_methods=["GET", "POST"], allow_headers=["authorization", "content-type"],
-                   allow_origins=[o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "http://localhost:5173").split(",") if o.strip()])
+                   allow_origins=allowed_origins())
 
 # Routes answer at the root (local, tests) and under /ai, the public path on Vercel,
 # where a service receives the original request path including its prefix.
@@ -84,6 +92,9 @@ async def ask(body: Ask, request: Request, authorization: str | None = Header(No
         return error(503, "ai_resting", "Scribb AI is resting right now. Please try again in a few minutes.")
     except TimeoutError:
         return error(504, "ai_timeout", "That took too long. Please try again.")
+    except Exception as exc:
+        log.error("ask failed: type=%s sqlstate=%s provider_status=%s", type(exc).__name__, getattr(exc, "sqlstate", None), getattr(exc, "code", None))
+        return error(503, "ai_unavailable", "The answer could not be completed. Please try again.")
     log.info("ask ok: %d sources in %.1fs", len(result["sources"]), asyncio.get_running_loop().time() - started)
     return {"answer": result["answer"], "sources": result["sources"]}
 
@@ -120,7 +131,9 @@ async def answer_events(body: Ask, user_id: str):
             await queue.put(("error", {"message": "Scribb AI is resting right now. Please try again in a few minutes."}))
         except TimeoutError:
             await queue.put(("error", {"message": "That took too long. Please try again."}))
-        except Exception:
+        except Exception as exc:
+            # Exception text can contain credentials or private passages; log only safe classification.
+            log.error("ask failed: type=%s sqlstate=%s provider_status=%s", type(exc).__name__, getattr(exc, "sqlstate", None), getattr(exc, "code", None))
             # Do not log exceptions that may contain journal text or prompts.
             await queue.put(("error", {"message": "The answer could not be completed. Please try again."}))
 

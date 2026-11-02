@@ -74,7 +74,7 @@ test('Ask my journal handles wake-up, streamed answers, retry and withdrawal',as
  expect(tickets).toBe(0)
  await page.getByRole('button',{name:'What did I write about last month?'}).click()
  await page.getByRole('button',{name:'Send question'}).click()
- await expect(page.getByRole('status')).toContainText('Waking up')
+ await expect(page.locator('.ask-status')).toContainText('Waking up')
  await expect(page.getByRole('alert')).toContainText('resting')
  await page.getByRole('button',{name:'Retry question'}).click()
  await expect(page.locator('.ask-answer')).toHaveText('You wrote about drawing <b>outside</b>.')

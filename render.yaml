@@ -23,4 +23,4 @@ services:
       - key: GEMINI_LIVE_MODEL
         value: gemini-3.8-live
       - key: ALLOWED_ORIGINS
-        value: https://scribb.xyz
+        value: https://scribb.xyz,https://www.scribb.xyz
