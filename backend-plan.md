@@ -1,6 +1,6 @@
 # Scribb backend plan
 
-**Status:** the Express API (accounts, Google sign-in, email, password reset, AI tickets), the migrations and the AI service skeleton are built and tested locally. Nothing is deployed, and the frontend is not connected yet.
+**Status:** the Express API is built and tested locally against an in-process Postgres: accounts, Google sign-in, email, password reset, profiles with preset avatars, books with visibility and versions, journal entries with server-side sanitising and word limits, the feed, likes, saves, follows, notifications, account deletion and AI tickets. The AI service skeleton (`/ask`) is built too. Still to do: image upload (needs Cloudinary keys), Listen and live calls, deployment, and connecting the frontend. Nothing is deployed.
 **Source brief:** `scribb_architecture_journal_ai_brief.md`
 **Facts checked:** 2 November 2026 (see [Sources](#sources))
 **Budget:** ₹0 beyond the `scribb.xyz` domain. Every service runs on its free tier.
@@ -313,14 +313,14 @@ Each task is a vertical slice. After any task that changes rendering, gestures, 
 
 ### Phase 2: Profiles and sketchbooks
 
-**Task 5: Profiles** (S)
+**Task 5: Profiles** (S) — API done (`server/people.ts`); the frontend is not connected.
 - Done when: a public profile loads signed out, and a user can edit only their own.
 
 **Task 6: Image upload** (M)
 - Add the 1 MB artwork path, `POST /api/media` and Cloudinary upload.
 - Done when: a renamed non-image, an oversized file and an over-quota upload are all rejected and nothing is stored.
 
-**Task 7: Sketchbooks on the server** (M)
+**Task 7: Sketchbooks on the server** (M) — API done (`server/books.ts`); `Profile.tsx` still uses IndexedDB.
 - Add the `books` routes with visibility, and move `Profile.tsx` from IndexedDB to the API.
 - Done when: a published book renders the same on a second browser, a private one returns `404` to others, an old `version` returns `409`, and the draft survives.
 
@@ -328,11 +328,11 @@ Each task is a vertical slice. After any task that changes rendering, gestures, 
 
 ### Phase 3: Journals
 
-**Task 8: Entries API** (M)
+**Task 8: Entries API** (M) — done, except that search runs only in the AI service so far.
 - Add `journal_entries`, sanitising, word limits, keyset pagination, date filters and full-text search.
 - Done when: `<script>` is stripped, limits are enforced server-side, and date-range and word queries use their indexes.
 
-**Task 9: Journal privacy** (S)
+**Task 9: Journal privacy** (S) — private books and entries return `404`; signed journal images wait for Task 6.
 - Add journal visibility and signed journal images.
 - Done when: a guest and a second account get `404` for a private journal, its entries and its images.
 
@@ -344,11 +344,11 @@ Each task is a vertical slice. After any task that changes rendering, gestures, 
 
 ### Phase 4: Social
 
-**Task 11: Explore, likes and saves** (M)
+**Task 11: Explore, likes and saves** (M) — API done; the demo data is still in the frontend.
 - Remove the demo data in `Feed.tsx` and `src/data/feed.ts`.
 - Done when: a repeated like is ignored, counts stay correct, cursors do not skip or repeat, and an empty Explore shows a designed empty state.
 
-**Task 12: Follows and notifications** (M)
+**Task 12: Follows and notifications** (M) — API done; no frontend yet.
 - Done when: the following tab shows only followed artists, and likes and follows create one notification each.
 
 **Checkpoint:** the whole product works with AI absent. Phases 4 and 5 do not depend on each other, so they can swap.

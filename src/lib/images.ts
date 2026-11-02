@@ -37,9 +37,15 @@ function encode(bitmap:ImageBitmap,edge:number,quality:number){
  const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Image processing is unavailable.');ctx.imageSmoothingQuality='high';ctx.drawImage(bitmap,0,0,canvas.width,canvas.height)
  const webp=canvas.toDataURL('image/webp',quality);const result=webp.startsWith('data:image/webp')?webp:canvas.toDataURL('image/jpeg',quality);canvas.width=canvas.height=1;return result
 }
+const dataBytes=(url:string)=>(url.length-url.indexOf(',')-1)*.75
+export const ARTWORK_BYTES=1024*1024
+/** Artworks and covers are uploaded under 1 MB: resolution steps down first, quality only after. */
 export async function ingestImage(file:File):Promise<string>{
  const bitmap=await decode(file)
- try{return encode(bitmap,IMAGE_LIMITS.outputEdge,.9)}finally{bitmap.close()}
+ try{
+  for(const quality of[.9,.8])for(const edge of[IMAGE_LIMITS.outputEdge,2048,1600]){const url=encode(bitmap,edge,quality);if(dataBytes(url)<ARTWORK_BYTES)return url}
+  return encode(bitmap,1280,.72)
+ }finally{bitmap.close()}
 }
 export const JOURNAL_IMAGE_BYTES=200*1024
 /** Journal pictures: step resolution down at good quality first, and only then lower quality. */
@@ -47,7 +53,7 @@ export async function ingestJournalImage(file:File):Promise<string>{
  const bitmap=await decode(file)
  try{
   for(const quality of[.82,.68])for(const edge of[1600,1280,1024,800,640]){
-   const url=encode(bitmap,edge,quality);if((url.length-url.indexOf(',')-1)*.75<JOURNAL_IMAGE_BYTES)return url
+   const url=encode(bitmap,edge,quality);if(dataBytes(url)<JOURNAL_IMAGE_BYTES)return url
   }
   throw new Error('This picture cannot be reduced under 200 KB. Try a simpler one.')
  }finally{bitmap.close()}

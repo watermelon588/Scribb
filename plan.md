@@ -81,3 +81,12 @@ Scope: journals only. Sketchbooks are unchanged. Do not start this again.
 - [x] Tap to add, drag from the tray to drop exactly there (mouse/pen), drag to move, corner handle to resize and turn, remove button; keyboard: arrows move, Shift+arrows turn/resize, Delete removes, Escape deselects.
 - [x] GSAP press-in on add, lift while held, shrink on remove; all instant under reduced motion. Only prepared /stickers/*.png sources are drawn.
 - [x] Tests (journal.spec.ts sticker tests), desktop and 390px visual review, build.
+
+## Welcome, information pages and Ask my journal — 2 November 2026
+- [x] Replace the guest text hero with the supplied modest centered animation and one account prompt. Preserve the source GIF; serve silent looping MP4s with matched light/dark backgrounds, posters, a pause control and reduced-motion behavior.
+- [x] Add Privacy and Terms routes, shared footer links and account-creation links. Describe actual storage/deletion limits and verified Gemini free-tier processing.
+- [x] Connect Ask my journal to consent, verified email, cold-start status, actual Gemini streaming, source dates, retry, stop, clear and withdrawal. Keep conversations in memory and mint a fresh ticket after waking without charging for health checks.
+- [x] Review desktop and 320px/390px layouts in both appearances. Correct the new pages' muted-text contrast without changing the established palette.
+- [x] Build and validate locally: 16 API tests and 20 Python tests passed. The full browser run passed 47/50 including all four new page tests; the two timed-out existing journal/theme checks passed focused reruns. The remaining elastic check passed after its immediate SVG assertion became an awaited poll of the same expected value. No renderer or gesture code changed.
+
+AI checks used mocks and local test storage; no journal content was sent to a live provider. Streaming needs the updated AI service deployed with the app; the client also supports the older JSON response. Media provenance is in public/media/README.md; surface design and maintenance are in docs/PUBLIC-PAGES.md.

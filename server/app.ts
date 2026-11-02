@@ -3,11 +3,14 @@ import { ai } from './ai.js'
 import { auth, fail } from './auth.js'
 import { books } from './books.js'
 import { sql } from './db.js'
+import { media } from './media.js'
 import { people } from './people.js'
 
 /** The Scribb core API. Vercel runs it as one function behind /api (api/index.ts); dev.ts runs it locally. */
 const app = express()
 app.disable('x-powered-by')
+// Private account and journal responses must never be stored by a shared cache.
+app.use((_req, res, next) => { res.set('Cache-Control', 'private, no-store'); next() })
 // On Vercel the edge sets X-Forwarded-For, so req.ip is the visitor. Locally the header is not trusted.
 if (process.env.VERCEL) app.set('trust proxy', true)
 app.use(express.json({ limit: '256kb' }))
@@ -31,7 +34,7 @@ app.get('/api/health', async (_req, res) => {
     res.status(503).json({ ok: false, db: 'down' })
   }
 })
-app.use('/api', auth, people, books, ai)
+app.use('/api', auth, people, books, media, ai)
 
 app.use((_req, res) => fail(res, 404, 'not_found', 'No such endpoint.'))
 

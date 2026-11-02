@@ -1,9 +1,9 @@
-import {test,expect} from '@playwright/test'
+import {test,expect,seedBook,seedJournal} from './fixtures'
 
-test('a save that aborts at commit shows an error and keeps the draft',async({page})=>{
+test('a save the server refuses shows an error and keeps the draft',async({page})=>{
  await page.goto('/#new');await page.getByLabel('Sketchbook name').fill('Abort at commit')
  await page.locator('input[type=file]').last().setInputFiles('public/artworks/roses.jpg');await page.locator('.artwork-edit-card').first().waitFor()
- await page.evaluate(()=>{const put=IDBObjectStore.prototype.put;IDBObjectStore.prototype.put=function(...args){const request=put.apply(this,args as [unknown]);request.addEventListener('success',()=>this.transaction.abort());return request}})
+ await page.route('**/api/books/*',route=>route.request().method()==='PUT'?route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:{code:'down',message:'The server is resting.'}})}):route.continue())
  await page.getByRole('button',{name:'Save sketchbook'}).click()
  await expect(page.locator('.notification')).toContainText('Could not save');await expect(page.getByRole('button',{name:'Save sketchbook'})).toBeEnabled();await expect(page.getByLabel('Sketchbook name')).toHaveValue('Abort at commit')
 })
@@ -29,7 +29,7 @@ async function newJournal(page:import('@playwright/test').Page){
 }
 const field=(page:import('@playwright/test').Page)=>page.getByRole('textbox',{name:'Paragraph'})
 
-test('the customizing section switches between sketchbook and journal and saves a journal with no pictures',async({page})=>{
+test('the customizing section switches between sketchbook and journal and saves a journal with no pictures',async({page,account})=>{
  await newJournal(page);await expect(page.getByRole('heading',{name:'Your pages'})).toBeVisible()
  await page.getByRole('group',{name:'Book type'}).getByRole('button',{name:'Sketchbook'}).click();await expect(page.getByLabel('Sketchbook name')).toHaveValue('Untitled sketchbook');await expect(page.getByRole('heading',{name:'Your artwork'})).toBeVisible()
  await page.getByRole('group',{name:'Book type'}).getByRole('button',{name:'Journal'}).click()
@@ -43,7 +43,7 @@ test('the customizing section switches between sketchbook and journal and saves 
  const stage=page.locator('.portfolio-dialog .book-stage');await expect(stage.locator('.stf__item').first()).toBeAttached()
  const pages=stage.locator('[hidden] .book-page')
  // Cover, inside cover, front page, one written page, two blanks, one to keep the spread even, back cover.
- await expect(pages).toHaveCount(8);await expect(pages.nth(2)).toContainText('What the days felt like.');await expect(pages.nth(2)).toContainText('Your studio');await expect(pages.nth(2)).toContainText('Started')
+ await expect(pages).toHaveCount(8);await expect(pages.nth(2)).toContainText('What the days felt like.');await expect(pages.nth(2)).toContainText(account.username);await expect(pages.nth(2)).toContainText('Started')
  await expect(pages.nth(3)).toContainText('Today was quiet.');await expect(pages.nth(3).locator('.j-number')).toHaveText('1')
 })
 
@@ -79,19 +79,16 @@ test('a box stops at its limits and pictures are reduced under 200 KB',async({pa
  const bytes=await image.evaluate(img=>{const src=(img as HTMLImageElement).src;return (src.length-src.indexOf(',')-1)*.75});expect(bytes).toBeLessThan(200*1024)
 })
 
-test('stored markup cannot run and old books stay sketchbooks',async({page})=>{
- const hostile={id:'hostile',kind:'journal',title:'Hostile',presetId:'linen',color:'#526756',format:'3:4',paper:'plain',artworks:[],journal:{font:'book',size:'m',ink:'#262826',rule:'lined',about:'',created:'2026-11-02',entries:[{id:'e1',layout:'writing',date:'2026-11-02',images:{},texts:{p0:'<img src=x onerror="window.pwned=1"><script>window.pwned=1</script><b onclick="window.pwned=1">safe</b>'}}]}}
- await page.goto('/');await expect(page.getByRole('button',{name:'Sketchbooks',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.locator('.collection-book').first()).toBeVisible()
- await page.evaluate(book=>new Promise<void>(resolve=>{const open=indexedDB.open('untitled-portfolio',1);open.onsuccess=()=>{const tx=open.result.transaction('library','readwrite');tx.objectStore('library').put([book],'books');tx.oncomplete=()=>{open.result.close();resolve()}}}),hostile)
- await page.reload();await expect(page.locator('.collection-book')).toHaveCount(0);await page.getByRole('button',{name:'Journals',exact:true}).click();await page.getByRole('button',{name:'Open Hostile'}).click()
+test('stored markup cannot run',async({page})=>{
+ // The server strips it on save; whatever reaches the browser is sanitized again before it is drawn.
+ await seedJournal(page.request,'Hostile',[{layout:'writing',texts:{p0:'<img src=x onerror="window.pwned=1"><script>window.pwned=1</script><b onclick="window.pwned=1">safe</b>'}}])
+ await page.goto('/');await page.getByRole('button',{name:'Journals',exact:true}).click();await page.getByRole('button',{name:'Open Hostile'}).click()
  const text=page.locator('.portfolio-dialog [hidden] .j-text');await expect(text.locator('b')).toHaveText('safe');await expect(text.locator('img')).toHaveCount(0);expect(await text.locator('b').getAttribute('onclick')).toBeNull();expect(await page.evaluate(()=>'pwned' in window)).toBe(false)
 })
 
 async function deskWith(page:import('@playwright/test').Page,entry:object){
- const book={id:'moves',kind:'journal',title:'Moves',presetId:'linen',color:'#526756',format:'3:4',paper:'plain',artworks:[],journal:{font:'book',size:'m',ink:'#262826',rule:'lined',about:'',created:'2026-11-02',entries:[{id:'e1',date:'2026-11-02',images:{},...entry}]}}
- await page.goto('/');await expect(page.locator('.artist-profile')).toBeVisible()
- await page.evaluate(book=>new Promise<void>(resolve=>{const open=indexedDB.open('untitled-portfolio',1);open.onsuccess=()=>{const tx=open.result.transaction('library','readwrite');tx.objectStore('library').put([book],'books');tx.oncomplete=()=>{open.result.close();resolve()}}}),book)
- await page.reload();await page.getByRole('button',{name:'Journals',exact:true}).click();await page.getByRole('button',{name:'Edit Moves'}).click();await page.getByRole('button',{name:'Write on page 1'}).click()
+ await seedJournal(page.request,'Moves',[entry])
+ await page.goto('/');await page.getByRole('button',{name:'Journals',exact:true}).click();await page.getByRole('button',{name:'Edit Moves'}).click();await page.getByRole('button',{name:'Write on page 1'}).click()
 }
 const slotText=(page:import('@playwright/test').Page,id:string)=>page.locator(`.journal-canvas-page [data-slot=${id}] .j-text`)
 
@@ -190,11 +187,11 @@ test('rough scribbles are placed, moved, removed and limited per page',async({pa
  await page.getByRole('button',{name:'Back to book'}).click();await expect(page.locator('.journal-thumb .j-scribble')).toHaveCount(6)
 })
 
-test('the watermark puts the owner on every written page and nowhere else',async({page})=>{
+test('the watermark puts the owner on every written page and nowhere else',async({page,account})=>{
  await newJournal(page);await page.getByRole('button',{name:'Add page'}).click();await field(page).click();await page.keyboard.type('Second page.')
  await page.getByRole('button',{name:'Back to book'}).click()
  const thumbs=page.locator('.journal-thumb .j-watermark');await expect(thumbs).toHaveCount(0)
- await page.getByRole('button',{name:'Watermark with your name and picture'}).click();await expect(thumbs).toHaveCount(2);await expect(thumbs.first()).toHaveText('@yourstudio')
+ await page.getByRole('button',{name:'Watermark with your name and picture'}).click();await expect(thumbs).toHaveCount(2);await expect(thumbs.first()).toHaveText(`@${account.username}`)
  await page.getByLabel('Journal name').fill('Marked');await page.getByRole('button',{name:'Save journal'}).click();await page.getByRole('button',{name:'Open Marked'}).click()
  const pages=page.locator('.portfolio-dialog [hidden] .book-page');await expect(pages.first()).toBeAttached()
  // Front page, two written pages and the blanks: only the written pages carry the mark.
@@ -226,7 +223,7 @@ test('journals are always Linen, with no elastic or wire, while sketchbooks keep
  await page.getByRole('button',{name:'Spiral'}).click();await page.getByRole('group',{name:'Book type'}).getByRole('button',{name:'Journal'}).click();await expect(stage).toHaveClass(/preset-linen/)
  await page.getByRole('group',{name:'Book type'}).getByRole('button',{name:'Sketchbook'}).click();await expect(stage).toHaveClass(/preset-spiral/)
  // A journal stored with another binding opens as Linen.
- await page.evaluate(()=>new Promise<void>(resolve=>{const open=indexedDB.open('untitled-portfolio',1);open.onsuccess=()=>{const tx=open.result.transaction('library','readwrite');tx.objectStore('library').put([{id:'old',kind:'journal',title:'Old',presetId:'watercolor',color:'#526756',format:'3:4',paper:'plain',artworks:[],journal:{font:'book',size:'m',ink:'#262826',rule:'lined',about:'',created:'2026-11-02',entries:[]}}],'books');tx.objectStore('library').put(null,'draft');tx.oncomplete=()=>{open.result.close();resolve()}}}))
+ await seedBook(page.request,{title:'Old',kind:'journal',design:{presetId:'watercolor',journal:{font:'book',size:'m',ink:'#262826',rule:'lined',about:'',created:'2026-11-02'}}})
  await page.goto('/');await page.reload();await page.getByRole('button',{name:'Journals',exact:true}).click();await page.getByRole('button',{name:'Open Old'}).click()
  const view=page.locator('.portfolio-dialog .book-stage');await expect(view).toHaveClass(/preset-linen/);await expect(view.locator('.elastic-band')).toHaveCount(0)
 })
@@ -312,7 +309,7 @@ test('a journal opens at its newest written page, jumps from the page strip and 
 })
 
 test('stickers are pressed onto a page, moved, turned, removed and limited, and the book draws them',async({page})=>{
- await deskWith(page,{layout:'margin',texts:{p0:'A quiet day.'},stickers:[{id:'bad',src:'javascript:alert(1)',name:'Bad',x:50,y:50,size:20,rotate:0}]})
+ await deskWith(page,{layout:'margin',texts:{p0:'A quiet day.'},stickers:[{id:'bad',src:'/artworks/roses.jpg',name:'Bad',x:50,y:50,size:20,rotate:0}]})
  const canvas=page.locator('.journal-canvas-page')
  // A stored record that is not a prepared cutout is never drawn.
  await expect(canvas.locator('.sticker')).toHaveCount(0)

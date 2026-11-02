@@ -5,6 +5,7 @@ POST /ask     ticket (mode "ask") in Authorization: Bearer; body {question, toda
 Listen (/speak) and live calls (/call) follow, ported from Koe.
 Logs never include questions, answers or journal text."""
 import asyncio
+import json
 import logging
 import os
 from datetime import date, datetime, timedelta, timezone
@@ -12,7 +13,7 @@ from typing import Literal
 
 from fastapi import FastAPI, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
 from scribb_ai import llm, retrieval, tickets
@@ -58,11 +59,14 @@ async def health():
 
 
 @app.post("/ask")
-async def ask(body: Ask, authorization: str | None = Header(None)):
+async def ask(body: Ask, request: Request, authorization: str | None = Header(None)):
     user_id = tickets.verify(ticket_from(authorization), "ask")
     utc_today = datetime.now(timezone.utc).date()
     if abs(body.today - utc_today) > timedelta(days=1):
         return error(400, "bad_date", "Your device date looks wrong.")
+    if "text/event-stream" in request.headers.get("accept", ""):
+        return StreamingResponse(answer_events(body, user_id), media_type="text/event-stream",
+                                 headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"})
     started = asyncio.get_running_loop().time()
     try:
         async with asyncio.timeout(ANSWER_SECONDS):
@@ -77,5 +81,59 @@ async def ask(body: Ask, authorization: str | None = Header(None)):
     except TimeoutError:
         return error(504, "ai_timeout", "That took too long. Please try again.")
     log.info("ask ok: %d sources in %.1fs", len(result["sources"]), asyncio.get_running_loop().time() - started)
-    # ponytail: the answer arrives whole; stream it token by token when answers get long enough to wait for.
     return {"answer": result["answer"], "sources": result["sources"]}
+
+
+async def answer_events(body: Ask, user_id: str):
+    """Keep the existing retrieval/identity boundary and stream only the final answer."""
+    queue: asyncio.Queue = asyncio.Queue(maxsize=64)
+    sent = False
+
+    async def generate(system, prompt, schema=None, max_tokens=600):
+        nonlocal sent
+        if schema:
+            return await llm.generate(system, prompt, schema, max_tokens)
+        parts = []
+        async for chunk in llm.stream_generate(system, prompt, max_tokens):
+            parts.append(chunk)
+            sent = True
+            await queue.put(("delta", {"text": chunk}))
+        return "".join(parts)
+
+    async def run():
+        try:
+            async with asyncio.timeout(ANSWER_SECONDS):
+                async with await retrieval.connect() as conn:
+                    result = await graph.ainvoke(
+                        {"user_id": user_id, "question": body.question.strip(), "today": body.today,
+                         "history": [t.model_dump() for t in body.history]},
+                        config={"configurable": {"generate": generate,
+                                                 "search": lambda uid, f: retrieval.search_journal(conn, uid, f)}})
+                if not sent:
+                    await queue.put(("delta", {"text": result["answer"]}))
+                await queue.put(("done", {"sources": result["sources"]}))
+        except llm.AIUnavailable:
+            await queue.put(("error", {"message": "Scribb AI is resting right now. Please try again in a few minutes."}))
+        except TimeoutError:
+            await queue.put(("error", {"message": "That took too long. Please try again."}))
+        except Exception:
+            # Do not log exceptions that may contain journal text or prompts.
+            await queue.put(("error", {"message": "The answer could not be completed. Please try again."}))
+
+    task = asyncio.create_task(run())
+    try:
+        while True:
+            try:
+                event, data = await asyncio.wait_for(queue.get(), timeout=10)
+            except TimeoutError:
+                yield ": waiting\n\n"
+                continue
+            yield f"event: {event}\ndata: {json.dumps(data)}\n\n"
+            if event in ("done", "error"):
+                break
+    finally:
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass

@@ -184,3 +184,19 @@ test('deleting an account removes its data and uncounts its likes', async () => 
   assert.equal((await call('GET', '/users/owen')).body.profile.followers, 0)
   assert.equal((await call('GET', '/notifications', undefined, owner)).body.notifications.length, 0, 'their notifications go too')
 })
+
+test('image upload checks the real file type, the size and the quota', async () => {
+  const cookie = await signup('uma')
+  const send = (body: Buffer, kind = 'artwork', type = 'image/webp') => fetch(`${base}/api/media?kind=${kind}`, { method: 'POST', headers: { 'content-type': type, cookie }, body: new Uint8Array(body) })
+  const webp = Buffer.concat([Buffer.from('RIFF\0\0\0\0WEBPVP8 '), Buffer.alloc(64)])
+  assert.equal((await fetch(`${base}/api/media?kind=artwork`, { method: 'POST', headers: { 'content-type': 'image/webp' }, body: new Uint8Array(webp) })).status, 401)
+  assert.equal((await send(Buffer.from('<svg onload=alert(1)>'))).status, 400, 'a renamed non-image is refused')
+  assert.equal((await send(Buffer.concat([webp, Buffer.alloc(300 * 1024)]), 'journal')).status, 413, 'journal pictures stay under 200 KB')
+  assert.equal((await send(Buffer.concat([webp, Buffer.alloc(1100 * 1024)]))).status, 413)
+  const ok = await send(webp)
+  assert.equal(ok.status, 201)
+  const { url } = await ok.json() as { url: string }
+  assert.match(url, /^\/api\/media\/[0-9a-f-]{36}\.webp$/)
+  assert.deepEqual(Buffer.from(await (await fetch(`${base}${url}`)).arrayBuffer()), webp, 'development serves the stored file')
+  assert.equal((await call('PUT', `/books/${randomUUID()}`, sketchbook({ pages: [{ src: url }] }), cookie)).status, 201, 'books accept uploaded images')
+})

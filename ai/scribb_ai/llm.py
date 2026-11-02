@@ -53,3 +53,24 @@ async def generate(system: str, prompt: str, schema: type[BaseModel] | None = No
             return schema.model_validate_json(response.text or "{}")
         return (response.text or "").strip()
     raise AIUnavailable("Every Gemini model is busy or out of free quota.")
+
+
+async def stream_generate(system: str, prompt: str, max_tokens: int = 600):
+    """Yield actual provider chunks; never restart a response once text was sent."""
+    config = types.GenerateContentConfig(system_instruction=system, max_output_tokens=max_tokens)
+    for model in models():
+        sent = False
+        try:
+            stream = await client().aio.models.generate_content_stream(model=model, contents=prompt, config=config)
+            async for chunk in stream:
+                if chunk.text:
+                    sent = True
+                    yield chunk.text
+            return
+        except errors.APIError as exc:
+            if exc.code not in RETRYABLE:
+                raise
+            _resting[model] = time.monotonic() + REST_SECONDS
+            if sent:
+                raise AIUnavailable("The answer was interrupted.") from None
+    raise AIUnavailable("Every Gemini model is busy or out of free quota.")

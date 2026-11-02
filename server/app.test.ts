@@ -14,6 +14,7 @@ test('health answers without a database', async () => {
   try {
     const res = await fetch(`${base}/api/health`)
     assert.equal(res.status, 200)
+    assert.equal(res.headers.get('cache-control'), 'private, no-store')
     assert.deepEqual(await res.json(), { ok: true, db: 'unconfigured' })
   } finally {
     if (saved !== undefined) process.env.DATABASE_URL = saved

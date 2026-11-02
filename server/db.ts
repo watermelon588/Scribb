@@ -39,6 +39,7 @@ export const migrationFiles = (dir = 'db/migrations') =>
 /** Fixed-window counter: true while `key` has been used at most `max` times in the current window.
  * ponytail: old windows are never deleted; add a daily cleanup once the table grows. */
 export async function limit(key: string, max: number, windowSeconds: number) {
+  if (process.env.RATE_LIMITS === 'off') return true // local development database only (server/dev.ts)
   const [row] = await sql()`
     insert into rate_limits (key, window_start, count)
     values (${key}, to_timestamp(floor(extract(epoch from now()) / ${windowSeconds}::int) * ${windowSeconds}::int), 1)
