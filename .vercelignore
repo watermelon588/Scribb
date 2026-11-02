@@ -1,0 +1,17 @@
+.env*
+.git/
+.claude/
+.codex/
+.data/
+.reference-analysis/
+.impeccable/
+test-results/
+playwright-report/
+graphify-out/
+ai/
+tests/
+docs/
+journal inspiration/
+texture and cover layout and colour reference/
+From Klickpin.com-*
+*.log

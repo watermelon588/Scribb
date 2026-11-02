@@ -1,17 +1,16 @@
-# Render Blueprint for the Scribb AI service (free plan, Singapore). Secrets are entered in the Render dashboard.
+# Only the Python AI service runs on Render. Vercel serves the UI and core API.
 services:
   - type: web
     name: scribb-ai
     runtime: python
     plan: free
     region: singapore
+    branch: codex/hosting-ready
     rootDir: ai
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn scribb_ai.main:app --host 0.0.0.0 --port $PORT
+    startCommand: python -m scribb_ai.check_config && uvicorn scribb_ai.main:app --host 0.0.0.0 --port $PORT --no-access-log
     healthCheckPath: /health
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.13.5
       - key: AI_TICKET_SECRET
         sync: false
       - key: AI_DATABASE_URL
@@ -20,7 +19,5 @@ services:
         sync: false
       - key: GEMINI_TEXT_MODEL
         value: gemini-3.5-flash-lite
-      - key: GEMINI_LIVE_MODEL
-        value: gemini-3.8-live
       - key: ALLOWED_ORIGINS
-        value: https://scribb.xyz
+        sync: false

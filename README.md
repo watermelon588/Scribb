@@ -100,15 +100,19 @@ idempotent postinstall patch stops StPageFlip 2.0.7's render loop on destruction
 It checks the exact upstream source and fails clearly if an upgrade needs review.
 
 The local MP4 references remain untouched. Generated analysis images and QA
-captures are ignored in `.reference-analysis/`. No backend or hosting is configured.
+captures are ignored in `.reference-analysis/`. The current backend and hosting setup are described below.
 
+
+## Hosting
+
+Deploy the `codex/hosting-ready` branch. Follow [the exact Vercel, Neon, Cloudinary, Resend and Render setup](docs/DEPLOYMENT.md). Vercel serves the UI and Express API together; Render serves only optional Python AI. No secrets belong in GitHub.
 
 ## Current application
-- `/` or `/#portfolio`: your artist profile and locally saved sketchbooks and journals.
-- `/#feed`: Explore, with 12 demo sketchbooks and four fictional artists. Open books, visit artist collections, filter/search, like and bookmark. Reactions persist only on this device.
+- `/` or `/#portfolio`: your artist profile and account-backed sketchbooks and journals. Guests see a centered silent welcome animation and account prompt.
+- `/#feed`: Explore, with published books from the API. Open books, visit artist collections, filter/search, like, save and follow. Guest actions ask for sign-in.
 - `/#new` and legacy `/#studio`: one creation/editing flow that switches between Sketchbook and Journal. Drafts autosave on this device.
 
-Journals have 10 fonts, 10 layouts that adapt to all four formats, and a Writing page that continues across pages. Pictures are reduced under 200 KB. See `journaling-plan.md` for the parts still to come.
+Journals have 10 fonts, 18 layouts that adapt to all four formats, and a Writing page that continues across pages. Pictures are reduced under 200 KB. See `journaling-plan.md` for the parts still to come.
 
 Gallery and Editorial have coordinated profile, editor and feed layouts with a shared palette. Both include Gallery and Bookshelf previews. Library has been removed.
 The style switch preserves the draft. Phone navigation links Explore, Create and
@@ -130,9 +134,11 @@ The reference-inspired Bookshelf uses close-set spines and an expanding selected
 front cover. Scrollbars are hidden while scrolling remains enabled. Phone layouts
 use safe-area navigation, full-screen book dialogs and appropriately sized inputs.
 
-Books/images use IndexedDB; profile, style and feed reactions use localStorage.
-There is no backend, authentication or cloud sync. Clearing browser storage removes
-saved work. Reference artwork is included for this local design exploration.
+Accounts, profiles, books, entries and social actions use the Express API and Postgres.
+Uploaded images use Cloudinary in production. Only per-account drafts, theme and
+view preferences stay on the device. Username/password and optional Google sign-in
+are supported. New books are private until explicitly published.
+Reference artwork remains in the repository; preparation records are in docs/.
 
 Run `npm run build` and `npm test` for validation. Browser checks cover desktop and
 320/390px phone viewports, touch input, reduced motion, formats, persistence,
@@ -154,10 +160,41 @@ and one on phones. The Gallery/Editorial selector uses compact labeled icons.
 
 ## Backend (local)
 
-The plan is in `backend-plan.md`. Copy `.env.example` to `.env` and fill in the keys.
+The plan is in `backend-plan.md`. For production, follow [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). For isolated local development in PowerShell, run `$env:LOCAL_ONLY='1'; npm run dev:api` in one terminal and `npm run dev` in another. This ignores any real service keys and stores local test data in `.data/`. Do not use that switch in hosted environments.
 
 - `npm run migrate` applies `db/migrations` to `DATABASE_URL`.
 - `npm run dev:api` runs the Express API on port 3001; `npm run dev` proxies `/api` to it.
 - `npm run test:api` runs the API tests against an in-process Postgres, so no database is needed.
 - AI service: `cd ai`, `py -3 -m venv .venv`, `.venv/Scripts/pip install -r requirements.txt pytest`, then `.venv/Scripts/python -m pytest` or `.venv/Scripts/uvicorn scribb_ai.main:app --port 8000`.
 - After the first migration, give the AI role a password once: `alter role scribb_ai login password '...'`, and use it in `AI_DATABASE_URL`.
+
+## Welcome, information and journal questions
+
+Guests see a centered animation and account prompt on `/`. The original supplied
+GIF is preserved. `public/media/welcome-light.mp4` and `welcome-dark.mp4` are silent,
+looping H.264 conversions with a background matched to each appearance; WebP stills
+serve as posters. The animation pauses for reduced motion and has a play/pause button.
+
+`/#privacy` and `/#terms` use the shared olive theme and Gallery/Editorial typography.
+Links appear in the footer and account creation form. The privacy page documents
+the current media-deletion limitation and Gemini free-tier processing rather than
+promising complete deletion or confidential AI processing.
+
+`/#ask` opens Ask my journal. A verified email and explicit AI consent are required.
+`GET /api/ai/status` checks access and returns the configured service URL without
+spending a turn. On submission the client polls `/health` for up to 90 seconds,
+then mints a fresh, one-time 60-second ticket. No AI service is contacted on ordinary
+app loads or while merely reading the consent notice. AI is disabled in local-only tests.
+
+The AI `/ask` endpoint retains JSON compatibility and accepts
+`Accept: text/event-stream` for real Gemini chunks (`delta`, `done` with journal source
+dates, and `error`). Disconnecting cancels the generation task. Conversations live
+only in page memory; retry, cancellation, consent withdrawal and route changes
+do not write them into journal entries or device storage. Deploy the updated AI
+service alongside the app to enable streamed answers; older services still return JSON.
+
+Gemini data-use wording was checked against https://ai.google.dev/gemini-api/terms
+on 2 November 2026. Operator-specific legal details and a provider change need a
+content review before a public launch. `tests/pages.spec.ts` checks the new flows
+with mocked AI responses; `ai/tests/test_streaming.py` tests the streaming boundary
+without external model calls.
