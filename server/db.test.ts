@@ -2,6 +2,22 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { migrate, migrationFiles, sql } from './db.js'
 import { testDatabase } from './testdb.js'
+import { mkdtemp, rm } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { dirname, join, resolve } from 'node:path'
+
+test('a fresh checkout creates missing local database parent directories', async () => {
+  const temporary = await mkdtemp(join(tmpdir(), 'scribb-db-'))
+  try {
+    const pg = await testDatabase(join(temporary, 'missing-parent', 'pglite'))
+    try { assert.equal((await pg.query<{ count: number }>('select count(*)::int as count from schema_migrations')).rows[0].count, migrationFiles().length) }
+    finally { await pg.close() }
+  } finally {
+    // Only remove the unique directory created immediately above, under the OS temp directory.
+    assert.equal(dirname(resolve(temporary)), resolve(tmpdir()))
+    await rm(temporary, { recursive: true, force: true })
+  }
+})
 
 test('migrations apply once, and the AI role sees only the ticket user\'s entries', async () => {
   const pg = await testDatabase()

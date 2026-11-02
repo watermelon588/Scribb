@@ -7,7 +7,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   app:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
@@ -21,7 +21,7 @@ jobs:
       - run: npm run test:api
       - run: npm audit --omit=dev --audit-level=high
   browser:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
       CI: 'true'
@@ -34,7 +34,7 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npx playwright test
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: browser-failures
@@ -43,7 +43,7 @@ jobs:
             playwright-report/
           retention-days: 7
   ai:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7

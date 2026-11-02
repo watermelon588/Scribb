@@ -225,13 +225,16 @@ to make deployment pass.
 
 ## Sources checked for this setup
 
-Local verification: production build, 16 API tests, 23 Python tests, six deployment
+Local verification: production build, API tests, 23 Python tests, six deployment
 checks, npm production dependency audit and Python dependency audit passed. The
 50-browser run passed 47 checks; two feed failures exposed hardcoded secondary
 browser ports, which were corrected. Five focused checks then passed, including
 those feed flows, guest access, phone navigation and the one sticker failure that
 did not recur. The build retains the existing large-JavaScript-chunk advisory.
-Hosted CI and live-provider smoke checks still run after GitHub/dashboard setup.
+A clean-checkout database startup regression was reproduced and fixed; its test
+verifies nested local data directories are created before Postgres starts. GitHub
+CI runs on Ubuntu 24.04 with no production credentials. Live-provider smoke checks
+still run after dashboard setup.
 
 - [Vite and Vercel Functions](https://vercel.com/docs/frameworks/frontend/vite)
 - [Vercel Node.js runtime](https://vercel.com/docs/functions/runtimes/node-js)
