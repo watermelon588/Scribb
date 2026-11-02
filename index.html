@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
     <meta name="theme-color" content="#f9f9f6" />
     <script>try{localStorage.removeItem('untitled-palette');const saved=localStorage.getItem('untitled-theme');const theme=saved==='dark'||saved==='light'?saved:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=theme;document.documentElement.style.colorScheme=theme;document.querySelector('meta[name="theme-color"]').content=theme==='dark'?'#181c1a':'#faf9f6'}catch{document.documentElement.dataset.theme='light'}</script>
-    <meta name="description" content="Scribb is a home for sketchbooks and journals. Fill tactile digital books with your art and words, share them, and turn a page." />
+    <!-- seo.ts swaps everything between the seo markers for profile, book and Explore pages. -->
+    <!--seo-->
+    <meta name="description" content="Scribb is a free home for sketchbooks and journals. Fill tactile digital books with your art and words, keep them private or publish them, and turn a page." />
+    <link rel="canonical" href="https://scribb.xyz/" />
     <!-- Link cards (X, iMessage, Slack…) need absolute image URLs; scribb.xyz is the production origin. -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Scribb" />
@@ -21,14 +24,43 @@
     <meta name="twitter:description" content="Sketchbooks and journals, made by hand and shared with care." />
     <meta name="twitter:image" content="https://scribb.xyz/brand/og-card.jpg" />
     <meta name="twitter:image:alt" content="The Scribb logo, a hand-drawn smiling face, beside the word Scribb." />
-    <title>Scribb — Sketchbooks and journals</title>
+    <title>Scribb — Free digital sketchbooks and journals</title>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[
+      {"@type":"Organization","@id":"https://scribb.xyz/#organization","name":"Scribb","url":"https://scribb.xyz/","logo":{"@type":"ImageObject","url":"https://scribb.xyz/brand/icon-512.png","width":512,"height":512},"email":"hello@scribb.xyz"},
+      {"@type":"WebSite","@id":"https://scribb.xyz/#website","name":"Scribb","url":"https://scribb.xyz/","inLanguage":"en","publisher":{"@id":"https://scribb.xyz/#organization"}},
+      {"@type":"WebApplication","@id":"https://scribb.xyz/#app","name":"Scribb","url":"https://scribb.xyz/","applicationCategory":"DesignApplication","operatingSystem":"Any web browser","browserRequirements":"Requires JavaScript","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@id":"https://scribb.xyz/#organization"},
+       "description":"A free home for digital sketchbooks and journals with real page turns, covers and bindings, private by default and publishable to a public profile.",
+       "featureList":["Sketchbooks with up to 40 artworks, single pages or two-page spreads","Linen, Spiral and Watercolor bindings with an elastic closure","Journals with 18 page layouts, pictures, stickers and scribbles","Voice typing for journal entries","Ask my journal: an AI companion that answers questions about your own entries","Public profiles, an Explore feed, likes, saves and follows"]}
+    ]}</script>
+    <!--/seo-->
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png" />
     <link rel="apple-touch-icon" href="/brand/icon-180.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <style>.seo-page{max-width:42rem;margin:0 auto;padding:48px 16px;font:300 16px/1.6 system-ui,sans-serif;color:#303b34}.seo-page h1{font-weight:400;font-size:2rem;line-height:1.2}.seo-page h2{font-weight:400;font-size:1.25rem;margin-top:2rem}.seo-page a{color:inherit}.seo-page img{border-radius:50%}[data-theme=dark] .seo-page{color:#e7e9df}</style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><!--app--><main class="seo-page">
+      <h1>Scribb: sketchbooks and journals you can turn the pages of</h1>
+      <p>Scribb is a free home for sketchbooks and journals. Fill a tactile digital book with your drawings, paintings and words, choose its cover and binding, then keep it private or publish it so anyone can turn its pages.</p>
+      <h2>What you can make</h2>
+      <ul>
+        <li>Sketchbooks with up to 40 artworks, on single pages or full two-page spreads, in Linen, Spiral or Watercolor bindings.</li>
+        <li>Journals with 18 page layouts, pictures, stickers, scribbles and voice typing.</li>
+        <li>Ask my journal, a companion that answers questions about your own entries.</li>
+        <li>A public profile at scribb.xyz/@yourname that shows every book you publish.</li>
+      </ul>
+      <h2>How it works</h2>
+      <ol>
+        <li>Create a free account with a username or with Google.</li>
+        <li>Start a sketchbook or a journal and fill its pages.</li>
+        <li>Publish it when you are ready. Every new book stays private until you do.</li>
+      </ol>
+      <h2>Explore</h2>
+      <p><a href="/explore">Browse the newest public sketchbooks and journals</a> or read <a href="/about/">about Scribb</a>.</p>
+      <p><a href="/about/">About</a> · <a href="mailto:hello@scribb.xyz">Contact</a> · <a href="/#privacy">Privacy</a> · <a href="/#terms">Terms</a></p>
+    </main><!--/app--></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

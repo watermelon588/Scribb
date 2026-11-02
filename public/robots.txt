@@ -1,0 +1,34 @@
+# Scribb: https://scribb.xyz
+# Search engines and AI search assistants may read and cite every public page.
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /ai/
+
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: ClaudeBot
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: Applebot
+User-agent: DuckAssistBot
+Allow: /
+Disallow: /api/
+Disallow: /ai/
+
+# Scribb hosts artists' own work. Crawlers that only collect AI training data are not allowed.
+User-agent: GPTBot
+User-agent: Google-Extended
+User-agent: CCBot
+User-agent: anthropic-ai
+User-agent: Applebot-Extended
+User-agent: Bytespider
+User-agent: meta-externalagent
+User-agent: cohere-training-data-crawler
+Disallow: /
+
+Sitemap: https://scribb.xyz/sitemap.xml

@@ -43,10 +43,13 @@ export function CoverPicker({value,onChange,kind='sketchbook'}:{value?:string;on
 function LayoutIcon({spread=false}:{spread?:boolean}){return <svg width="32" height="24" viewBox="0 0 32 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="28" height="20" rx="1" stroke="currentColor" opacity=".4"/><path d="M16 2v20" stroke="currentColor"/>{spread?<rect x="6" y="6" width="20" height="12" fill="currentColor" opacity=".35"/>:<><rect x="6" y="6" width="7" height="12" fill="currentColor" opacity=".35"/><rect x="19" y="6" width="7" height="12" fill="currentColor" opacity=".35"/></>}</svg>}
 
 export default function Profile(){
- const route=()=>location.hash==='#new'||location.hash==='#studio'?'new':location.hash==='#feed'?'feed':['#privacy','#terms','#ask'].includes(location.hash)?location.hash.slice(1):location.hash.startsWith('#@')?'person':'portfolio'
- const personHandle=()=>location.hash.startsWith('#@')?decodeURIComponent(location.hash.slice(2)).toLowerCase():''
+ // Profiles, books and Explore have crawlable paths (/@name, /@name/<book id>, /explore; server/seo.ts renders them for crawlers). Legacy hash links still work.
+ const pathPerson=()=>location.hash?null:/^\/@([\w.]+)(?:\/([\da-f-]{36}))?\/?$/i.exec(location.pathname)
+ const route=()=>location.hash==='#new'||location.hash==='#studio'?'new':location.hash==='#feed'||!location.hash&&location.pathname==='/explore'?'feed':['#privacy','#terms','#ask'].includes(location.hash)?location.hash.slice(1):location.hash.startsWith('#@')||pathPerson()?'person':'portfolio'
+ const personHandle=()=>location.hash.startsWith('#@')?decodeURIComponent(location.hash.slice(2)).toLowerCase():pathPerson()?.[1].toLowerCase()??''
  const [screen,setScreen]=useState(route),[handle,setHandle]=useState(personHandle)
- function navigate(next:string){setScreen(next.startsWith('@')?'person':next);history.pushState(null,'',`#${next}`);window.scrollTo({top:0,behavior:'instant'})}
+ const urlFor=(next:string)=>next.startsWith('@')?`/${next}`:next==='feed'?'/explore':next==='portfolio'?'/':`/#${next}`
+ function navigate(next:string){setScreen(next.startsWith('@')?'person':next);history.pushState(null,'',urlFor(next));window.scrollTo({top:0,behavior:'instant'})}
  function openPerson(name:string){setHandle(name);navigate(`@${name}`)}
  useEffect(()=>{const sync=()=>{setScreen(route());setHandle(personHandle());window.scrollTo({top:0,behavior:'instant'});if(route()==='new')setDraft(d=>{if(d)return d;const book=fresh();pristine.current=book;return book});setViewing(null)};window.addEventListener('popstate',sync);window.addEventListener('hashchange',sync);return()=>{window.removeEventListener('popstate',sync);window.removeEventListener('hashchange',sync)}},[])
  const appRoot=useRef<HTMLDivElement>(null)
@@ -67,6 +70,19 @@ const [books,setBooks]=useState<Book[]>([]),[ready,setReady]=useState(false),[qu
  // Signed in: undefined while asking the server, null for guests.
  const [user,setUser]=useState<User|null>(),[me,setMe]=useState<Person|null>(null),[unread,setUnread]=useState(0)
  const [person,setPerson]=useState<{profile:Person;books:Book[]}|'missing'|null>(null)
+ // An open public book shows its own address (/@name/<id>), so it can be shared; closing restores the page's address.
+ const beforeBook=useRef('')
+ useEffect(()=>{const id=pathPerson()?.[2];if(id)loadBook(id).then(b=>setViewing(asJournal(b))).catch(e=>showError(message(e,'This book could not be opened.')))},[]) // eslint-disable-line react-hooks/exhaustive-deps
+ useEffect(()=>{
+  const at=viewing?.visibility==='public'&&viewing.owner?`/@${viewing.owner.username}/${viewing.id}`:''
+  if(at&&location.pathname!==at){beforeBook.current=location.pathname+location.hash;history.replaceState(null,'',at)}
+  else if(at)beforeBook.current||=`/@${viewing!.owner!.username}`
+  else if(beforeBook.current){if(pathPerson()?.[2])history.replaceState(null,'',beforeBook.current);beforeBook.current=''}
+ },[viewing]) // eslint-disable-line react-hooks/exhaustive-deps
+ useEffect(()=>{
+  const who=screen==='person'&&person&&person!=='missing'?person.profile:null
+  document.title=viewing?`${viewing.title||'Untitled'} · Scribb`:screen==='feed'?'Explore sketchbooks and journals · Scribb':who?`${who.displayName||who.username} (@${who.username}) · Scribb`:'Scribb — Free digital sketchbooks and journals'
+ },[screen,person,viewing])
  const [panel,setPanel]=useState<null|'signin'|'signup'|'settings'|'notifications'|'verified'|{reset:string}>(null)
  // The saved copy of the book being edited, so a save sends only changed journal entries and removes deleted ones.
  const serverCopy=useRef<Book|null>(null)

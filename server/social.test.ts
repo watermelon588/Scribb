@@ -68,6 +68,10 @@ test('creator profile picture and badge require the verified owner email', async
   assert.equal((await call('PATCH', '/me/profile', { avatar: 'a07' }, owner)).body.profile.avatar, 'a07', 'the creator can still choose a public PFP')
   await call('PATCH', '/me/profile', { avatar: 'mine' }, owner)
 
+  const zaxx = await signup('zaxx.owner')
+  await pg.query(`update users set email = $1, email_verified_at = now() where id = (select user_id from profiles where handle = $2)`, ['rohitgdg021@gmail.com', 'zaxx.owner'])
+  assert.equal((await call('GET', '/auth/me', undefined, zaxx)).body.user.isCreator, true, 'the zaxx owner email also carries the badge')
+
   await pg.query(`update users set email_verified_at = null where id = $1`, [creator.id])
   const revoked = (await call('GET', '/auth/me', undefined, owner)).body.user
   assert.equal(revoked.isCreator, false)

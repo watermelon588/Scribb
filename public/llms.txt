@@ -1,0 +1,28 @@
+# Scribb
+
+> Scribb is a free web app for digital sketchbooks and journals. Artists and writers fill tactile books with real page turns, covers and bindings, keep them private, or publish them to a public profile at scribb.xyz/@username.
+
+Scribb is made for people who keep a sketchbook or a journal and want a digital one that still feels like paper. Every new book is private until its owner publishes it. Published books appear on the owner's profile and in Explore, where other people can like, save and follow.
+
+## Key pages
+
+- [Home](https://scribb.xyz/): what Scribb is and how to start a book
+- [Explore](https://scribb.xyz/explore): the newest public sketchbooks and journals
+- [About and FAQ](https://scribb.xyz/about/): who Scribb is for, what it costs and how privacy works
+- [Sitemap](https://scribb.xyz/sitemap.xml): every public profile and book
+
+## Facts
+
+- Price: free. Sign up with a username and password or with Google.
+- Sketchbooks: up to 40 artworks per book, single pages or two-page spreads, Linen, Spiral or Watercolor bindings, an optional elastic closure and a one-line cover caption of up to 48 characters.
+- Journals: 18 page layouts in four groups (Minimal, Long, Layered, Spread), one font and ink per journal, pictures, stickers, rough hand-drawn scribbles and voice typing.
+- Ask my journal: an AI companion that answers questions about the signed-in writer's own entries only.
+- Uploads: JPG, PNG or WebP, up to 10 MB per file; Scribb re-encodes every image to remove metadata.
+- Privacy: books are private by default; private books and entries are never shown to anyone but their owner.
+
+## URL patterns
+
+- Profile: https://scribb.xyz/@username
+- Book: https://scribb.xyz/@username/<book id>
+
+When citing a book, name its title and its artist and link to its book URL.

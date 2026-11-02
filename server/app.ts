@@ -5,6 +5,7 @@ import { books } from './books.js'
 import { sql } from './db.js'
 import { media } from './media.js'
 import { people } from './people.js'
+import { seo } from './seo.js'
 
 /** The Scribb core API. Vercel runs it as the `api` service behind /api (vercel.json); dev.ts runs it locally. */
 const app = express()
@@ -33,6 +34,8 @@ app.get('/api/health', async (_req, res) => {
   }
 })
 app.use('/api', auth, people, books, media, ai)
+// Crawlable profile, book and Explore pages plus the sitemap (vercel.json sends those paths here).
+app.use(seo)
 
 app.use((_req, res) => fail(res, 404, 'not_found', 'No such endpoint.'))
 

@@ -3,7 +3,7 @@
 ## Scope
 The root route is the artist profile. New Sketchbook is the single creation studio.
 Legacy /#studio and /#new open that same creation flow. There is no separate Design Studio. The user now authorizes a reference-inspired
-Bookshelf view and two coordinated profile/editor styles: Gallery and Editorial. The feed at /#feed shows published books from the API, with likes, saves and follows; other artists' profiles open at /#@username. Accounts (username and password, or Google) and cloud saving are in. Comments remain outside the current milestone.
+Bookshelf view and two coordinated profile/editor styles: Gallery and Editorial. The feed at /explore (legacy /#feed) shows published books from the API, with likes, saves and follows; other artists' profiles open at /@username (legacy /#@username) and a public book at /@username/<book id>. Accounts (username and password, or Google) and cloud saving are in. Comments remain outside the current milestone.
 
 ## Rendering and design
 - src/components/Sketchbook.tsx is the only interactive book renderer. Cover is
@@ -122,3 +122,11 @@ The plan and remaining parts are in journaling-plan.md. Sketchbook and Journal a
 - Ask my journal opens from the floating companion (JournalCompanion in AskJournal.tsx), not a page button. The persona's faces are public/persona/*.webp (320px copies of a04 to a06) plus the girl expression stickers; Persona cross-fades between moods.
 - Edit profile has username, bio, picture and links only. Profiles show the username; saving copies it into displayName. Links are rows chosen from LINK_KINDS (api.ts, kept in step with LINKS in server/people.ts), one per platform, shown as icons.
 - Settings, sign-in and notifications open as a narrow panel; a press and release on the backdrop closes the dialog.
+
+## SEO and AI search
+- Profiles, public books and Explore have real paths. vercel.json sends /@*, /explore and /sitemap.xml to the API; server/seo.ts renders them into the built index.html (fetched from APP_ORIGIN, the production origin) between the `<!--seo-->` and `<!--app-->` markers, with title, description, canonical, Open Graph, JSON-LD and readable text. Only public data, always escaped. Keep the markers in index.html.
+- Profile.tsx reads those paths and writes clean URLs (navigate/urlFor). An open public book shows /@name/<id> and closing restores the page's address (replaceState, no extra history).
+- index.html carries prerendered homepage text inside #root, which React replaces. Keep it true to the product.
+- public/robots.txt allows search and AI-search crawlers and blocks AI-training crawlers (GPTBot, Google-Extended, CCBot, anthropic-ai…) because Scribb hosts artists' work. public/llms.txt, public/about/ (FAQ) and public/404.html are static; keep their facts in step with the product.
+- Publishing a book pings IndexNow (production only); the key file is public/<key>.txt.
+- Check with Walkthru's audit (trustdraft/apps/api app.scans.site.audit) after SEO changes.
