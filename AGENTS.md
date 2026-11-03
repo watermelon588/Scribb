@@ -98,6 +98,7 @@ The plan and remaining parts are in journaling-plan.md. Sketchbook and Journal a
 - Spreads are one sheet two pages wide: columns 12 to 23 are the right page, `slotArea`/`slotRect` add the fold gutter, and only pictures cross the fold. `pageNumbers` starts a spread on a left page after a blank; the book draws the sheet on both pages (`half`), the desk edits it whole. Spread boxes do not resize. Layered and spread panels hug their words; the Subtitle box (H) is one per layout at most.
 - All journal pages are drawn on a reference sheet with the same area in every format, then scaled (sheetSize). Use reference pixels on the sheet, not container units. Editor, book and phone must keep identical line breaks.
 - One font, size and ink per journal, constant on every page. Never add per-page or per-box fonts.
+- Page style (paper, lines, font, size, ink, watermark) is set beside the page in JournalDesk (JournalPageSettings), not with the cover. It still applies to every page. Journal text keeps `font-synthesis: weight style` so bold and italic show in single-weight fonts. Titles hold 16 words and step down in size to fit their box (titleFit, `--fit`).
 - Book order: cover, inside cover, front page, entries, at least two blank pages, back cover. A journal never ends on its last entry.
 - Writing entries are one continuous text shown across pages by line offset. Do not split text between pages.
 - Ruled lines are vector paths placed from font metrics. Gradients drop lines when a sheet is scaled.
@@ -115,6 +116,7 @@ The plan and remaining parts are in journaling-plan.md. Sketchbook and Journal a
 - Pictures and text: dragFocus/focusKey (Journal.tsx) are the only picture-position logic, used by the side panel and the on-page Position pad. A crop goes back through ingestJournalImage. Alignment is per box in `entry.align` and only left, center or right are drawn.
 - Reading: journals open at their newest written page (`startPage`), with the same page strip and Back to start as sketchbooks.
 - Drafts autosave under the `draft` record. Never replace an unsaved draft silently. A failed save must show an error and keep the draft.
+- Presets: up to two saved journal looks per account (profiles.presets, /api/me/presets, JournalPresets). They hold the book look, page style, cover layouts and stickers and the page layouts, never draft uploads. Applying one checks every field again and never replaces written pages.
 
 ## Hints, companion and profile
 - Brand: the app is Scribb. The mark is the companion's calm face (public/brand/, cream sticker edge baked in) and the name is hand-lettered in Caveat (`.wordmark`). It appears in the header, sign-in, footer, empty feed, favicons and the share card. index.html carries absolute https://scribb.xyz Open Graph and X (`summary_large_image`) tags pointing at /brand/og-card.jpg; change them with the production origin.

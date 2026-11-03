@@ -123,7 +123,7 @@ test('journal entries: private journals stay private, HTML is sanitized, limits 
   assert.equal((await call('DELETE', `/entries/${entry}`, undefined, guest)).status, 404)
 
   assert.equal((await put({ texts: { p0: 'word '.repeat(1001) } }, kit, randomUUID())).body.error.code, 'too_many_words')
-  assert.equal((await put({ texts: { t0: 'one two three four five six seven eight nine' } }, kit, randomUUID())).body.error.code, 'too_many_words')
+  assert.equal((await put({ texts: { t0: 'word '.repeat(17) } }, kit, randomUUID())).body.error.code, 'too_many_words')
   assert.equal((await put({ images: { i0: 'https://evil.example/a.png' } }, kit, randomUUID())).body.error.code, 'bad_image')
   assert.equal((await put({ layout: 'nope' }, kit, randomUUID())).body.error.code, 'bad_layout')
   assert.equal((await put({ date: '2026-02-30' }, kit, randomUUID())).body.error.code, 'bad_date')
@@ -257,4 +257,18 @@ test('feed cards carry the newest post: sketchbook pages and the newest written 
   assert.match(days.latest!.texts.p0, /Rain/)
   await call('PUT', `/books/${journal}/save`, undefined, noor)
   assert.equal((await call('GET', '/me/saved', undefined, noor)).body.books[0].latest.date, '2026-01-02', 'saved cards open the same way')
+})
+
+test('journal presets: two per account, kept private, no uploads', async () => {
+  const kit = await signup('preset.keeper'), other = await signup('preset.other')
+  const look = (name: string) => ({ name, font: 'rough', layouts: ['writing'], coverImage: '/covers/love.jpg' })
+  assert.deepEqual((await call('GET', '/me/presets', undefined, kit)).body.presets, [])
+  assert.equal((await call('PUT', '/me/presets', { presets: [look('One'), look('Two')] }, kit)).status, 200)
+  assert.deepEqual((await call('GET', '/me/presets', undefined, kit)).body.presets.map((p: { name: string }) => p.name), ['One', 'Two'])
+  assert.deepEqual((await call('GET', '/me/presets', undefined, other)).body.presets, [], 'presets belong to one account')
+  assert.equal((await call('PUT', '/me/presets', { presets: [look('A'), look('B'), look('C')] }, kit)).body.error.code, 'too_many_presets')
+  assert.equal((await call('PUT', '/me/presets', { presets: [{ ...look('A'), coverImage: 'data:image/png;base64,AAAA' }] }, kit)).body.error.code, 'bad_preset')
+  assert.equal((await call('PUT', '/me/presets', { presets: [{ font: 'rough' }] }, kit)).body.error.code, 'bad_preset')
+  assert.equal((await call('GET', '/me/presets')).status, 401)
+  assert.ok(!('presets' in (await call('GET', '/users/preset.keeper', undefined, other)).body.profile), 'profiles never show presets')
 })

@@ -10,7 +10,7 @@ const escape=(text:string)=>text.replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 function walk(node:Node):string{
  let out=''
  node.childNodes.forEach(child=>{
-  if(child.nodeType===Node.TEXT_NODE){out+=escape(child.textContent??'');return}
+  if(child.nodeType===Node.TEXT_NODE){out+=escape((child.textContent??'').replace(/​/g,''));return}
   if(child.nodeType!==Node.ELEMENT_NODE)return
   const element=child as HTMLElement,inner=walk(element),tag=inline[element.tagName]
   if(element.tagName==='BR')out+='<br>'

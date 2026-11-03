@@ -1,10 +1,11 @@
 import {useEffect,useLayoutEffect,useRef,useState,type CSSProperties,type FormEvent,type KeyboardEvent as ReactKeyboardEvent,type PointerEvent as ReactPointerEvent,type ReactNode} from 'react'
-import {ArrowCounterClockwise,ArrowLeft,ArrowRight,ArrowsOutCardinal,BookOpen,Check,Crop,TextAlignCenter,TextAlignLeft,TextAlignRight,Highlighter,LinkSimple,Microphone,Stop,TextB,TextItalic,TextUnderline,Image as ImageIcon,Plus,Trash,X} from '@phosphor-icons/react'
+import {ArrowCounterClockwise,ArrowLeft,ArrowRight,ArrowsOutCardinal,BookOpen,Check,Crop,TextAlignCenter,TextAlignLeft,TextAlignRight,FloppyDisk,Highlighter,LinkSimple,Microphone,Stop,TextB,TextItalic,TextUnderline,Image as ImageIcon,Plus,Trash,X} from '@phosphor-icons/react'
 import {ScribbleArt} from './Scribble'
 import {StickerLayer,StickerTray,changeSticker,dropPoint} from './Stickers'
-import {STICKERS_ON_COVER,STICKERS_PER_PAGE,newSticker,safeSticker,type PlacedSticker,type StickerItem} from '../data/stickers'
+import {STICKERS_ON_COVER,STICKERS_PER_PAGE,fitSticker,newSticker,safeSticker,type PlacedSticker,type StickerItem} from '../data/stickers'
 import {Cover,inkFor} from './Sketchbook'
-import {formats,presets} from '../data/presets'
+import {formats,papers,presets,type Format,type Placement,type TurnStyle} from '../data/presets'
+import {api,message} from '../lib/api'
 import type {Book} from '../Profile'
 import type {Owner} from './Journal'
 import ArtworkCropper from './ArtworkCropper'
@@ -12,20 +13,76 @@ import {JournalSheet,dragFocus,focusKey,journalCover,layoutFits,pageNumbers,slot
 import {IMAGE_LIMITS,ingestJournalImage} from '../lib/images'
 import {escapeText,safeLink,sanitize,wordCount} from '../lib/richtext'
 import {canDictate,dictate} from '../lib/voice'
-import {SCRIBBLES_PER_PAGE,coverFields,coverLayouts,type JournalCover,entrySlots,gridOf,isSpread,scribbleKinds,journalFonts,journalInks,journalLayouts,layoutSlots,moveEdge,newEntry,paperRules,sectionOf,sheetSize,slotArea,slotEdges,slotRect,slotWordLimits,textSizes,today,typeScale,wordLimits,type Edge,type JournalData,type Scribble,type ScribbleKind,type JournalEntry,type LayoutId,type Slot,type TextAlign} from '../data/journal'
+import {SCRIBBLES_PER_PAGE,coverFields,coverLayouts,type JournalCover,entrySlots,gridOf,isSpread,scribbleKinds,journalFonts,journalInks,journalLayouts,layoutSlots,moveEdge,newEntry,paperRules,type FontId,type PaperRule,type TextSize,sectionOf,sheetSize,slotArea,slotEdges,slotRect,slotWordLimits,textSizes,today,typeScale,wordLimits,type Edge,type JournalData,type Scribble,type ScribbleKind,type JournalEntry,type LayoutId,type Slot,type TextAlign} from '../data/journal'
 
-export function JournalSettings({journal,owner,onChange}:{journal:JournalData;owner:Owner;onChange:(patch:Partial<JournalData>)=>void}){
+export function JournalSettings({journal,onChange}:{journal:JournalData;onChange:(patch:Partial<JournalData>)=>void}){
  return <div className="journal-settings">
   <label className="journal-about">About this journal<textarea rows={2} maxLength={140} placeholder="What will you write here?" value={journal.about} onChange={e=>onChange({about:e.target.value})}/></label>
+ </div>
+}
+
+/** What every written page looks like: paper, lines, type and the watermark. Shown beside the page being written. */
+export function JournalPageSettings({journal,owner,paper,onPaper,onChange}:{journal:JournalData;owner:Owner;paper:string;onPaper:(id:string)=>void;onChange:(patch:Partial<JournalData>)=>void}){
+ return <div className="journal-settings journal-page-settings">
+  <div className="journal-group"><label>Paper</label><div className="visual-papers">{papers.map(p=><button key={p.id} data-hint={p.name} aria-label={`${p.name} paper`} aria-pressed={paper===p.id} onClick={()=>onPaper(p.id)}><i className={p.id==='dots'?'dotted-paper':''} style={{backgroundImage:`url(${p.src})`}}/></button>)}</div></div>
+  <div className="journal-group"><label>Paper lines</label><div className="journal-row">{paperRules.map(rule=><button key={rule.id} aria-label={`${rule.name} paper`} data-hint={rule.name} aria-pressed={journal.rule===rule.id} onClick={()=>onChange({rule:rule.id})}>{rule.name}</button>)}</div></div>
   <div className="journal-group"><label>Font</label><div className="journal-fonts">{journalFonts.map(font=><button key={font.id} data-hint={font.name} aria-label={`${font.name} font`} aria-pressed={journal.font===font.id} onClick={()=>onChange({font:font.id})}><b style={{fontFamily:font.family,fontSize:`${font.scale*22}px`}}>Aa</b><span>{font.name}</span></button>)}</div></div>
   <div className="journal-group"><label>Size</label><div className="journal-row">{textSizes.map(size=><button key={size.id} aria-label={`${size.name} text`} data-hint={size.name} aria-pressed={journal.size===size.id} onClick={()=>onChange({size:size.id})}>{size.name}</button>)}</div></div>
   <div className="journal-group"><label>Ink</label><div className="journal-inks">{journalInks.map(ink=><button key={ink.value} aria-label={`${ink.name} ink`} data-hint={ink.name} aria-pressed={journal.ink===ink.value} style={{backgroundColor:ink.value}} onClick={()=>onChange({ink:ink.value})}/>)}</div></div>
   <div className="journal-group"><label>Watermark</label><div className="journal-row"><button aria-label="No watermark" data-hint="None" aria-pressed={!journal.watermark} onClick={()=>onChange({watermark:false})}>None</button><button className="journal-watermark-choice" aria-label="Watermark with your name and picture" data-hint="Signature" aria-pressed={Boolean(journal.watermark)} onClick={()=>onChange({watermark:true})}><img src={owner.avatar} alt=""/>@{owner.handle}</button></div></div>
-  <div className="journal-group"><label>Paper lines</label><div className="journal-row">{paperRules.map(rule=><button key={rule.id} aria-label={`${rule.name} paper`} data-hint={rule.name} aria-pressed={journal.rule===rule.id} onClick={()=>onChange({rule:rule.id})}>{rule.name}</button>)}</div></div>
  </div>
 }
 
 const NO_COVER:JournalCover={front:'artwork',back:'plain'}
+
+/** A saved look for new journals: the book, the page style, the cover layouts and stickers, and the page layouts. */
+export interface JournalPreset {name:string;format:Format;color:string;coverImage?:string;coverPlacement?:Placement;paper:string;turnStyle:TurnStyle;font:FontId;size:TextSize;ink:string;rule:PaperRule;watermark:boolean;cover?:JournalCover;layouts:LayoutId[]}
+export const PRESET_LIMIT=2
+// Built-in pictures and saved uploads are kept; a picture still only in the draft (a data: URL) is too large to keep.
+const keep=(src?:unknown)=>typeof src==='string'&&(/^\/[\w\-/.]+$/.test(src)||/^https:\/\/[^\s"'<>]+$/.test(src))?src:undefined
+const one=<T,>(list:readonly T[],value:unknown,fallback:T)=>list.includes(value as T)?value as T:fallback
+function presetOf(book:Book):JournalPreset{
+ const j=book.journal!
+ return {name:book.title.trim().slice(0,36)||'Preset',format:book.format,color:book.color,coverImage:keep(book.coverImage),coverPlacement:book.coverPlacement,paper:book.paper,turnStyle:book.turnStyle??'curl',font:j.font,size:j.size,ink:j.ink,rule:j.rule,watermark:Boolean(j.watermark),cover:j.cover&&{...j.cover,image:keep(j.cover.image)},layouts:j.entries.map(e=>e.layout)}
+}
+/** Presets come back from the server, so every field is checked again before it reaches the draft. */
+function readCover(raw:unknown):JournalCover|undefined{
+ if(!raw||typeof raw!=='object')return undefined
+ const c=raw as Record<string,unknown>,text=(id:keyof typeof coverFields)=>typeof c[id]==='string'?(c[id] as string).slice(0,coverFields[id].max):undefined
+ const stickers=(Array.isArray(c.stickers)?c.stickers:[]).filter((s):s is PlacedSticker=>Boolean(s)&&safeSticker(s.src)&&['x','y','size','rotate'].every(k=>Number.isFinite(s[k]))).slice(0,STICKERS_ON_COVER).map(s=>fitSticker({id:crypto.randomUUID(),src:s.src,name:String(s.name??'').slice(0,40),x:s.x,y:s.y,size:s.size,rotate:s.rotate}))
+ return {front:one(coverLayouts.front.map(l=>l.id),c.front,'artwork'),back:one(coverLayouts.back.map(l=>l.id),c.back,'plain'),quote:text('quote'),by:text('by'),backQuote:text('backQuote'),backBy:text('backBy'),note:text('note'),image:keep(c.image),stickers}
+}
+export function withPreset(book:Book,p:JournalPreset):Book{
+ const j=book.journal!,written=j.entries.some(e=>Object.values(e.texts).some(Boolean)||Object.keys(e.images).length>0)
+ const layouts=(Array.isArray(p.layouts)?p.layouts:[]).filter(id=>journalLayouts.some(l=>l.id===id)).slice(0,60)
+ const placement=p.coverPlacement&&['x','y','scale'].every(k=>Number.isFinite(p.coverPlacement![k as keyof Placement]))?{x:p.coverPlacement.x,y:p.coverPlacement.y,scale:p.coverPlacement.scale}:undefined
+ return {...book,format:one(formats.map(f=>f.id),p.format,book.format),color:/^#[\da-f]{6}$/i.test(p.color)?p.color:book.color,coverImage:keep(p.coverImage),coverPlacement:placement,paper:one(papers.map(x=>x.id),p.paper,book.paper),turnStyle:one(['curl','hinge'] as TurnStyle[],p.turnStyle,'curl'),
+  // Pages already written are never replaced; an empty journal takes the preset's page layouts.
+  journal:{...j,font:one(journalFonts.map(f=>f.id),p.font,j.font),size:one(textSizes.map(x=>x.id),p.size,j.size),ink:one(journalInks.map(x=>x.value),p.ink,j.ink),rule:one(paperRules.map(x=>x.id),p.rule,j.rule),watermark:p.watermark===true,cover:readCover(p.cover),entries:written||!layouts.length?j.entries:layouts.map(layout=>newEntry(layout))}}
+}
+
+/** Up to two saved looks, kept with the account. Saving copies this journal's look; applying copies it onto this journal. */
+export function JournalPresets({book,onApply,onNotice}:{book:Book;onApply:(book:Book)=>boolean;onNotice:(text:string,tone?:'success'|'error')=>void}){
+ const [saved,setSaved]=useState<JournalPreset[]|null>(null),[busy,setBusy]=useState(false)
+ useEffect(()=>{let live=true;api<{presets:JournalPreset[]}>('GET','/me/presets').then(r=>{if(live)setSaved(r.presets)}).catch(()=>{if(live)setSaved([])});return()=>{live=false}},[])
+ async function store(next:JournalPreset[],done:string){
+  setBusy(true)
+  try{setSaved((await api<{presets:JournalPreset[]}>('PUT','/me/presets',{presets:next})).presets);onNotice(done,'success')}
+  catch(error){onNotice(message(error,'Could not save your presets. Please try again.'),'error')}
+  finally{setBusy(false)}
+ }
+ if(!saved)return null
+ return <div className="journal-group journal-presets"><label>Presets<span className="sticker-count">{saved.length} / {PRESET_LIMIT}</span></label>
+  <div className="journal-preset-list">
+   {saved.map((p,i)=><div key={i} className="journal-preset">
+    <button className="button-secondary" data-hint="Apply" aria-label={`Apply preset ${p.name}`} onClick={()=>{if(onApply(withPreset(book,p)))onNotice(`${p.name} applied.`,'success')}}>{p.name}</button>
+    <button className="button-icon" data-hint="Replace" aria-label={`Replace preset ${p.name} with this journal`} disabled={busy} onClick={()=>{if(confirm(`Replace ${p.name} with this journal's look?`))void store(saved.map((q,j)=>j===i?presetOf(book):q),'Preset updated.')}}><FloppyDisk size={18}/></button>
+    <button className="button-icon" data-hint="Delete" aria-label={`Delete preset ${p.name}`} disabled={busy} onClick={()=>{if(confirm(`Delete ${p.name}?`))void store(saved.filter((_,j)=>j!==i),'Preset deleted.')}}><Trash size={18}/></button>
+   </div>)}
+   {saved.length<PRESET_LIMIT&&<button className="button-quiet" disabled={busy} onClick={()=>void store([...saved,presetOf(book)],'Preset saved.')}><Plus size={18}/>Save as preset</button>}
+  </div>
+ </div>
+}
 
 /** Fixed front and back layouts, shown as real covers so each choice looks like the book. */
 export function JournalCoverSettings({book,onChange,onNotice,onArrange}:{book:Book;onChange:(cover:JournalCover,side:'front'|'back')=>void;onNotice:(message:string)=>void;onArrange:()=>void}){
@@ -113,19 +170,25 @@ const FORMATS=[{tag:'b',name:'Bold',Icon:TextB,command:'bold'},{tag:'i',name:'It
 function TextField({id,html,label,singleLine,font,readOnly,align,onWrite,children}:{id:string;html:string;label:string;singleLine:boolean;font:{family:string;scale:number};readOnly:boolean;align:TextAlign;onWrite:(value:string)=>boolean;children?:ReactNode}){
  const field=useRef<HTMLDivElement>(null),accepted=useRef(html),composing=useRef(false),saved=useRef<Range|null>(null)
  const [active,setActive]=useState<string[]>([]),[link,setLink]=useState<string|null>(null),[linkError,setLinkError]=useState(false)
- useEffect(()=>{
-  const update=()=>{const node=field.current;if(node&&selectionIn(node))setActive([...FORMATS.map(f=>f.tag),'a'].filter(tag=>within(node,tag)))}
-  document.addEventListener('selectionchange',update);return()=>document.removeEventListener('selectionchange',update)
- },[])
+ // Bold, italic and underline report the browser's own state, so a style chosen at the caret shows before typing.
+ function update(){const node=field.current;if(node&&selectionIn(node))setActive([...FORMATS.filter(f=>f.command?document.queryCommandState(f.command):within(node,f.tag)).map(f=>f.tag),...(within(node,'a')?['a']:[])])}
+ useEffect(()=>{document.addEventListener('selectionchange',update);return()=>document.removeEventListener('selectionchange',update)},[])
  function ready(){const node=field.current!;if(!selectionIn(node)){node.focus();caretToEnd(node)};return node}
  function format(tag:string,command:string){
   const node=ready()
-  if(command){document.execCommand(command);return}
+  if(command){document.execCommand(command);update();return}
   const mark=within(node,'mark'),selection=getSelection()!
   if(mark)mark.replaceWith(...mark.childNodes)
-  else if(!selection.isCollapsed)wrap(selection.getRangeAt(0),document.createElement(tag))
-  else return
-  node.dispatchEvent(new Event('input',{bubbles:true}))
+  // At a caret, an empty marker holds the place so the next words are highlighted. sanitize drops the placeholder.
+  else if(selection.isCollapsed){
+   // Moving the caret forgets a bold or italic chosen at it, so those are chosen again inside the marker.
+   const pending=FORMATS.filter(f=>f.command&&document.queryCommandState(f.command)),element=document.createElement(tag)
+   element.textContent='​';selection.getRangeAt(0).insertNode(element)
+   const caret=document.createRange();caret.setStart(element.firstChild!,1);selection.removeAllRanges();selection.addRange(caret)
+   pending.forEach(f=>document.execCommand(f.command))
+  }
+  else wrap(selection.getRangeAt(0),document.createElement(tag))
+  node.dispatchEvent(new Event('input',{bubbles:true}));update()
  }
  // Range edits keep the bold or italic around a selection, which insertHTML drops.
  function wrap(range:Range,element:HTMLElement,after=''){
@@ -196,7 +259,7 @@ function PictureFrame({src,shape,focus,onMove}:{src:string;shape:number;focus:[n
  return <div className="journal-picture-preview is-framed" style={{'--shape':shape} as CSSProperties}><img src={src} alt="" draggable={false} role="slider" tabIndex={0} data-hint="Drag to frame" aria-label="Picture position" aria-valuenow={focus[0]} aria-valuetext={`${focus[0]}% across, ${focus[1]}% down`} style={{objectPosition:`${focus[0]}% ${focus[1]}%`}} onPointerDown={e=>dragFocus(e,e.currentTarget,focus,onMove)} onKeyDown={e=>focusKey(e,focus,onMove)}/></div>
 }
 
-export function JournalDesk({journal,entry,ratio,paper,owner,onEntry,onClose,onNotice}:{journal:JournalData;entry:JournalEntry;ratio:number;paper?:string;owner:Owner;onEntry:(entry:JournalEntry)=>void;onClose:()=>void;onNotice:(message:string)=>void}){
+export function JournalDesk({journal,entry,ratio,paper,owner,onEntry,onClose,onNotice,children}:{journal:JournalData;entry:JournalEntry;ratio:number;paper?:string;owner:Owner;onEntry:(entry:JournalEntry)=>void;onClose:()=>void;onNotice:(message:string)=>void;children?:ReactNode}){
  // A spread is edited as one surface two pages wide. Its boxes are fixed, so it has no edges to resize.
  const section=sectionOf(entry.layout),spread=section==='spread',across=spread?2:1,slots=entrySlots(entry,ratio),edges=spread?[]:slotEdges(slots)
  const texts=slots.filter(slot=>slot.kind!=='I')
@@ -425,6 +488,7 @@ export function JournalDesk({journal,entry,ratio,paper,owner,onEntry,onClose,onN
    <div className="journal-group"><label>Scribbles</label><div className="journal-scribbles">{scribbleKinds.map(kind=><button key={kind.id} type="button" data-hint={kind.name} aria-label={`Add ${kind.name.toLowerCase()} scribble`} disabled={marks.length>=maxMarks} onClick={()=>addMark(kind.id)}><ScribbleArt kind={kind.id} w={kind.w} h={kind.h} seed={7}/></button>)}</div></div>
    <div className="journal-group"><label>Stickers<span className="sticker-count">{stuck.length} / {maxStickers}</span></label><StickerTray used={stuck.length} max={maxStickers} onAdd={addSticker}/></div>
    {spare.length>0&&<div className="journal-group"><label>Not on this page</label><div className="journal-tray">{spare.map(id=><button key={id} data-hint="Place" aria-label={`Move ${entry.images[id]?'picture':'text'} onto the page`} aria-pressed={moving===id} onPointerDown={e=>{if(e.pointerType!=='touch')grab(e,id)}} onClick={()=>grip(id)}>{entry.images[id]?<img src={entry.images[id]} alt="" draggable={false}/>:<span style={{fontFamily:typeScale(journal,'writing').font.family}} dangerouslySetInnerHTML={{__html:sanitize(entry.texts[id])}}/>}</button>)}</div></div>}
+   {children}
   </section>
  </div>
 }
