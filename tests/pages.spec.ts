@@ -14,7 +14,7 @@ test('guest animation loops silently, account opens and legal pages retain appea
  await expect(page.getByRole('heading',{name:'Create your account'})).toBeVisible()
  await page.locator('.account-legal').getByRole('link',{name:'Terms',exact:true}).click()
  await expect(page.getByRole('heading',{name:'Terms of use.'})).toBeVisible()
- await expect(page.locator('dialog.portfolio-dialog')).not.toBeVisible()
+ await expect(page.locator('dialog[open]')).toHaveCount(0)
  await page.getByRole('button',{name:'Switch to dark theme'}).click()
  await page.getByRole('link',{name:'Privacy',exact:true}).click()
  await expect(page.getByRole('heading',{name:'Your privacy.'})).toBeVisible()
@@ -88,7 +88,7 @@ test('Ask my journal handles wake-up, streamed answers, retry and withdrawal',as
  for(const width of [320,390]){
   await page.setViewportSize({width,height:844})
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)
-  expect(await page.locator('#journal-question').evaluate(e=>parseFloat(getComputedStyle(e).fontSize))).toBeGreaterThanOrEqual(16)
+  expect(await page.getByRole('textbox',{name:'Ask about your journal'}).evaluate(e=>parseFloat(getComputedStyle(e).fontSize))).toBeGreaterThanOrEqual(16)
   await page.screenshot({path:`.impeccable/review/ask-dark-${width}.png`,fullPage:true})
  }
  await page.getByRole('button',{name:'Clear conversation'}).click()

@@ -144,4 +144,13 @@ button:disabled{opacity:.4;cursor:default}
 .feedback-dialog .button-primary{align-self:stretch}
 .feedback-error{margin:0;color:var(--app-danger);font-size:var(--text-sm)}
 .feedback-done p{margin:0 0 var(--space-4);color:var(--app-muted)}
+/* Install app (components/InstallApp.tsx) shares the feedback dialog. */
+.install-dialog :is(p,ol){margin:0 0 var(--space-4);line-height:1.6}
+.install-dialog ol{padding-left:20px}
+.install-dialog h2{padding-right:var(--space-6)}
+.install-dialog b{font-weight:500}
+.install-dialog .install-note{color:var(--app-muted);font-size:var(--text-sm)}
+.install-dialog .button-primary{width:100%}
+/* On wider screens the floating companion sits over the footer's right end, so the links stop short of it. */
+@media(min-width:701px){.portfolio-app .site-footer{padding-right:calc(clamp(16px,3vw,36px) + 100px)}}
 

@@ -125,6 +125,7 @@ The plan and remaining parts are in journaling-plan.md. Sketchbook and Journal a
 - Control hints use `data-hint` (one or two words) and are drawn by components/Hints.tsx, a single top-layer popover. Do not add `title` tooltips; keep aria-labels for names.
 - Ask my journal opens from the floating companion (JournalCompanion in AskJournal.tsx), not a page button. The persona's faces are public/persona/*.webp (320px copies of a04 to a06) plus the girl expression stickers; Persona cross-fades between moods.
 - Edit profile has username, bio, picture and links only. Profiles show the username; saving copies it into displayName. Links are rows chosen from LINK_KINDS (api.ts, kept in step with LINKS in server/people.ts), one per platform, shown as icons.
+- Install app (components/InstallApp.tsx) is a footer link: it uses the browser's own install prompt when there is one, otherwise a small dialog with Chrome/Edge, Mac Safari and iPhone steps, and it hides once installed. public/manifest.webmanifest has id, scope and a maskable icon (brand/icon-maskable-512.png, the mark at 72% on the paper color). There is no service worker on purpose: nothing private is cached and the app needs the internet.
 - Settings, sign-in and notifications open as a narrow panel; a press and release on the backdrop closes the dialog.
 
 ## SEO and AI search

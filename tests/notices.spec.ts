@@ -65,7 +65,7 @@ test('verified email opens a branded success panel with a working home link',asy
  await expect(page.getByRole('heading',{name:'Email verified.',exact:true})).toBeVisible()
  await expect(page.locator('.email-verified .brand-mark')).toBeVisible()
  await page.getByRole('button',{name:'Go to homepage',exact:true}).click()
- await expect(page.locator('dialog.portfolio-dialog')).not.toBeVisible()
+ await expect(page.locator('dialog[open]')).toHaveCount(0)
  await expect(page.locator('.artist-profile')).toBeVisible()
 })
 
@@ -99,7 +99,7 @@ test('password updates and sign-out report confirmed account changes',async({pag
  await toast.getByRole('button',{name:'Dismiss notification'}).click()
  await page.getByRole('button',{name:'Sign out',exact:true}).click()
  await expect(toast).toContainText('Signed out successfully.')
- await expect(page.locator('dialog.portfolio-dialog')).not.toBeVisible()
+ await expect(page.locator('dialog[open]')).toHaveCount(0)
 })
 
 test('bookmarks confirm saved-shelf additions and removals',async({page,context})=>{
