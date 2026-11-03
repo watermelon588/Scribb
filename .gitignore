@@ -17,3 +17,5 @@ __pycache__/
 .pytest_cache/
 .data/
 .impeccable/review/
+brag-output/
+brag-output-*/

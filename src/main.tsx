@@ -22,6 +22,7 @@ import './styles.css'
 import './theme.css'
 import './journal.css'
 import './system.css'
+import './phone.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode><Profile /></React.StrictMode>,

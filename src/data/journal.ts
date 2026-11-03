@@ -141,7 +141,7 @@ export function moveEdge(slots:Slot[],{axis,at}:Edge,step:number){
 }
 
 export const wordLimits:Record<Section,number>={writing:1000,minimal:100,long:250,layered:160,spread:300}
-export const slotWordLimits:Partial<Record<SlotKind,number>>={T:8,H:14,C:12,S:14,Q:20}
+export const slotWordLimits:Partial<Record<SlotKind,number>>={T:16,H:14,C:12,S:14,Q:20}
 export const sectionOf=(layout:LayoutId)=>journalLayouts.find(l=>l.id===layout)!.section
 
 const pad=(n:number)=>String(n).padStart(2,'0')

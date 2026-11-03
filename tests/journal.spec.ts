@@ -34,7 +34,7 @@ test('the customizing section switches between sketchbook and journal and saves 
  await page.getByRole('group',{name:'Book type'}).getByRole('button',{name:'Sketchbook'}).click();await expect(page.getByLabel('Sketchbook name')).toHaveValue('Untitled sketchbook');await expect(page.getByRole('heading',{name:'Your artwork'})).toBeVisible()
  await page.getByRole('group',{name:'Book type'}).getByRole('button',{name:'Journal'}).click()
  await page.getByLabel('Journal name').fill('Slow notes');await page.getByLabel('About this journal').fill('What the days felt like.')
- await page.getByRole('button',{name:'Everyday font'}).click();await page.getByRole('button',{name:'Write on page 1'}).click()
+ await page.getByRole('button',{name:'Write on page 1'}).click();await page.getByRole('button',{name:'Everyday font'}).click()
  await field(page).click();await page.keyboard.type('Today was quiet.');await expect(page.locator('.journal-canvas-page .j-text')).toHaveText('Today was quiet.')
  await expect(page.locator('.journal-canvas-page .j-text')).toHaveCSS('font-family',/Caveat/)
  await page.getByRole('button',{name:'Back to book'}).click();await page.getByRole('button',{name:'Save journal'}).click()
@@ -70,7 +70,7 @@ test('every layout, layered and spread, adapts to every format without losing te
 test('a box stops at its limits and pictures are reduced under 200 KB',async({page})=>{
  await newJournal(page);await page.getByRole('button',{name:'Write on page 1'}).click();await page.getByRole('button',{name:'Statement layout'}).click()
  await page.getByRole('button',{name:'Edit title'}).click();await page.getByRole('textbox',{name:'Title'}).click()
- await page.evaluate(()=>document.execCommand('insertText',false,'one two three four five six seven eight nine'))
+ await page.evaluate(()=>document.execCommand('insertText',false,'one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen'))
  await expect(page.locator('.journal-status')).toContainText('Word limit');await expect(page.getByRole('textbox',{name:'Title'})).toHaveText('')
  await page.locator('.journal-composer input[type=file]').evaluate(()=>{})
  await page.getByRole('button',{name:'Edit picture'}).click({noWaitAfter:true}).catch(()=>{})
@@ -106,7 +106,7 @@ test('text and pictures move between boxes by drag or by tap',async({page})=>{
 })
 
 test('a move that does not fit is refused and boxes resize, reset and keep their size in the book',async({page})=>{
- await deskWith(page,{layout:'statement',texts:{p0:'A paragraph that is much too long to become the title of this page'}})
+ await deskWith(page,{layout:'statement',texts:{p0:'A paragraph that is much too long to become the title of this page, even now that titles hold sixteen words'}})
  await page.getByRole('button',{name:'Edit paragraph'}).click();await page.getByRole('button',{name:'Move paragraph'}).click();await page.getByRole('button',{name:'Edit title'}).click()
  await expect(page.locator('.journal-status')).toContainText('Too long');await expect(slotText(page,'p0')).toContainText('A paragraph')
  const edge=page.locator('.journal-canvas-page .j-edge').last(),image=page.locator('.journal-canvas-page [data-slot=i0]')
@@ -145,9 +145,9 @@ test('voice typing writes live, survives restarts and moves on when a box fills'
  await say(page,'A quiet <b>morning</b>',true);await expect(slotText(page,'t0')).toHaveText('A quiet <b>morning</b>');await expect(slotText(page,'t0').locator('b')).toHaveCount(0)
  // The browser ends a session after silence; the next one must not repeat what was kept.
  await page.evaluate(()=>(window as unknown as {voice:{onend:()=>void}}).voice.onend());expect(await page.evaluate(()=>(window as unknown as {starts:number}).starts)).toBe(2)
- await say(page,'by the sea and the long road home',true)
- await expect(slotText(page,'t0')).toHaveText('A quiet <b>morning</b>');await expect(slotText(page,'p0')).toHaveText('by the sea and the long road home')
- await expect(page.getByRole('textbox',{name:'Paragraph'})).toHaveText('by the sea and the long road home')
+ await say(page,'by the sea and the long road home where the gulls call out all evening',true)
+ await expect(slotText(page,'t0')).toHaveText('A quiet <b>morning</b>');await expect(slotText(page,'p0')).toHaveText('by the sea and the long road home where the gulls call out all evening')
+ await expect(page.getByRole('textbox',{name:'Paragraph'})).toHaveText('by the sea and the long road home where the gulls call out all evening')
  await page.getByRole('button',{name:'Voice typing'}).click();await expect(page.getByRole('button',{name:'Voice typing'})).toHaveAttribute('aria-pressed','false')
  await expect(page.getByRole('textbox',{name:'Paragraph'})).toHaveAttribute('contenteditable','true')
 })
@@ -189,14 +189,13 @@ test('rough scribbles are placed, moved, removed and limited per page',async({pa
 
 test('the watermark puts the owner on every written page and nowhere else',async({page,account})=>{
  await newJournal(page);await page.getByRole('button',{name:'Add page'}).click();await field(page).click();await page.keyboard.type('Second page.')
- await page.getByRole('button',{name:'Back to book'}).click()
- const thumbs=page.locator('.journal-thumb .j-watermark');await expect(thumbs).toHaveCount(0)
- await page.getByRole('button',{name:'Watermark with your name and picture'}).click();await expect(thumbs).toHaveCount(2);await expect(thumbs.first()).toHaveText(`@${account.username}`)
+ await page.getByRole('button',{name:'Watermark with your name and picture'}).click();await page.getByRole('button',{name:'Back to book'}).click()
+ const thumbs=page.locator('.journal-thumb .j-watermark');await expect(thumbs).toHaveCount(2);await expect(thumbs.first()).toHaveText(`@${account.username}`)
  await page.getByLabel('Journal name').fill('Marked');await page.getByRole('button',{name:'Save journal'}).click();await page.getByRole('button',{name:'Open Marked'}).click()
  const pages=page.locator('.portfolio-dialog [hidden] .book-page');await expect(pages.first()).toBeAttached()
  // Front page, two written pages and the blanks: only the written pages carry the mark.
  await expect(page.locator('.portfolio-dialog [hidden] .j-watermark')).toHaveCount(2);await expect(pages.nth(2).locator('.j-watermark')).toHaveCount(0)
- await page.keyboard.press('Escape');await page.getByRole('button',{name:'Edit Marked'}).click();await page.getByRole('button',{name:'No watermark'}).click();await expect(thumbs).toHaveCount(0)
+ await page.keyboard.press('Escape');await page.getByRole('button',{name:'Edit Marked'}).click();await page.getByRole('button',{name:'Write on page 1'}).click();await page.getByRole('button',{name:'No watermark'}).click();await page.getByRole('button',{name:'Back to book'}).click();await expect(thumbs).toHaveCount(0)
 })
 
 test('a journal turns in 3D by drag and keys, still turns pages, and returns flat',async({page})=>{
@@ -369,4 +368,54 @@ test('text aligns per box, pictures are positioned on the page and cropped under
  expect(((await src.getAttribute('src'))!.length*3/4)).toBeLessThan(200*1024)
  await page.getByRole('button',{name:'Back to book'}).click()
  await expect(page.locator('.book-stage [hidden] .j-layout-margin [style*="text-align: center"]')).toHaveCount(1)
+})
+
+test('page style is chosen beside the page, not with the cover',async({page})=>{
+ await newJournal(page)
+ for(const name of ['Lined paper','Large text','Navy ink','No watermark','Cotton paper'])await expect(page.getByRole('button',{name})).toHaveCount(0)
+ await page.getByRole('button',{name:'Write on page 1'}).click()
+ await page.getByRole('button',{name:'Grid paper'}).click();await page.getByRole('button',{name:'Large text'}).click();await page.getByRole('button',{name:'Cotton paper'}).click()
+ await expect(page.locator('.journal-canvas-page')).toHaveCSS('--paper-image',/cotton/);await expect(page.getByRole('button',{name:'Grid paper'})).toHaveAttribute('aria-pressed','true')
+})
+
+test('bold, italic, underline and highlight show in every font, also from the caret',async({page})=>{
+ await deskWith(page,{layout:'writing',texts:{}})
+ await page.getByRole('button',{name:'Rough font'}).click()
+ await field(page).click()
+ for(const name of ['Bold','Italic','Underline','Highlight'])await page.getByRole('button',{name,exact:true}).click()
+ for(const name of ['Bold','Italic','Underline','Highlight'])await expect(page.getByRole('button',{name,exact:true})).toHaveAttribute('aria-pressed','true')
+ await page.keyboard.type('Loud words')
+ const text=page.locator('.journal-canvas-page .j-text')
+ for(const tag of ['b','i','u','mark'])await expect(text.locator(tag)).toHaveText('Loud words')
+ // Fonts with one weight and no italic still draw bold and italic.
+ await expect(text).toHaveCSS('font-synthesis-weight','auto');await expect(text).toHaveCSS('font-synthesis-style','auto')
+ expect(await text.evaluate(node=>node.innerHTML.includes('​'))).toBe(false)
+})
+
+test('a longer title shrinks to fit a narrow box',async({page})=>{
+ await deskWith(page,{layout:'inset',texts:{}})
+ await page.getByRole('button',{name:'Edit title'}).click();await page.getByRole('textbox',{name:'Title'}).click()
+ await page.keyboard.type('A long slow summer by the quiet grey sea with old friends')
+ const title=slotText(page,'t0');await expect(title).toHaveText('A long slow summer by the quiet grey sea with old friends')
+ expect(Number(await title.evaluate(node=>getComputedStyle(node).getPropertyValue('--fit')))).toBeLessThan(1)
+})
+
+test('two journal presets are saved to the account and applied to a new journal',async({page})=>{
+ await newJournal(page);await page.getByLabel('Journal name').fill('Quiet style')
+ await page.getByRole('button',{name:'Write on page 1'}).click();await page.getByRole('button',{name:'Rough font'}).click();await page.getByRole('button',{name:'Grid paper'}).click();await page.getByRole('button',{name:'Navy ink'}).click()
+ await page.getByRole('button',{name:'Statement layout'}).click();await page.getByRole('button',{name:'Back to book'}).click()
+ await page.getByRole('button',{name:'Title front cover'}).click()
+ await page.getByRole('button',{name:'Save as preset'}).click();await expect(page.getByRole('button',{name:'Apply preset Quiet style'})).toBeVisible()
+ await page.getByLabel('Journal name').fill('Second style');await page.getByRole('button',{name:'Save as preset'}).click()
+ await expect(page.getByRole('button',{name:'Apply preset Second style'})).toBeVisible();await expect(page.getByRole('button',{name:'Save as preset'})).toHaveCount(0)
+ expect((await page.request.put('/api/me/presets',{data:{presets:[{name:'a'},{name:'b'},{name:'c'}]}})).status()).toBe(400)
+ // A fresh journal takes the whole look from the saved preset.
+ page.on('dialog',dialog=>void dialog.accept())
+ await page.getByRole('button',{name:'Discard draft'}).click();await newJournal(page)
+ await page.getByRole('button',{name:'Apply preset Quiet style'}).click()
+ await expect(page.getByRole('button',{name:'Title front cover'})).toHaveAttribute('aria-pressed','true')
+ await page.getByRole('button',{name:'Write on page 1'}).click()
+ for(const name of ['Rough font','Grid paper','Navy ink','Statement layout'])await expect(page.getByRole('button',{name})).toHaveAttribute('aria-pressed','true')
+ await page.getByRole('button',{name:'Back to book'}).click();await page.getByRole('button',{name:'Delete preset Second style'}).click()
+ await expect(page.getByRole('button',{name:'Apply preset Second style'})).toHaveCount(0);await expect(page.getByRole('button',{name:'Save as preset'})).toBeVisible()
 })

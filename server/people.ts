@@ -115,6 +115,25 @@ people.post('/notifications/read', requireUser, async (_req, res) => {
   res.json({ ok: true })
 })
 
+/** Up to two saved journal looks. The app checks every field again when one is applied;
+ * here they are capped in count and size, and pictures must already be links, never uploads. */
+export const PRESET_LIMIT = 2
+people.get('/me/presets', requireUser, async (_req, res) => {
+  const [row] = await sql()`select presets from profiles where user_id = ${(res.locals.user as Row).id}`
+  res.json({ presets: row?.presets ?? [] })
+})
+
+people.put('/me/presets', requireUser, async (req, res) => {
+  const user = res.locals.user as Row, presets = req.body?.presets
+  if (!Array.isArray(presets) || presets.length > PRESET_LIMIT) return fail(res, 400, 'too_many_presets', `You can keep up to ${PRESET_LIMIT} presets.`)
+  const json = JSON.stringify(presets)
+  if (json.length > 16000 || json.includes('data:') || presets.some(p => !p || typeof p !== 'object' || Array.isArray(p) || typeof p.name !== 'string' || !p.name.trim() || p.name.length > 36))
+    return fail(res, 400, 'bad_preset', 'This preset could not be saved.')
+  if (!(await limit(`presets:${user.id}`, 60, 3600))) return fail(res, 429, 'rate_limited', 'Slow down a little and try again.')
+  await sql()`update profiles set presets = ${json}::jsonb where user_id = ${user.id}`
+  res.json({ presets })
+})
+
 /** Deletes the account and everything it owns. Password accounts confirm with the password,
  * Google-only accounts by typing their username. */
 people.delete('/me', requireUser, async (req, res) => {

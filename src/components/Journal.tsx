@@ -22,6 +22,7 @@ export function sheetStyle(journal:JournalData,ratio:number,section:Section='wri
 let probe:HTMLDivElement|null=null
 function textHeight(html:string,width:number,kind:SlotKind,style:CSSProperties){
  if(!probe){probe=document.createElement('div');document.body.appendChild(probe)}
+ probe.removeAttribute('style')
  for(const [key,value] of Object.entries(style))probe.style.setProperty(key,String(value))
  probe.className=`journal-probe j-text j-${kind}`;probe.style.width=`${width}px`;probe.innerHTML=html
  return probe.scrollHeight
@@ -32,8 +33,16 @@ export function slotBox(slot:Slot,ratio:number){
  if(slot.kind==='B')return {width:width-PANEL,height:height-2*PANEL}
  return {width,height}
 }
+// A longer title steps down in size until it fits its box. Every surface measures the same, so all pick the same step.
+const TITLE_STEPS=[1,.84,.7,.58]
+export function titleFit(journal:JournalData,layout:LayoutId,slot:Slot,html:string,ratio:number){
+ if(slot.kind!=='T'||!html)return 1
+ const box=slotBox(slot,ratio),style=sheetStyle(journal,ratio,sectionOf(layout)),text=sanitize(html)
+ return TITLE_STEPS.find(fit=>textHeight(text,box.width,'T',{...style,'--fit':fit} as CSSProperties)<=box.height+1)??0
+}
 export function slotFits(journal:JournalData,layout:LayoutId,slot:Slot,html:string,ratio:number){
  if(!html||layout==='writing')return true
+ if(slot.kind==='T')return titleFit(journal,layout,slot,html,ratio)>0
  const box=slotBox(slot,ratio)
  return textHeight(sanitize(html),box.width,slot.kind,sheetStyle(journal,ratio,sectionOf(layout)))<=box.height+1
 }
@@ -129,7 +138,7 @@ export function JournalSheet({journal,entry,ratio,number,side,offset=0,half,owne
   const data=editing?{'data-slot':slot.id}:undefined
   if(slot.kind==='I'){const src=entry.images[slot.id],focus=entry.focus?.[slot.id];return <div key={slot.id} {...data} className={`${classes} j-image`} style={slot.bleed?undefined:area}>{src&&<img src={src} alt="" draggable={false} style={focus&&{objectPosition:`${focus[0]}% ${focus[1]}%`}}/>}{src&&positioning===slot.id&&onPosition?<div className="j-position" role="slider" tabIndex={0} data-hint="Drag to frame" aria-label="Picture position" aria-valuenow={(focus??[50,50])[0]} aria-valuetext={`${(focus??[50,50])[0]}% across, ${(focus??[50,50])[1]}% down`} onPointerDown={e=>dragFocus(e,e.currentTarget.parentElement!.querySelector('img')!,focus??[50,50],f=>onPosition(slot.id,f))} onKeyDown={e=>focusKey(e,focus??[50,50],f=>onPosition(slot.id,f))}><ArrowsOutCardinal weight="light"/></div>:hit(slot,Boolean(src))}</div>}
   const html=entry.texts[slot.id]
-  return <div key={slot.id} {...data} className={`${classes} j-box j-box-${slot.kind}`} style={area}>{slot.meta&&<div className="j-panel-meta"><span>{formatDate(entry.date)}</span><span>{spread&&slot.col>=12?number+1:number}</span></div>}{html&&<div className={`j-text j-${slot.kind}`} style={alignOf(entry,slot.id)} dangerouslySetInnerHTML={{__html:sanitize(html)}}/>}{hit(slot,Boolean(html))}</div>
+  return <div key={slot.id} {...data} className={`${classes} j-box j-box-${slot.kind}`} style={area}>{slot.meta&&<div className="j-panel-meta"><span>{formatDate(entry.date)}</span><span>{spread&&slot.col>=12?number+1:number}</span></div>}{html&&<div className={`j-text j-${slot.kind}`} style={{...alignOf(entry,slot.id),...(slot.kind==='T'&&{'--fit':titleFit(journal,entry.layout,slot,html,ratio)||TITLE_STEPS.at(-1)})} as CSSProperties} dangerouslySetInnerHTML={{__html:sanitize(html)}}/>}{hit(slot,Boolean(html))}</div>
  }
  if(entry.layout==='writing'){
   const lines=writingLines(journal,ratio),line=typeScale(journal,'writing').line,html=entry.texts.p0

@@ -26,8 +26,10 @@ test('profile and email confirmations are visible and dismissible above Settings
  await page.screenshot({path:'.reference-analysis/notices/settings-email-320.png'})
  await toast.getByRole('button',{name:'Dismiss notification'}).click()
  await page.getByRole('button',{name:'Close dialog'}).click()
- await page.setViewportSize({width:390,height:844})
+ // Phones have no style switch: choose Editorial on desktop, then narrow the window.
+ await page.setViewportSize({width:1440,height:900})
  await page.getByRole('button',{name:'editorial style',exact:true}).click()
+ await page.setViewportSize({width:390,height:844})
  await page.getByRole('button',{name:'Switch to dark theme'}).click()
  await page.getByRole('button',{name:'Settings',exact:true}).click()
  await page.getByRole('textbox',{name:'Email',exact:true}).fill('artist@example.com')

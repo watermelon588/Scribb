@@ -42,10 +42,17 @@ test('rejects renamed active content, oversized files and oversized pixel dimens
 });
 
 test('all profile and editor directions fit mobile',async({page})=>{
- await page.setViewportSize({width:390,height:844});await page.goto('/');
- for(const style of ['gallery','editorial']){
- await page.getByRole('button',{name:`${style} style`}).click();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:`.reference-analysis/style-${style}-mobile.png`,fullPage:true});
- }
- await page.getByRole('button',{name:'New sketchbook',exact:true}).last().click();
- for(const style of ['gallery','editorial']){await page.getByRole('button',{name:`${style} style`}).click();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)}
+ // A stored Editorial choice still applies on desktop; phones always use Gallery and show no style or view switches.
+ await page.goto('/');await page.getByRole('button',{name:'editorial style',exact:true}).click()
+ await page.setViewportSize({width:390,height:844})
+ await expect(page.locator('.portfolio-app')).toHaveClass(/style-gallery/);await expect(page.getByRole('group',{name:'Portfolio style'})).toBeHidden()
+ await expect(page.getByRole('button',{name:'Bookshelf',exact:true})).toBeHidden();await expect(page.getByRole('button',{name:'New sketchbook',exact:true})).toBeHidden()
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:'.reference-analysis/style-phone-profile.png',fullPage:true})
+ await page.getByRole('navigation',{name:'Main navigation'}).getByRole('button',{name:'Create',exact:true}).click()
+ // The studio is full screen: one tool panel at a time above the tool bar, and Save opens the save sheet first.
+ await expect(page.getByRole('navigation',{name:'Main navigation'})).toBeHidden();await expect(page.getByLabel('Sketchbook name')).toBeHidden()
+ for(const tool of ['Binding','Cover','Paper']){await page.getByRole('navigation',{name:'Tools'}).getByRole('button',{name:tool,exact:true}).click();await expect(page.getByRole('navigation',{name:'Tools'}).getByRole('button',{name:tool,exact:true})).toHaveAttribute('aria-pressed','true');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)}
+ await expect(page.getByRole('button',{name:'hinge page turn',exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'Linen',exact:true})).toBeHidden()
+ await page.getByRole('button',{name:'Save',exact:true}).click();await expect(page.getByLabel('Sketchbook name')).toBeVisible();await expect(page.getByRole('button',{name:'Public',exact:true})).toBeVisible()
+ await page.screenshot({path:'.reference-analysis/studio-phone-save.png'})
 });

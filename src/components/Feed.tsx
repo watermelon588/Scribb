@@ -1,5 +1,5 @@
 import {useEffect,useMemo,useRef,useState,type CSSProperties} from 'react'
-import {Heart,BookmarkSimple,MagnifyingGlass,BookOpen,Book as BookIcon,Plus} from '@phosphor-icons/react'
+import {Heart,BookmarkSimple,MagnifyingGlass,BookOpen,Book as BookIcon,Plus,CaretDown} from '@phosphor-icons/react'
 import {BookObject} from './Bookshelf'
 import {ArtworkPage,artworkPages} from './Sketchbook'
 import {journalLeaves,useFontReady,type Owner} from './Journal'
@@ -44,6 +44,9 @@ export default function Feed({user,onOpen,onPerson,onSignIn,onNotice}:{user:User
  }
  useEffect(()=>{if(tab!=='explore'&&!user)return;setBooks([]);void load()},[path,user?.id]) // eslint-disable-line react-hooks/exhaustive-deps
  function choose(next:Tab){if(next!=='explore'&&!user){onSignIn();return}setTab(next)}
+ // Phones replace the toolbar and search with one switch that opens a bottom sheet of views.
+ const views=useRef<HTMLDivElement>(null),view=tab==='saved'?'Saved':tab==='following'?'Following':category==='All'?'For you':category
+ function pick(next:Tab,c='All'){views.current?.hidePopover();setCategory(c);choose(next)}
  // Optimistic: the button changes at once and the server's counts replace the guess.
  async function react(book:Book,kind:'like'|'save'){
   if(!user){onSignIn();return}
@@ -63,6 +66,8 @@ export default function Feed({user,onOpen,onPerson,onSignIn,onNotice}:{user:User
  </article>}
  return <main className="feed-page">
  <div className="feed-toolbar"><div className="feed-categories" role="group" aria-label="Art category">{CATEGORIES.map(c=><button key={c} className="button-quiet" aria-pressed={tab!=='saved'&&category===c} onClick={()=>{setCategory(c);if(tab==='saved')setTab('explore')}}>{c==='All'?'For you':c}</button>)}</div><div className="feed-toolbar-right"><button className="button-icon feed-saved-toggle" title="Saved books" aria-label="Show saved books" aria-pressed={tab==='saved'} onClick={()=>choose(tab==='saved'?'explore':'saved')}><BookmarkSimple size={19} weight={tab==='saved'?'fill':'light'}/></button><div className="feed-sort" role="group" aria-label="Feed"><button className="button-quiet" aria-pressed={tab==='explore'} onClick={()=>choose('explore')}>Everyone</button><button className="button-quiet" aria-pressed={tab==='following'} onClick={()=>choose('following')}>Following</button></div></div></div>
+ <div className="feed-phone-menu"><button className="button-quiet" popoverTarget="feed-views" aria-label={`Showing ${view}. Change view`}>{view}<CaretDown size={14}/></button>
+  <div ref={views} id="feed-views" popover="auto" className="feed-views" aria-label="Feed views">{([['explore','All','For you'],['following','All','Following'],['saved','All','Saved'],...CATEGORIES.slice(1).map(c=>['explore',c,c])] as [Tab,string,string][]).map(([t,c,name])=><button key={name} className="button-quiet" aria-pressed={view===name} onClick={()=>pick(t,c)}>{name}</button>)}</div></div>
  <label className="feed-search"><MagnifyingGlass size={18}/><input aria-label="Search the feed" placeholder="Find a book or an artist" value={query} onChange={e=>setQuery(e.target.value)} type="search" enterKeyHint="search"/></label>
  <div className="feed-layout"><aside className="feed-side-note"><span className="eyebrow">THE READING ROOM</span><h2>Good art<br/>takes time.</h2><p>A few pages from someone else’s world.</p></aside><div className="feed-grid" aria-busy={loading}>{shown.map(card)}</div></div>
  {error&&<div className="feed-empty" role="alert"><h2>The feed could not be loaded.</h2><p>{error}</p><button className="button-secondary" onClick={()=>void load()}>Try again</button></div>}
