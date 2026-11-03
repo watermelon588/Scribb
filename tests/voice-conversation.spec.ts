@@ -5,7 +5,9 @@ test('voice conversation submits once, speaks answer, listens again and stops on
   const w=window as any;w.voiceStarts=0;w.voiceStops=0;w.spoken=[];
   class Recognition {lang='';continuous=true;interimResults=true;onresult:any;onerror:any;onend:any;start(){w.recognition=this;w.voiceStarts++}stop(){w.voiceStops++;this.onend?.()}}
   w.SpeechRecognition=Recognition;
-  Object.defineProperty(window,'speechSynthesis',{value:{getVoices:()=>[],cancel:()=>{},speak:(u:any)=>{w.spoken.push(u.text);setTimeout(()=>u.onend?.(),30)}}});
+  w.SpeechSynthesisUtterance=class{text:string;lang='';voice:any=null;pitch=1;rate=1;onend:any;onerror:any;constructor(text:string){this.text=text}};
+  const voices=[{name:'Microsoft David',lang:'en-US',localService:true},{name:'Microsoft Zira',lang:'en-US',localService:true}];
+  Object.defineProperty(window,'speechSynthesis',{value:{getVoices:()=>voices,cancel:()=>{},speak:(u:any)=>{w.spoken.push(u.text);w.voice={name:u.voice?.name,pitch:u.pitch};setTimeout(()=>u.onend?.(),30)}}});
  });
  await page.request.post('/api/ai/consent');await page.route('**/api/auth/me',async r=>{const response=await r.fetch();const data=await response.json();await r.fulfill({json:{...data,user:{...data.user,emailVerified:true}}})});
  await page.route('**/api/ai/status',r=>r.fulfill({json:{url:'https://voice-ai.test'}}));await page.route('https://voice-ai.test/health',r=>r.fulfill({headers:cors,json:{ok:true}}));await page.route('**/api/ai/ticket',r=>r.fulfill({json:{url:'https://voice-ai.test',ticket:'test'}}));let asks=0;
@@ -13,6 +15,7 @@ test('voice conversation submits once, speaks answer, listens again and stops on
  await page.goto('/#ask');await page.getByRole('button',{name:'Start voice conversation'}).click();await expect(page.getByRole('button',{name:'End voice conversation'})).toBeVisible();
  await page.evaluate(()=>{const w=window as any;w.recognition.onresult({resultIndex:0,results:[{isFinal:true,0:{transcript:'What did I write yesterday?'}}]})});
  await expect(page.locator('.ask-answer')).toHaveText('You wrote about a walk.');await expect.poll(()=>page.evaluate(()=>(window as any).voiceStarts)).toBe(2);expect(asks).toBe(1);expect(await page.evaluate(()=>(window as any).spoken.join(''))).toBe('You wrote about a walk.');
+ expect(await page.evaluate(()=>(window as any).voice)).toEqual({name:'Microsoft Zira',pitch:1.4});
  await page.getByRole('button',{name:'End voice conversation'}).click();await expect(page.getByRole('button',{name:'Start voice conversation'})).toBeVisible();
  await page.getByRole('button',{name:'Start voice conversation'}).click();await page.getByRole('link',{name:'Privacy',exact:true}).click();expect(await page.evaluate(()=>(window as any).voiceStops)).toBeGreaterThanOrEqual(3);
 });

@@ -126,3 +126,22 @@ button:disabled{opacity:.4;cursor:default}
 .portfolio-app .notification .button-quiet{flex-shrink:0;margin-left:auto;color:var(--app-ink)}
 .portfolio-app .email-verified p{font-size:var(--text-md);line-height:1.6}
 @media(max-width:600px){.portfolio-app .notification{bottom:calc(85px + env(safe-area-inset-bottom));padding:var(--space-3);gap:var(--space-2)}}
+
+/* Feedback: footer link and its small dialog (components/Feedback.tsx). */
+.site-footer .footer-feedback{display:inline;margin:0;color:inherit;font-size:inherit;text-decoration:none}
+.site-footer .footer-feedback:hover{text-decoration:underline;text-underline-offset:4px}
+.feedback-dialog{width:min(440px,calc(100vw - 32px));max-height:calc(100dvh - 32px);padding:var(--space-6) var(--space-5) var(--space-5);border:1px solid var(--app-line);border-radius:var(--radius);background:var(--app-bg);color:var(--app-ink)}
+.feedback-dialog::backdrop{background:#0b110d99;backdrop-filter:blur(5px)}
+.feedback-dialog h2{margin:0 0 var(--space-5);font-size:24px;font-weight:300;line-height:1.25}
+.feedback-dialog form,.feedback-done{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-4)}
+.feedback-dialog label{font-size:var(--text-sm);color:var(--app-muted)}
+.feedback-stars{display:flex;gap:4px;margin:-8px 0 var(--space-2) -10px}
+.feedback-stars button{color:var(--app-muted)}
+.feedback-stars button[aria-checked=true],.feedback-stars:has(button:hover) button:not(:hover ~ button){color:var(--app-accent)}
+.feedback-dialog textarea{width:100%;min-height:112px;padding:12px;border:1px solid var(--app-line);border-radius:var(--radius);background:transparent;color:var(--app-ink);font:inherit;font-size:16px;line-height:1.5;resize:vertical}
+.feedback-dialog textarea:focus{outline:none;border-color:var(--app-accent)}
+.feedback-dialog textarea::placeholder{color:var(--app-muted)}
+.feedback-dialog .button-primary{align-self:stretch}
+.feedback-error{margin:0;color:var(--app-danger);font-size:var(--text-sm)}
+.feedback-done p{margin:0 0 var(--space-4);color:var(--app-muted)}
+

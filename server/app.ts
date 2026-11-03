@@ -2,6 +2,7 @@ import express, { type NextFunction, type Request, type Response } from 'express
 import { ai } from './ai.js'
 import { auth, fail } from './auth.js'
 import { books } from './books.js'
+import { feedback } from './feedback.js'
 import { sql } from './db.js'
 import { media } from './media.js'
 import { people } from './people.js'
@@ -33,7 +34,7 @@ app.get('/api/health', async (_req, res) => {
     res.status(503).json({ ok: false, db: 'down' })
   }
 })
-app.use('/api', auth, people, books, media, ai)
+app.use('/api', auth, people, books, media, ai, feedback)
 // Crawlable profile, book and Explore pages plus the sitemap (vercel.json sends those paths here).
 app.use(seo)
 

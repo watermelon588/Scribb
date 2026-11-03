@@ -1,6 +1,15 @@
 import {useEffect,useRef,useState} from 'react'
 import {canDictate,dictate} from './voice'
 
+// The companion's voice: bright female voices first (Edge, Apple, Windows, Chrome, Android), then any female voice.
+const CUTE=[/\bAna\b/,/Aria/,/Jenny/,/Samantha/,/Zira/,/Google US English/,/Google UK English Female/,/Swara/,/female|woman|girl/i]
+function companionVoice(){
+ const lang=navigator.language.split('-')[0]
+ const voices=speechSynthesis.getVoices().filter(v=>v.lang.split('-')[0]===lang&&!/\bmale\b|\bman\b/i.test(v.name))
+ for(const name of CUTE){const found=voices.filter(v=>name.test(v.name));const pick=found.find(v=>v.localService)??found[0];if(pick)return pick}
+ return voices.find(v=>v.localService)??voices[0]
+}
+
 /** Turn-based voice uses the same authenticated journal request, never an unauthenticated call endpoint. */
 export function useJournalVoice(onQuestion:(text:string)=>Promise<string|undefined>,onTranscript:(text:string)=>void,onCancel:()=>void){
  const [state,setState]=useState<'off'|'listening'|'thinking'|'speaking'>('off'),[error,setError]=useState('')
@@ -9,7 +18,8 @@ export function useJournalVoice(onQuestion:(text:string)=>Promise<string|undefin
  const supported=canDictate()&&'speechSynthesis' in window
  function cleanup(){session.current++;if(timer.current)clearTimeout(timer.current);if(silence.current)clearTimeout(silence.current);listening.current?.();listening.current=null;if('speechSynthesis' in window)speechSynthesis.cancel()}
  function stop(){cleanup();setState('off');callbacks.current.onCancel()}
- useEffect(()=>()=>cleanup(),[])
+ // Chrome loads its voice list lazily; asking early lets the first answer use the companion's voice.
+ useEffect(()=>{if(supported)speechSynthesis.getVoices();return()=>cleanup()},[])
  function start(){
   if(!supported){setError('Voice conversation needs a browser with speech recognition and spoken replies. You can still type here.');return}
   cleanup();setError('');const id=session.current
@@ -23,7 +33,8 @@ export function useJournalVoice(onQuestion:(text:string)=>Promise<string|undefin
     if(!valid())return
     const text=chunks.shift();if(!text){listen();return}
     const utterance=new SpeechSynthesisUtterance(text);utterance.lang=navigator.language
-    const local=speechSynthesis.getVoices().find(v=>v.localService&&v.lang.split('-')[0]===navigator.language.split('-')[0]);if(local)utterance.voice=local
+    const voice=companionVoice();if(voice)utterance.voice=voice
+    utterance.pitch=1.4;utterance.rate=1.05
     utterance.onend=next;utterance.onerror=()=>fail('Spoken replies stopped. Your answer is still available as text.')
     speechSynthesis.speak(utterance)
    }
