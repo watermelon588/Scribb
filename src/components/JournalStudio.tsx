@@ -1,5 +1,6 @@
 import {useEffect,useLayoutEffect,useRef,useState,type CSSProperties,type FormEvent,type KeyboardEvent as ReactKeyboardEvent,type PointerEvent as ReactPointerEvent,type ReactNode} from 'react'
-import {ArrowCounterClockwise,ArrowLeft,ArrowRight,ArrowsOutCardinal,BookOpen,Check,Crop,TextAlignCenter,TextAlignLeft,TextAlignRight,FloppyDisk,Highlighter,LinkSimple,Microphone,Stop,TextB,TextItalic,TextUnderline,Image as ImageIcon,Plus,Trash,X} from '@phosphor-icons/react'
+import {ArrowCounterClockwise,ArrowLeft,ArrowRight,ArrowsOutCardinal,BookOpen,Check,Crop,TextAlignCenter,TextAlignLeft,TextAlignRight,FloppyDisk,Highlighter,LinkSimple,Microphone,Stop,TextB,TextItalic,TextUnderline,Image as ImageIcon,Plus,Trash,X,PencilSimple,SquaresFour,Sticker,PaintBrush} from '@phosphor-icons/react'
+import PhoneTools,{panelOf,type Tool} from './PhoneTools'
 import {ScribbleArt} from './Scribble'
 import {StickerLayer,StickerTray,changeSticker,dropPoint} from './Stickers'
 import {STICKERS_ON_COVER,STICKERS_PER_PAGE,fitSticker,newSticker,safeSticker,type PlacedSticker,type StickerItem} from '../data/stickers'
@@ -259,6 +260,7 @@ function PictureFrame({src,shape,focus,onMove}:{src:string;shape:number;focus:[n
  return <div className="journal-picture-preview is-framed" style={{'--shape':shape} as CSSProperties}><img src={src} alt="" draggable={false} role="slider" tabIndex={0} data-hint="Drag to frame" aria-label="Picture position" aria-valuenow={focus[0]} aria-valuetext={`${focus[0]}% across, ${focus[1]}% down`} style={{objectPosition:`${focus[0]}% ${focus[1]}%`}} onPointerDown={e=>dragFocus(e,e.currentTarget,focus,onMove)} onKeyDown={e=>focusKey(e,focus,onMove)}/></div>
 }
 
+const DESK_TOOLS:Tool[]=[{id:'write',name:'Write',Icon:PencilSimple},{id:'layout',name:'Layout',Icon:SquaresFour},{id:'decorate',name:'Decorate',Icon:Sticker},{id:'style',name:'Style',Icon:PaintBrush}]
 export function JournalDesk({journal,entry,ratio,paper,owner,onEntry,onClose,onNotice,children}:{journal:JournalData;entry:JournalEntry;ratio:number;paper?:string;owner:Owner;onEntry:(entry:JournalEntry)=>void;onClose:()=>void;onNotice:(message:string)=>void;children?:ReactNode}){
  // A spread is edited as one surface two pages wide. Its boxes are fixed, so it has no edges to resize.
  const section=sectionOf(entry.layout),spread=section==='spread',across=spread?2:1,slots=entrySlots(entry,ratio),edges=spread?[]:slotEdges(slots)
@@ -272,6 +274,8 @@ export function JournalDesk({journal,entry,ratio,paper,owner,onEntry,onClose,onN
  const live=useRef(entry);live.current=entry
  const [markId,setMarkId]=useState<string|null>(null),[stickerId,setStickerId]=useState<string|null>(null)
  const [cropping,setCropping]=useState(false),[positioning,setPositioning]=useState(false)
+ // Phones show one tool panel under the page at a time.
+ const [tool,setTool]=useState<string|null>('write'),panel=panelOf(tool)
  const surface=useRef<HTMLDivElement>(null),picker=useRef<HTMLInputElement>(null),[scale,setScale]=useState(0)
  const sheet=sheetSize(ratio),surfaceWidth=sheet.width*across,frame=slot.bleed?{width:surfaceWidth,height:sheet.height}:slotBox(slot,ratio)
  const maxMarks=SCRIBBLES_PER_PAGE*across,maxStickers=STICKERS_PER_PAGE*across,where=spread?'on a spread':'on a page'
@@ -388,7 +392,7 @@ export function JournalDesk({journal,entry,ratio,paper,owner,onEntry,onClose,onN
  }
  function select(next:Slot){
   if(dropped.current)return
-  setMarkId(null);setStickerId(null);if(next.id!==slot.id)setPositioning(false)
+  setMarkId(null);setStickerId(null);setTool('write');if(next.id!==slot.id)setPositioning(false)
   stopVoice.current?.()
   if(moving){place(moving,next.id);return}
   setSlotId(next.id);if(next.kind==='I'&&!entry.images[next.id])picker.current?.click()
@@ -472,7 +476,7 @@ export function JournalDesk({journal,entry,ratio,paper,owner,onEntry,onClose,onN
    <div className="canvas-actions"><button className="button-icon" data-hint="Book" aria-label="Back to book" onClick={onClose}><BookOpen size={21} weight="light"/></button>{gridOf(entry,ratio)&&<button className="button-icon" data-hint="Reset" aria-label="Reset boxes" onClick={resetGrid}><ArrowCounterClockwise size={21} weight="light"/></button>}</div>
   </div>
   <section className="creation-controls journal-composer">
-   {slot.kind==='I'?<div className="journal-picture">
+   <div className="tool-group" {...panel('write')}>{slot.kind==='I'?<div className="journal-picture">
     {entry.images[slot.id]?<PictureFrame src={entry.images[slot.id]} shape={frame.width/frame.height} focus={entry.focus?.[slot.id]??[50,50]} onMove={focus=>onEntry({...entry,focus:{...entry.focus,[slot.id]:focus}})}/>:<div className="journal-picture-preview"><ImageIcon size={30} weight="thin"/></div>}
     <div className="journal-picture-actions"><button className="button-secondary" disabled={busy} onClick={()=>picker.current?.click()}>{busy?'Opening…':entry.images[slot.id]?'Replace picture':'Add picture'}</button>{entry.images[slot.id]&&<><button className="button-icon" data-hint={positioning?'Done':'Position'} aria-label="Position picture" aria-pressed={positioning} onClick={()=>{setCropping(false);setPositioning(p=>!p)}}><ArrowsOutCardinal size={18}/></button><button className="button-icon" data-hint="Crop" aria-label="Crop picture" aria-pressed={cropping} disabled={busy} onClick={()=>{setPositioning(false);setCropping(c=>!c)}}><Crop size={18}/></button><button className="button-icon" data-hint="Remove" aria-label="Remove picture" onClick={removePicture}><X size={18}/></button></>}</div>
     <small className="upload-limits">Reduced to under 200 KB. You are responsible for the pictures you add.</small>
@@ -483,12 +487,13 @@ export function JournalDesk({journal,entry,ratio,paper,owner,onEntry,onClose,onN
     </TextField>
    </>}
    <div className="journal-status" aria-live="polite"><span>{moving?'Choose a box':status||(positioning&&slot.kind==='I'?'Drag the picture on the page':'')||(listening?'Listening':'')||(slot.kind==='I'?'':`${used} / ${limit} words`)}</span>{pages>1&&<span>{pages} pages</span>}</div>
+   {spare.length>0&&<div className="journal-group"><label>Not on this page</label><div className="journal-tray">{spare.map(id=><button key={id} data-hint="Place" aria-label={`Move ${entry.images[id]?'picture':'text'} onto the page`} aria-pressed={moving===id} onPointerDown={e=>{if(e.pointerType!=='touch')grab(e,id)}} onClick={()=>grip(id)}>{entry.images[id]?<img src={entry.images[id]} alt="" draggable={false}/>:<span style={{fontFamily:typeScale(journal,'writing').font.family}} dangerouslySetInnerHTML={{__html:sanitize(entry.texts[id])}}/>}</button>)}</div></div>}</div>
    <input ref={picker} hidden type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>{void addPicture(e.target.files?.[0]);e.target.value=''}}/>
-   {(['writing','minimal','long','layered','spread'] as const).map(group=><div className="journal-group" key={group}><label>{group[0].toUpperCase()+group.slice(1)}</label><div className="journal-layouts">{journalLayouts.filter(l=>l.section===group).map(l=><button key={l.id} className={l.section==='spread'?'is-spread-layout':undefined} data-hint={l.name} aria-label={`${l.name} layout`} aria-pressed={entry.layout===l.id} onClick={()=>setLayout(l.id)}><LayoutGlyph layout={l.id} ratio={ratio}/></button>)}</div></div>)}
-   <div className="journal-group"><label>Scribbles</label><div className="journal-scribbles">{scribbleKinds.map(kind=><button key={kind.id} type="button" data-hint={kind.name} aria-label={`Add ${kind.name.toLowerCase()} scribble`} disabled={marks.length>=maxMarks} onClick={()=>addMark(kind.id)}><ScribbleArt kind={kind.id} w={kind.w} h={kind.h} seed={7}/></button>)}</div></div>
-   <div className="journal-group"><label>Stickers<span className="sticker-count">{stuck.length} / {maxStickers}</span></label><StickerTray used={stuck.length} max={maxStickers} onAdd={addSticker}/></div>
-   {spare.length>0&&<div className="journal-group"><label>Not on this page</label><div className="journal-tray">{spare.map(id=><button key={id} data-hint="Place" aria-label={`Move ${entry.images[id]?'picture':'text'} onto the page`} aria-pressed={moving===id} onPointerDown={e=>{if(e.pointerType!=='touch')grab(e,id)}} onClick={()=>grip(id)}>{entry.images[id]?<img src={entry.images[id]} alt="" draggable={false}/>:<span style={{fontFamily:typeScale(journal,'writing').font.family}} dangerouslySetInnerHTML={{__html:sanitize(entry.texts[id])}}/>}</button>)}</div></div>}
-   {children}
+   <div className="tool-group" {...panel('layout')}>{(['writing','minimal','long','layered','spread'] as const).map(group=><div className="journal-group" key={group}><label>{group[0].toUpperCase()+group.slice(1)}</label><div className="journal-layouts">{journalLayouts.filter(l=>l.section===group).map(l=><button key={l.id} className={l.section==='spread'?'is-spread-layout':undefined} data-hint={l.name} aria-label={`${l.name} layout`} aria-pressed={entry.layout===l.id} onClick={()=>setLayout(l.id)}><LayoutGlyph layout={l.id} ratio={ratio}/></button>)}</div></div>)}</div>
+   <div className="tool-group" {...panel('decorate')}><div className="journal-group"><label>Scribbles</label><div className="journal-scribbles">{scribbleKinds.map(kind=><button key={kind.id} type="button" data-hint={kind.name} aria-label={`Add ${kind.name.toLowerCase()} scribble`} disabled={marks.length>=maxMarks} onClick={()=>addMark(kind.id)}><ScribbleArt kind={kind.id} w={kind.w} h={kind.h} seed={7}/></button>)}</div></div>
+   <div className="journal-group"><label>Stickers<span className="sticker-count">{stuck.length} / {maxStickers}</span></label><StickerTray used={stuck.length} max={maxStickers} onAdd={addSticker}/></div></div>
+   <div className="tool-group" {...panel('style')}>{children}</div>
   </section>
+  <PhoneTools tools={DESK_TOOLS} value={tool} onChange={setTool}/>
  </div>
 }

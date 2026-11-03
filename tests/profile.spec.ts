@@ -38,5 +38,5 @@ test('resize handle and cover upload work with touch-sized controls',async({page
  await expect(page.getByRole('group',{name:'Position cover image'}).locator('img')).not.toHaveCSS('transform','none');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.getByRole('button',{name:'Preview book',exact:true}).first().click();await expect(page.locator('.book-mount .cover-art-image')).toHaveAttribute('src',/^data:image/);
- await page.getByRole('button',{name:'Solid color cover'}).click();await expect(page.locator('.book-mount .cover-art-image')).toHaveCount(0);
+ await page.getByRole('navigation',{name:'Tools'}).getByRole('button',{name:'Cover',exact:true}).click();await page.getByRole('button',{name:'Solid color cover'}).click();await expect(page.locator('.book-mount .cover-art-image')).toHaveCount(0);
 });

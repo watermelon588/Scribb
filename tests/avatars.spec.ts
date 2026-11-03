@@ -29,7 +29,9 @@ test('creator identity shows its star and reserved PFP in round layouts',async({
  await page.goto('/')
  await expect(page.getByRole('img',{name:'Creator of this application',exact:true})).toBeVisible()
  await expect(page.locator('.artist-portrait img')).toHaveAttribute('src','/avatars/mine.png')
+ // Phones have no style switch, so each style is chosen at desktop width and then checked at every width.
  for(const style of ['gallery','editorial']){
+  await page.setViewportSize({width:1440,height:1000})
   await page.getByRole('button',{name:`${style} style`,exact:true}).click()
   for(const width of [1440,390,320]){
    await page.setViewportSize({width,height:width===1440?1000:844})
