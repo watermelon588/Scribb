@@ -5,7 +5,7 @@ import {ArtworkPage,artworkPages} from './Sketchbook'
 import {journalLeaves,useFontReady,type Owner} from './Journal'
 import {api,avatarSrc,bookPage,message,type User} from '../lib/api'
 import {formats,papers} from '../data/presets'
-import {sheetSize,typeScale} from '../data/journal'
+import {sectionOf,sheetSize,typeScale} from '../data/journal'
 import type {Book} from '../Profile'
 import './feed.css'
 
@@ -21,12 +21,13 @@ function OpenSpread({book}:{book:Book}){
   if(journal&&book.latest){const owner:Owner={name:book.owner?.displayName||book.owner?.username||'',handle:book.owner?.username??'',avatar:avatarSrc(book.owner?.avatar)};return journalLeaves(book,{...journal,entries:[book.latest]},owner,ratio)}
   const pages=artworkPages(book.artworks);return {leaves:pages.map((art,i)=><ArtworkPage key={art.id} artwork={art} index={i}/>),recent:pages.length}
  },[book,journal,ratio,ready])
- const spread=useRef<HTMLDivElement>(null),[pageWidth,setPageWidth]=useState(0)
- useEffect(()=>{const node=spread.current;if(!node)return;const observer=new ResizeObserver(([e])=>setPageWidth(e.contentRect.width/2));observer.observe(node);return()=>observer.disconnect()},[])
+ const latestIsSpread = journal && book.latest ? sectionOf(book.latest.layout) === 'spread' : book.artworks.at(-1)?.layout === 'spread'
+ const leaf=useRef<HTMLDivElement>(null),[pageWidth,setPageWidth]=useState(0)
+ useEffect(()=>{const node=leaf.current;if(!node)return;const observer=new ResizeObserver(([e])=>setPageWidth(e.contentRect.width));observer.observe(node);return()=>observer.disconnect()},[recent])
  // Leaf i is page i + 1, and pages pair up 1-2, 3-4, … so the spread starts on the even leaf.
  const left=2*Math.floor((Math.max(recent,1)-1)/2)
- return <div ref={spread} className={`feed-spread textured preset-${journal?'linen':book.presetId} ${journal?'is-journal':''}`} style={{'--r':ratio,'--paper-image':`url("${papers.find(p=>p.id===book.paper)?.src??'/paper.svg'}")`,'--sheet-scale':journal&&pageWidth?pageWidth/sheetSize(ratio).width:undefined} as CSSProperties}>
-  <div className="feed-leaf">{leaves[left]}</div><div className="feed-leaf">{leaves[left+1]??<div className="book-page endpaper"/>}</div>
+ return <div className={`feed-spread ${latestIsSpread?'continuous':'single-post'} textured preset-${journal?'linen':book.presetId} ${journal?'is-journal':''}`} style={{'--r':ratio,'--paper-image':`url("${papers.find(p=>p.id===book.paper)?.src??'/paper.svg'}")`,'--sheet-scale':journal&&pageWidth?pageWidth/sheetSize(ratio).width:undefined} as CSSProperties}>
+  <div ref={recent===left+2?undefined:leaf} className={`feed-leaf ${recent===left+2?'':'recent'}`}>{leaves[left]}</div><div ref={recent===left+2?leaf:undefined} className={`feed-leaf ${recent===left+2?'recent':''}`}>{leaves[left+1]??<div className="book-page endpaper"/>}</div>
  </div>
 }
 

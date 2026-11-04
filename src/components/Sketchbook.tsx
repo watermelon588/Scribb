@@ -121,7 +121,7 @@ export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle,
   const [bandBusy, setBandBusy] = useState(false)
   const [bandOpening, setBandOpening] = useState(false)
   const [turning, setTurning] = useState(false)
-  const [size, setSize] = useState({ width: 0, height: 0 })
+  const [size, setSize] = useState({ width: 0, height: 0, inset: 0 })
   const [reduced, setReduced] = useState(false)
   const pageArtworks = useMemo(() => artworkPages(artworks), [artworks])
   const leafCount = pages?.length ?? pageArtworks.length
@@ -130,8 +130,10 @@ export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle,
   // The elastic wraps the front cover; the back only shows where its ends are anchored.
   const bandLocked = preset.id === 'watercolor' && page === 0 && !bandReleased
   // Prepared pages stay readable on phones by showing one page at a time.
-  const portrait = Boolean(pages) && size.width > 0 && size.width < 640
-  const pageWidth = Math.max(90, Math.floor(Math.min(portrait ? size.width - 24 : (size.width - 68) / 2, (size.height - 64) * aspectRatio, maxPage)))
+  const phoneSinglePage = !pages && size.inset > 0 && !artworks.some(art => art.layout === 'spread')
+  const portrait = size.width > 0 && size.width < 640 && (Boolean(pages) || phoneSinglePage)
+  const availableWidth = size.width - (size.inset || (portrait ? 24 : 68))
+  const pageWidth = Math.max(90, Math.floor(Math.min(availableWidth / (portrait ? 1 : 2), (size.height - (size.inset || 64)) * aspectRatio, maxPage)))
   const pageHeight = Math.round(pageWidth / aspectRatio)
   const coverInk = inkFor(coverColor)
 
@@ -140,7 +142,10 @@ export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle,
     const update = () => setReduced(media.matches)
     update()
     media.addEventListener('change', update)
-    const observer = new ResizeObserver(([entry]) => setSize({ width: Math.round(entry.contentRect.width), height: Math.round(entry.contentRect.height) }))
+    const observer = new ResizeObserver(([entry]) => setSize({
+      width: Math.round(entry.contentRect.width), height: Math.round(entry.contentRect.height),
+      inset: parseFloat(getComputedStyle(entry.target).getPropertyValue('--preview-inset')) || 0,
+    }))
     if (area.current) observer.observe(area.current)
     return () => { observer.disconnect(); media.removeEventListener('change', update) }
   }, [])
@@ -201,7 +206,7 @@ export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle,
     const touchStart = (event: TouchEvent) => {
       event.stopPropagation()
       if (event.touches.length !== 1) {
-        if (gesture?.active) { engine.userMove(gesture.start, true); engine.userStop(gesture.start) }
+        if (gesture?.active && !phoneSinglePage) { engine.userMove(gesture.start, true); engine.userStop(gesture.start) }
         gesture = null
         return
       }
@@ -216,23 +221,32 @@ export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle,
       if (!gesture.active) {
         if (dy > 8 && dy > dx) { gesture = null; return }
         if (dx < 8) return
-        engine.startUserTouch(gesture.start)
+        if (!phoneSinglePage) engine.startUserTouch(gesture.start)
         gesture.active = true
       }
       if (event.cancelable) event.preventDefault()
-      engine.userMove(current, true)
+      if (!phoneSinglePage) engine.userMove(current, true)
     }
     const touchEnd = (event: TouchEvent) => {
       event.stopPropagation()
       if (!gesture || !event.changedTouches[0]) return
       if (event.cancelable) event.preventDefault()
+      // In a single-leaf sketchbook a swipe can end well inside the same page.
+      // Use its direction rather than the two-page engine's drop position.
+      if (phoneSinglePage && gesture.active) {
+        const distance = point(event.changedTouches[0]).x - gesture.start.x
+        if (distance < -24) engine.flipNext('bottom')
+        else if (distance > 24) engine.flipPrev('bottom')
+        gesture = null
+        return
+      }
       if (!gesture.active) engine.startUserTouch(gesture.start)
       engine.userStop(point(event.changedTouches[0]))
       gesture = null
     }
     const touchCancel = (event: TouchEvent) => {
       event.stopPropagation()
-      if (gesture?.active) { engine.userMove(gesture.start, true); engine.userStop(gesture.start) }
+      if (gesture?.active && !phoneSinglePage) { engine.userMove(gesture.start, true); engine.userStop(gesture.start) }
       gesture = null
     }
     const handlers = { touchstart: touchStart, touchmove: touchMove, touchend: touchEnd, touchcancel: touchCancel }
@@ -397,7 +411,7 @@ export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle,
       
       <div className="page-navigation">
         <button className="button-icon" aria-label="Previous pages" data-hint="Previous" disabled={page === 0 || turning || bandLocked || bandBusy} onClick={() => navigate('previous')}><ArrowLeft size={18} weight="light" /></button>
-        <span className="sr-only" aria-live="polite" aria-atomic="true">{closed ? page === 0 ? 'COVER' : 'THE END' : `${String(visibleStart).padStart(2, '0')}—${String(visibleEnd).padStart(2, '0')}`}<small> / {String(leafCount).padStart(2, '0')}</small></span>
+        <span className="sr-only" aria-live="polite" aria-atomic="true">{closed ? page === 0 ? 'COVER' : 'THE END' : portrait ? `Page ${visibleStart}` : `${String(visibleStart).padStart(2, '0')}—${String(visibleEnd).padStart(2, '0')}`}<small> / {String(leafCount).padStart(2, '0')}</small></span>
         <button className="button-secondary button-icon cover-toggle" aria-label={bandLocked ? 'Release band' : closed ? 'Open book' : 'View cover'} data-hint={bandLocked ? 'Release band' : closed ? 'Open' : 'Cover'} onClick={toggleCover} disabled={(turning && !bandLocked) || bandBusy}>{closed ? <ArrowUpRight size={20} /> : <BookOpen size={20} weight="light" />}</button>
         {page === lastPage
           ? <button className="button-icon" aria-label="Back to start" data-hint="Start" disabled={turning} onClick={backToStart}><ArrowCounterClockwise size={18} weight="light" /></button>
