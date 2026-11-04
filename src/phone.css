@@ -81,7 +81,12 @@
 .portfolio-app .art-upload-empty,.phone-hidden{display:none}
 .portfolio-app .journal-page-strip{gap:var(--space-3);padding:4px 2px}
 /* The save sheet: name, caption, about, visibility and category, then Save. */
-.portfolio-app .creation-controls:has(>[data-panel=publish][data-on]){max-height:70dvh;padding-bottom:calc(var(--space-4) + env(safe-area-inset-bottom))}
+.portfolio-app .creation-controls:has(>[data-panel=publish][data-on]){max-height:40dvh;padding-bottom:calc(var(--space-4) + env(safe-area-inset-bottom))}
+.portfolio-app :is(.creation-preview,.portfolio-dialog) .book-area{--preview-inset:12px}
+.portfolio-app .journal-composer .tool-group[data-panel=layout][data-on]{display:flex;align-items:flex-end;gap:var(--space-4);overflow-x:auto;overscroll-behavior-x:contain}
+.portfolio-app .journal-composer .tool-group[data-panel=layout]>.journal-group{flex:0 0 auto;width:auto}
+.portfolio-app .journal-composer .tool-group[data-panel=layout] .journal-layouts{overflow:visible}
+.portfolio-app .journal-composer .journal-layouts button{flex:none;min-width:44px;min-height:44px}
 .portfolio-app .phone-save[data-on]{display:inline-flex;flex:none;width:100%;justify-content:center}
 
 .phone-tools{display:flex;flex:none;align-self:stretch;width:100%;box-sizing:border-box;justify-content:space-around;gap:var(--space-1);overflow-x:auto;padding:4px var(--space-2) calc(4px + env(safe-area-inset-bottom));border-top:1px solid var(--app-line);background:var(--app-bg)}
@@ -97,4 +102,84 @@
 .portfolio-app .portfolio-dialog.is-panel :is(h1,h2){font-size:var(--text-xl)}
 .portfolio-app .avatar-choices{display:flex;gap:var(--space-2);overflow-x:auto;padding:4px 2px}
 .portfolio-app .avatar-choices button{flex:none;width:64px;height:64px}
+
+ /* One scroll surface for the active tool. Fields keep their own editing space. */
+ .portfolio-app .creation-controls:has([data-on]),
+ .portfolio-app .creation-page .artwork-editor:is([data-on],.journal-pages){
+   display:flex;flex-flow:row nowrap;align-items:center;gap:var(--space-4);
+   flex:0 0 auto;max-width:100%;max-height:min(180px,32dvh);
+   overflow:auto;overscroll-behavior:contain;padding:8px 12px;scroll-padding-inline:12px
+ }
+ .portfolio-app .creation-controls :is(.tool-group[data-on],.journal-page-settings,.journal-cover-settings,.creator-cover,.creator-paper,.creator-binding,.creator-visibility,.creator-identity){
+   display:contents
+ }
+ .portfolio-app .creation-controls .tool-group[data-panel=layout][data-on]{display:contents}
+ .portfolio-app .creation-controls :is([data-on],.tool-group[data-on]>*,.journal-group,.journal-status){flex-shrink:0}
+ .portfolio-app .creation-controls .journal-group,
+ .portfolio-app .creation-controls .tool-group>.journal-group{width:max-content;gap:4px;margin:0}
+ .portfolio-app .creation-controls :is(.choice-row,.binding-choices,.creator-colors,.visual-formats,.motion-choices,.visual-papers,.journal-tools,.journal-layouts,.band-color-row,.journal-scribbles){
+   flex:none;width:max-content;display:flex;align-items:center;flex-wrap:nowrap;margin:0;overflow:visible
+ }
+ .portfolio-app .creation-controls :is(.creator-paper,.creator-binding,.creator-visibility)>label{flex:none;font-size:12px;color:var(--app-muted);margin:0}
+ .portfolio-app .creation-controls .creator-identity>*,.portfolio-app .journal-settings:has(textarea){flex:0 0 min(68vw,260px);min-width:0}
+ .portfolio-app .creation-controls .phone-save[data-on]{width:auto;flex:none}
+ .portfolio-app .creation-controls .control-label{width:auto;flex:none}
+ .portfolio-app .creation-controls .cover-picker{width:min(60vw,260px);flex:none}
+ .portfolio-app .creation-controls .cover-fan{min-height:82px;padding:10px 5px 4px}
+ .portfolio-app .creation-controls .cover-choice{height:64px;flex-basis:46px;margin-right:-18px}
+ .portfolio-app .creation-controls .creator-colors button{height:44px;width:44px}
+ .portfolio-app .creation-controls .journal-field{flex:0 0 min(78vw,340px);min-height:84px;max-height:112px;overflow:auto}
+ .portfolio-app .journal-composer .journal-tools{justify-content:flex-start}
+ .portfolio-app .creation-controls .sticker-tray{width:min(78vw,360px)}
+ .portfolio-app .creation-controls .sticker-grid{display:flex;overflow-x:auto;gap:4px;height:auto}
+ .portfolio-app .creation-controls .sticker-pick{flex:0 0 44px;height:44px}
+ .portfolio-app .creation-page .artwork-editor .collection-heading{flex:none}
+ .portfolio-app .creation-page .artwork-editor .collection-heading h2{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+ .portfolio-app .creation-page :is(.artwork-strip,.journal-page-strip){display:flex;flex:none;width:max-content;align-items:center;overflow:visible;margin:0}
+ .portfolio-app .creation-page :is(.artwork-edit-card,.journal-page-card){display:flex;align-items:center;gap:4px;flex:none;width:auto}
+ .portfolio-app .creation-page .artwork-edit-preview{width:64px;height:64px;flex:none}
+ .portfolio-app .creation-page :is(.artwork-tools,.art-order,.journal-page-tools){display:flex;align-items:center;margin:0;gap:0}
+ .portfolio-app .journal-page-card .journal-thumb{width:52px;max-height:72px}
+ .portfolio-app .phone-tools{justify-content:flex-start;padding-inline:max(4px,env(safe-area-inset-left));gap:0}
+ .portfolio-app .phone-tools button{flex:1 0 60px;min-height:48px}
+ .portfolio-app .creation-heading .kind-switch{gap:8px}
+ .portfolio-app .creation-heading{gap:4px}
+ .portfolio-app .creation-heading .creation-save{flex:none}
+
+ /* A single artwork gets a full leaf. Genuine spreads keep the central fold. */
+ .portfolio-app .feed-page{padding-inline:10px}
+ .portfolio-app .feed-book-scene{height:clamp(280px,124vw,62dvh)}
+ .portfolio-app .feed-spread.single-post{aspect-ratio:var(--r);height:min(96cqh,calc(96cqw / var(--r)))}
+ .portfolio-app .feed-spread.single-post .feed-leaf:not(.recent){display:none}
+ .portfolio-app .feed-spread.continuous{height:min(96cqh,calc(97cqw / (2 * var(--r))))}
+ .portfolio-app .feed-book-scene .collection-book-object{width:min(92cqw,calc(92cqh * var(--book-ratio)));height:auto;aspect-ratio:var(--book-ratio)}
+ .portfolio-app .feed-book-scene:has(.continuous){height:clamp(195px,72vw,52dvh)}
+ .phone-information{position:fixed;inset:52px 8px auto auto;margin:0;padding:8px;border:0;background:var(--app-bg);color:var(--app-ink);box-shadow:0 8px 28px #0002}
+ .phone-information nav{display:grid;min-width:150px}
+ .phone-information nav>:is(a,button){min-height:44px;display:flex;align-items:center;justify-content:flex-start;padding-inline:12px;color:inherit;font:inherit}
+
+ body:has(.portfolio-app.is-editing) .notification{
+   inset:calc(54px + env(safe-area-inset-top)) 8px auto;
+   width:auto;max-width:none;margin:0;transform:none;pointer-events:none
+ }
+ body:has(.portfolio-app.is-editing) .notification button{pointer-events:auto}
+ .portfolio-app .creation-controls .cover-picker{display:flex;align-items:center;gap:2px;width:min(80vw,310px)}
+ .portfolio-app .cover-picker .cover-fan{flex:1 1 auto;min-width:0}
+ .portfolio-app .cover-rail-controls{flex:none;display:grid;margin:0}
+
+ .portfolio-app .placement-editor{container-type:size;gap:4px}
+ .portfolio-app .placement-editor .placement-surface{
+   width:min(100cqw,calc((100cqh - 48px) * var(--placement-ratio)));
+   height:auto;max-height:none;flex:none
+ }
+ .portfolio-app .journal-scribbles button{width:48px;height:44px;flex:none}
+ .portfolio-app .creation-controls .band-color-row span{flex:none}
+
+ /* Mirror the reader's paper margin and artwork placement in the feed. */
+ .feed-spread .art-page .page-inner{display:block;padding:0}
+ .feed-spread .art-page :is(.page-topline,.page-caption,.page-number){display:none}
+ .feed-spread .artwork-mount{position:absolute;inset:0;overflow:hidden;margin:0}
+ .feed-spread .art-image-frame{position:relative;width:100%;height:100%}
+ .feed-spread .spread-art .art-image-frame{width:200%}
+ .feed-spread .art-image-frame img{width:100%;height:100%;object-fit:contain;padding:8% 5%;box-shadow:none}
 }

@@ -1,7 +1,12 @@
+import {DotsThree} from '@phosphor-icons/react'
 import InstallApp from './InstallApp'
 import Feedback from './Feedback'
 const geminiTerms='https://ai.google.dev/gemini-api/terms'
-export function SiteFooter(){return <footer className="site-footer"><span className="footer-brand"><img className="brand-mark" src="/brand/scribb-mark.png" alt="" width="22" height="22"/><b>Scribb</b> A space of your own.</span><nav aria-label="Information"><a href="#ask">Ask my journal</a><a href="#privacy">Privacy</a><a href="#terms">Terms</a><a href="/about/">About</a><Feedback/><InstallApp/></nav></footer>}
+export function SiteFooter({phone=false}:{phone?:boolean}){
+ const links = <nav aria-label="Information"><a href="#ask">Ask my journal</a><a href="#privacy">Privacy</a><a href="#terms">Terms</a><a href="/about/">About</a><Feedback/><InstallApp/></nav>
+ if(phone)return <><button className="button-icon" aria-label="More options" data-hint="More" popoverTarget="phone-information"><DotsThree size={22}/></button><div id="phone-information" className="phone-information" popover="auto" onClick={event=>{if((event.target as Element).closest('a'))event.currentTarget.hidePopover()}}>{links}</div></>
+ return <footer className="site-footer"><span className="footer-brand"><img className="brand-mark" src="/brand/scribb-mark.png" alt="" width="22" height="22"/><b>Scribb</b> A space of your own.</span>{links}</footer>
+}
 
 export default function Legal({page}:{page:'privacy'|'terms'}){
  const privacy=page==='privacy'

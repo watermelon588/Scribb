@@ -15,7 +15,10 @@ horizontal row of tool icons under the thumb, publish details asked for at save)
   Editorial choice still applies on desktop.
 - No Bookshelf preview on phones; the gallery grid is the only view.
 
+- The header’s More options menu holds the information links, Feedback and Install app. Phones have no footer.
+
 ## 2. Explore (feed)
+- Show the most recent leaf at full card width for individual works. Keep both halves for a continuous spread. The leaf sets the journal text scale.
 - Removed on phones: category buttons, Everyone/Following buttons, the saved
   toggle, the search field, the side note, the numbered edition marks and the
   duplicate "Made by hand" line.
@@ -44,7 +47,7 @@ horizontal row of tool icons under the thumb, publish details asked for at save)
     (format, page turn), Presets.
   - Writing a journal page: Write (text or picture), Layout, Decorate (scribbles and
     stickers), Style (paper, lines, font, size, ink, watermark).
-- Choice grids become single horizontal rows of smaller tiles inside the panel.
+- The active tool uses a horizontal editing rail. Keep fields editable, thumb targets reachable and long choices swipeable without shifting the preview. Sketchbooks of individual works turn one page at a time on phones. Books containing a continuous artwork spread keep both pages together.
 - Name, cover caption, journal description, visibility and category move to a
   bottom sheet that opens from Save. The sheet's own Save button saves the book.
 

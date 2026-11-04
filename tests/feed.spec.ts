@@ -46,21 +46,21 @@ test('all feed styles and thumbnail formats fit desktop and phone',async({page,b
  await page.setViewportSize({width,height:900});await expect(page.locator('.feed-card').first()).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 // Cards lie open at the newest page, so each page keeps the book's ratio.
- const ratios=await page.locator('.feed-card .feed-leaf:first-child').evaluateAll(es=>es.slice(0,4).map(e=>{const r=e.getBoundingClientRect();return r.width/r.height}));for(const [i,r] of [.75,16/9,1,4/3].entries())expect(ratios[i]).toBeCloseTo(r,1);
+ const ratios=await page.locator('.feed-card .feed-leaf.recent').evaluateAll(es=>es.slice(0,4).map(e=>{const r=e.getBoundingClientRect();return r.width/r.height}));for(const [i,r] of [.75,16/9,1,4/3].entries())expect(ratios[i]).toBeCloseTo(r,1);
  await page.screenshot({path:`.reference-analysis/feed-${style}-${width}.png`,fullPage:false});
  }}
  expect(await page.evaluate(()=>getComputedStyle(document.documentElement).scrollbarWidth)).toBe('none');
 });
 test('all editor dimensions reach the actual renderer on a phone',async({page})=>{
  await page.setViewportSize({width:390,height:844});await page.goto('/#new');await page.getByRole('navigation',{name:'Tools'}).getByRole('button',{name:'Paper',exact:true}).click()
- for(const [format,ratio] of [['16:9',16/9],['1:1',1],['3:4',.75],['4:3',4/3]] as const){await page.getByRole('button',{name:`${format} format`,exact:true}).click();await expect.poll(async()=>{const b=await page.locator('.book-mount').boundingBox();return Math.abs(b!.width/2/b!.height-ratio)}).toBeLessThan(.03)}
+ for(const [format,ratio] of [['16:9',16/9],['1:1',1],['3:4',.75],['4:3',4/3]] as const){await page.getByRole('button',{name:`${format} format`,exact:true}).click();await expect.poll(async()=>{const b=await page.locator('.book-mount').boundingBox();return Math.abs(b!.width/b!.height-ratio)}).toBeLessThan(.03)}
 });
 test('phone navigation preserves draft and touch turns an open sketchbook',async({browser})=>{
  const context=await browser.newContext({baseURL:'http://127.0.0.1:5174',viewport:{width:390,height:844},isMobile:true,hasTouch:true});await signUp(context);const page=await context.newPage();await page.goto('/#new');await page.getByRole('button',{name:'Save',exact:true}).tap();await page.getByLabel('Sketchbook name',{exact:true}).fill('Phone sketchbook');await page.locator('input[type=file]').last().setInputFiles(['public/artworks/roses.jpg','public/artworks/irises.jpg','public/artworks/venice.jpg','public/artworks/cypresses.jpg']);await expect(page.locator('.artwork-edit-card')).toHaveCount(4);
  await page.getByRole('button',{name:'Back to portfolio',exact:true}).tap();await page.getByRole('navigation',{name:'Main navigation'}).getByRole('button',{name:'Explore',exact:true}).tap();await expect(page.locator('.feed-phone-menu')).toBeVisible();await expect(page.locator('.feed-toolbar')).toBeHidden();await page.getByRole('navigation',{name:'Main navigation'}).getByRole('button',{name:'Create',exact:true}).tap();await expect(page.getByLabel('Sketchbook name',{exact:true})).toHaveValue('Phone sketchbook');
  await page.getByRole('navigation',{name:'Tools'}).getByRole('button',{name:'Binding',exact:true}).tap();await page.getByRole('button',{name:'Linen',exact:true}).tap();await page.getByRole('button',{name:'Open book',exact:true}).tap();await expect(page.getByRole('button',{name:'Next pages',exact:true})).toBeEnabled();
  await page.locator('.book-mount').scrollIntoViewIfNeeded();
- const box=(await page.locator('.book-mount').boundingBox())!;const x=box.x+box.width*.9,y=box.y+box.height*.55;const cdp=await context.newCDPSession(page);await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});for(let i=1;i<=12;i++){await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x-box.width*.7*i/12,y}]});await page.waitForTimeout(18)}await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await expect(page.locator('.page-navigation')).toContainText('03—04');await context.close();
+ const box=(await page.locator('.book-mount').boundingBox())!;const x=box.x+box.width*.9,y=box.y+box.height*.55;const cdp=await context.newCDPSession(page);await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});for(let i=1;i<=12;i++){await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x-box.width*.7*i/12,y}]});await page.waitForTimeout(18)}await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await page.locator('.stage-topline').getByRole('button',{name:'Pages',exact:true}).tap();await expect(page.getByRole('button',{name:'Page 2',exact:true})).toHaveAttribute('aria-current','true');await context.close();
 });
 
 test('feed cards open at the newest page and close to the cover',async({page,browser})=>{
