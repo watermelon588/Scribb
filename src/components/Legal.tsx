@@ -1,11 +1,17 @@
-import {DotsThree} from '@phosphor-icons/react'
+import {ArrowLeft,Gear,ArrowUpRight} from '@phosphor-icons/react'
 import InstallApp from './InstallApp'
 import Feedback from './Feedback'
 const geminiTerms='https://ai.google.dev/gemini-api/terms'
-export function SiteFooter({phone=false}:{phone?:boolean}){
+export function SiteFooter(){
  const links = <nav aria-label="Information"><a href="#ask">Ask my journal</a><a href="#privacy">Privacy</a><a href="#terms">Terms</a><a href="/about/">About</a><Feedback/><InstallApp/></nav>
- if(phone)return <><button className="button-icon" aria-label="More options" data-hint="More" popoverTarget="phone-information"><DotsThree size={22}/></button><div id="phone-information" className="phone-information" popover="auto" onClick={event=>{if((event.target as Element).closest('a'))event.currentTarget.hidePopover()}}>{links}</div></>
+
  return <footer className="site-footer"><span className="footer-brand"><img className="brand-mark" src="/brand/scribb-mark.png" alt="" width="22" height="22"/><b>Scribb</b> A space of your own.</span>{links}</footer>
+}
+
+export function PhoneSettings({username,onAccount,onBack}:{username?:string;onAccount:()=>void;onBack:()=>void}){
+ return <main className="phone-settings"><header><button className="button-icon" data-hint="Back" aria-label="Back to portfolio" onClick={onBack}><ArrowLeft/></button><h1>Settings</h1></header>
+ <section><h2>Account</h2><button className="button-quiet" onClick={onAccount}><Gear/>{username?'Profile settings · @'+username:'Sign in'}</button></section>
+ <section><h2>Scribb</h2><nav aria-label="Information">{[['About','/about/'],['Terms','#terms'],['Privacy','#privacy']].map(([label,href])=><a key={label} href={href}>{label}<ArrowUpRight size={16}/></a>)}</nav><Feedback/><InstallApp/></section></main>
 }
 
 export default function Legal({page}:{page:'privacy'|'terms'}){

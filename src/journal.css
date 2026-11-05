@@ -344,3 +344,6 @@
 .j-position:focus-visible{outline-width:calc(2.5px/var(--sheet-scale,1))}
 
 .journal-align{display:flex;gap:4px;padding-left:8px;margin-left:4px;border-left:1px solid var(--app-line)}
+
+/* Selected sticker handles stay reachable above overlapping stickers while editing. */
+.stickers.is-editing .sticker.is-chosen{z-index:1}

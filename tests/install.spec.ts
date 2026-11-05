@@ -35,7 +35,7 @@ test('without a browser prompt, instructions fit phones, close with Escape and f
  await page.getByRole('button',{name:'Switch to dark theme'}).click()
  for(const width of [320,390,1440]){
   await page.setViewportSize({width,height:900})
-  if(width<=600 && !(await page.locator('#phone-information').evaluate(el=>el.matches(':popover-open'))))await page.getByRole('button',{name:'More options'}).click()
+  await page.goto(width<=600?'/#settings':'/')
   const button=page.getByRole('button',{name:'Install app',exact:true})
   await button.click()
   const dialog=page.getByRole('dialog',{name:'Scribb on your home screen'})
