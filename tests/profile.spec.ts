@@ -8,7 +8,7 @@ test('profile opens a single creation studio with collection view choices',async
 
 test('cover and artwork placement save, reload and align across the fold',async({page})=>{
  await page.goto('/#new');await page.getByLabel('Sketchbook name').fill('New cover studies');
- await page.getByRole('button',{name:'Choose Blue Cat',exact:true}).hover({position:{x:5,y:70}});await page.getByRole('button',{name:'Choose Blue Cat',exact:true}).click();
+ await page.getByRole('button',{name:'Choose Blue Cat',exact:true}).focus();await page.keyboard.press('Enter');
  await page.getByRole('button',{name:'Position cover',exact:true}).click();await page.getByRole('slider',{name:'Cover image size'}).fill('1.3');
  const surface=page.getByRole('group',{name:'Position cover image'});await surface.focus();await page.keyboard.press('ArrowRight');
  await page.getByRole('button',{name:'Preview book',exact:true}).first().click();

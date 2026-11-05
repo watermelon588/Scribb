@@ -100,3 +100,12 @@ Scope: app chrome only. Book pages, covers, journal sheets, stickers and scribbl
 - [x] Type and spacing normalized to the scale (chrome text ≥12px); stray dividers removed (toolbar, card captions, footers, tool groups).
 - [x] Phones: Gallery/Bookshelf switch gets its own row, the studio header wraps so Save fits at 320px.
 - [x] npm run build passes; API tests 18/18. Browser suite on spare ports: all passing except feed.spec "feed reactions…", flaky (passed once, failed once at a different step on repeat). Screenshots at 1440/390/320 in light and dark reviewed.
+
+## Phone editor hierarchy and artwork corrections — 5 November 2026
+- [x] Shared PhonePanel gives each top-level tool separate feature tabs and only the selected options. Cover artwork/color/elastic, paper/format/turn, journal layout groups, stickers, and page styling no longer run into each other. Desktop keeps its existing DOM layout.
+- [x] Preserve the large preview and compact editing panel. Verified 320px and 390px with no document overflow; writing, formatting, microphone and alignment remain accessible.
+- [x] Add phone draft undo (40 snapshots), checkmark Save, plus-only add controls. Save first opens Details/Visibility/Category, then the checkmark commits. Undo refreshes live journal writing as well as design values.
+- [x] Move phone information links into Settings beside the owner profile. Include account settings, About, Terms, Privacy, Feedback and Install. Remove header overflow menu; phone companion appears only on Portfolio.
+- [x] Correct desktop sidebar image-frame offset and feed picture geometry. Unpaired feed artwork uses one page; continuous spreads retain their fold.
+- [x] Production build passes. Local-only API suite: 24 passed. Phone screenshot inspection completed; physical phone hardware was not available. Browser regression results recorded after the final rerun below.
+- [x] Regression verification: full npm test ran (24 API checks, 76 browser checks). Initial browser failures were resolved and verified in focused reruns, including all five phone/frame checks, phone navigation, journal covers, notifications, installation, and persisted cover/spread placement. Final sticker test passes after keeping selected editing handles above overlapping stickers. Build rerun after that fix.

@@ -52,7 +52,7 @@ test('all profile and editor directions fit mobile',async({page})=>{
  // The studio is full screen: one tool panel at a time above the tool bar, and Save opens the save sheet first.
  await expect(page.getByRole('navigation',{name:'Main navigation'})).toBeHidden();await expect(page.getByLabel('Sketchbook name')).toBeHidden()
  for(const tool of ['Binding','Cover','Paper']){await page.getByRole('navigation',{name:'Tools'}).getByRole('button',{name:tool,exact:true}).click();await expect(page.getByRole('navigation',{name:'Tools'}).getByRole('button',{name:tool,exact:true})).toHaveAttribute('aria-pressed','true');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)}
- await expect(page.getByRole('button',{name:'hinge page turn',exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'Linen',exact:true})).toBeHidden()
- await page.getByRole('button',{name:'Save',exact:true}).click();await expect(page.getByLabel('Sketchbook name')).toBeVisible();await expect(page.getByRole('button',{name:'Public',exact:true})).toBeVisible()
+ await page.getByRole('button',{name:'Page turn',exact:true}).click();await expect(page.getByRole('button',{name:'hinge page turn',exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'Linen',exact:true})).toBeHidden()
+ await page.getByRole('button',{name:'Save',exact:true}).click();await expect(page.getByLabel('Sketchbook name')).toBeVisible();await page.getByRole('button',{name:'Visibility',exact:true}).click();await expect(page.getByRole('button',{name:'Public',exact:true})).toBeVisible()
  await page.screenshot({path:'.reference-analysis/studio-phone-save.png'})
 });

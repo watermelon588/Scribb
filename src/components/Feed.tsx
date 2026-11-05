@@ -26,7 +26,7 @@ function OpenSpread({book}:{book:Book}){
  useEffect(()=>{const node=leaf.current;if(!node)return;const observer=new ResizeObserver(([e])=>setPageWidth(e.contentRect.width));observer.observe(node);return()=>observer.disconnect()},[recent])
  // Leaf i is page i + 1, and pages pair up 1-2, 3-4, … so the spread starts on the even leaf.
  const left=2*Math.floor((Math.max(recent,1)-1)/2)
- return <div className={`feed-spread ${latestIsSpread?'continuous':'single-post'} textured preset-${journal?'linen':book.presetId} ${journal?'is-journal':''}`} style={{'--r':ratio,'--paper-image':`url("${papers.find(p=>p.id===book.paper)?.src??'/paper.svg'}")`,'--sheet-scale':journal&&pageWidth?pageWidth/sheetSize(ratio).width:undefined} as CSSProperties}>
+ return <div data-unpaired={!leaves[left+1]||undefined} className={`feed-spread ${latestIsSpread?'continuous':'single-post'} textured preset-${journal?'linen':book.presetId} ${journal?'is-journal':''}`} style={{'--r':ratio,'--paper-image':`url("${papers.find(p=>p.id===book.paper)?.src??'/paper.svg'}")`,'--sheet-scale':journal&&pageWidth?pageWidth/sheetSize(ratio).width:undefined} as CSSProperties}>
   <div ref={recent===left+2?undefined:leaf} className={`feed-leaf ${recent===left+2?'':'recent'}`}>{leaves[left]}</div><div ref={recent===left+2?leaf:undefined} className={`feed-leaf ${recent===left+2?'recent':''}`}>{leaves[left+1]??<div className="book-page endpaper"/>}</div>
  </div>
 }

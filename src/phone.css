@@ -154,9 +154,6 @@
  .portfolio-app .feed-spread.continuous{height:min(96cqh,calc(97cqw / (2 * var(--r))))}
  .portfolio-app .feed-book-scene .collection-book-object{width:min(92cqw,calc(92cqh * var(--book-ratio)));height:auto;aspect-ratio:var(--book-ratio)}
  .portfolio-app .feed-book-scene:has(.continuous){height:clamp(195px,72vw,52dvh)}
- .phone-information{position:fixed;inset:52px 8px auto auto;margin:0;padding:8px;border:0;background:var(--app-bg);color:var(--app-ink);box-shadow:0 8px 28px #0002}
- .phone-information nav{display:grid;min-width:150px}
- .phone-information nav>:is(a,button){min-height:44px;display:flex;align-items:center;justify-content:flex-start;padding-inline:12px;color:inherit;font:inherit}
 
  body:has(.portfolio-app.is-editing) .notification{
    inset:calc(54px + env(safe-area-inset-top)) 8px auto;
@@ -182,4 +179,38 @@
  .feed-spread .art-image-frame{position:relative;width:100%;height:100%}
  .feed-spread .spread-art .art-image-frame{width:200%}
  .feed-spread .art-image-frame img{width:100%;height:100%;object-fit:contain;padding:8% 5%;box-shadow:none}
+}
+
+@media(max-width:600px){
+ .creation-page .feature-deck{display:grid;grid-template-rows:36px minmax(44px,auto);gap:4px;flex:1 0 100%;min-width:0;width:100%;max-width:100%}
+ .feature-tabs,.feature-options{display:flex;align-items:center;overflow-x:auto;overscroll-behavior-x:contain;min-width:0}
+ .feature-tabs{gap:12px}
+ .feature-tabs .button-quiet{flex:none;min-height:34px;padding:2px 1px;color:var(--app-muted);font-size:12px}
+ .feature-tabs [aria-pressed=true]{color:var(--app-ink);box-shadow:inset 0 -2px var(--app-accent)}
+ .feature-options{gap:8px;padding:2px 0;min-height:44px}
+ .feature-options .journal-group>label,.feature-options>.control-label>label,.feature-options>label:not(:has(input,textarea)){display:none}
+ .portfolio-app .creation-controls:has(.feature-deck [data-on]),.portfolio-app .creation-controls:has([data-on] .feature-deck){padding-block:3px;min-height:98px}
+ .portfolio-app .journal-composer .tool-group[data-panel=layout][data-on]{display:contents}
+ .portfolio-app .journal-composer:has([data-panel=write][data-on]){display:block;padding:4px 10px}
+ .portfolio-app .journal-composer [data-panel=write][data-on]{display:flex;flex-wrap:wrap;gap:2px 8px}
+ .portfolio-app .journal-composer [data-on] .journal-field{order:0;width:100%;flex:1 0 100%;min-height:42px;max-height:64px}
+ .portfolio-app .journal-composer [data-on] .journal-tools{order:1;width:100%;overflow-x:auto;gap:0;flex-wrap:nowrap;padding:0}
+ .portfolio-app .journal-composer .journal-align{display:inline-flex;order:2}
+ .portfolio-app .journal-composer .journal-tools button{flex:none;width:38px;min-width:38px}
+ .portfolio-app .journal-tools .journal-mic{order:-1}
+ .portfolio-app .journal-composer .journal-status{order:3;font-size:12px}
+ .portfolio-app .journal-composer .journal-link{order:2;width:100%}
+ .portfolio-app .creation-save{gap:0}
+ .portfolio-app .creation-save button{width:38px;min-width:38px}
+ .portfolio-app .phone-save[data-on]{display:none}
+ .artist-profile{position:relative}
+ .artist-details{min-width:0}
+ .artist-profile .profile-more{position:absolute;right:0;top:0}
+ .artist-profile:has(.profile-more) .artist-details h1{padding-right:36px;overflow-wrap:anywhere}
+ .phone-settings{padding:16px;max-width:600px;margin:auto}
+ .phone-settings header,.phone-settings a{display:flex;align-items:center;gap:10px}
+ .phone-settings h1{font-size:26px;font-weight:400;margin:0}
+ .phone-settings section{display:grid;gap:4px;margin:28px 0}
+ .phone-settings h2{font-size:12px;font-weight:400;color:var(--app-muted)}
+ .phone-settings a,.phone-settings section>button{min-height:44px;color:var(--app-ink);padding:0 8px;justify-content:space-between}
 }

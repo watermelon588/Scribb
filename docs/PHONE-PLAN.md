@@ -15,7 +15,7 @@ horizontal row of tool icons under the thumb, publish details asked for at save)
   Editorial choice still applies on desktop.
 - No Bookshelf preview on phones; the gallery grid is the only view.
 
-- The header’s More options menu holds the information links, Feedback and Install app. Phones have no footer.
+- The menu beside the owner’s profile opens Settings. It holds profile settings, information links, Feedback and Install app. Phones have no footer.
 
 ## 2. Explore (feed)
 - Show the most recent leaf at full card width for individual works. Keep both halves for a continuous spread. The leaf sets the journal text scale.
@@ -49,7 +49,7 @@ horizontal row of tool icons under the thumb, publish details asked for at save)
     stickers), Style (paper, lines, font, size, ink, watermark).
 - The active tool uses a horizontal editing rail. Keep fields editable, thumb targets reachable and long choices swipeable without shifting the preview. Sketchbooks of individual works turn one page at a time on phones. Books containing a continuous artwork spread keep both pages together.
 - Name, cover caption, journal description, visibility and category move to a
-  bottom sheet that opens from Save. The sheet's own Save button saves the book.
+  bottom sheet that opens from Save. The top checkmark saves the book once the publish panel is open.
 
 ## 5. Accounts and information pages
 - Sign-in, settings and notifications already open full screen on phones; they get
@@ -61,3 +61,8 @@ horizontal row of tool icons under the thumb, publish details asked for at save)
 - Look at 320px and 390px: Explore, portfolio, a new sketchbook (every tool), a new
   journal (every tool, a written page), the save sheet, sign-in and settings.
 - Look at desktop to confirm it is unchanged.
+## Phone editor correction
+1. Give each editor tool a named feature selector and a separate choices panel. Preserve the canvas allocation.
+2. Keep text formatting and dictation beside the writing field. Add draft undo and accessible icon controls.
+3. Move phone information and account access to the portfolio. Restrict the phone companion to the portfolio.
+4. Match desktop feed and page strip artwork geometry to the reader. Verify single pages, spreads, navigation and saved edits.

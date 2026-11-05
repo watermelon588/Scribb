@@ -10,3 +10,16 @@
 .feed-scene-open:focus-visible{outline:1.5px solid var(--app-accent);outline-offset:-4px}
 @media(hover:hover) and (pointer:fine){.feed-book-scene:hover .feed-spread{translate:0 -6px}}
 @media(prefers-reduced-motion:reduce){.feed-spread,.feed-cover-toggle{transition:none}}
+
+/* Feed leaves and sidebar previews use the same picture frame as the reader. */
+.feed-spread .art-page .page-inner{position:relative;display:block;padding:0}
+.feed-spread .art-page :is(.page-number,.page-topline,.page-caption){display:none}
+.feed-spread .artwork-mount{position:absolute;inset:0;width:100%;height:100%;margin:0;overflow:hidden}
+.feed-spread .art-image-frame{position:relative;width:100%;height:100%}
+.feed-spread .spread-art .art-image-frame{width:200%}
+.feed-spread .art-image-frame img{position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:contain;padding:8% 5%;box-shadow:none}
+.book-stage .page-thumb .art-image-frame img{inset:0}
+@media(min-width:601px){
+ .feed-spread[data-unpaired]{aspect-ratio:var(--r);height:min(86cqh,calc(90cqw / var(--r)))}
+ .feed-spread[data-unpaired]>.feed-leaf:not(.recent){display:none}
+}
