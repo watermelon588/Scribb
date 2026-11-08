@@ -109,3 +109,8 @@ Scope: app chrome only. Book pages, covers, journal sheets, stickers and scribbl
 - [x] Correct desktop sidebar image-frame offset and feed picture geometry. Unpaired feed artwork uses one page; continuous spreads retain their fold.
 - [x] Production build passes. Local-only API suite: 24 passed. Phone screenshot inspection completed; physical phone hardware was not available. Browser regression results recorded after the final rerun below.
 - [x] Regression verification: full npm test ran (24 API checks, 76 browser checks). Initial browser failures were resolved and verified in focused reruns, including all five phone/frame checks, phone navigation, journal covers, notifications, installation, and persisted cover/spread placement. Final sticker test passes after keeping selected editing handles above overlapping stickers. Build rerun after that fix.
+
+## Follow-up phone polish — 8 November 2026
+- [x] Keep the cover caption visible and editable within the Details step of the publish panel.
+- [x] Replace the empty owner collection message with a plus action that opens the selected Sketchbook or Journal creation flow.
+
