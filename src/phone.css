@@ -214,3 +214,10 @@
  .phone-settings h2{font-size:12px;font-weight:400;color:var(--app-muted)}
  .phone-settings a,.phone-settings section>button{min-height:44px;color:var(--app-ink);padding:0 8px;justify-content:space-between}
 }
+
+@media(max-width:600px){
+ .portfolio-app .creation-controls .creator-identity .caption-field{display:grid;gap:6px;flex:0 0 min(68vw,260px);min-width:0;color:var(--app-muted);font-size:12px}
+ .portfolio-app .creation-controls .creator-identity .caption-field input{width:100%;font-size:16px}
+ .portfolio-app .empty-create{display:flex;align-items:center;justify-content:center;gap:10px;min-height:48px;margin:36px auto;padding:12px 18px;border:0;background:var(--app-soft);color:var(--app-ink);font:inherit}
+ .portfolio-app .empty-create svg{color:var(--app-accent)}
+}
