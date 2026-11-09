@@ -100,7 +100,7 @@
 /* Settings, sign-in and notifications: full-screen panels with tighter spacing; the avatar grid is one scrolling row. */
 .portfolio-app .portfolio-dialog.is-panel{padding:calc(56px + env(safe-area-inset-top)) var(--space-4) calc(var(--space-5) + env(safe-area-inset-bottom))}
 .portfolio-app .portfolio-dialog.is-panel :is(h1,h2){font-size:var(--text-xl)}
-.portfolio-app .avatar-choices{display:flex;gap:var(--space-2);overflow-x:auto;padding:4px 2px}
+.portfolio-app .avatar-choices{display:flex;gap:var(--space-2);min-inline-size:0;width:100%;max-width:100%;box-sizing:border-box;overflow-x:auto;overscroll-behavior-x:contain;padding:4px 2px}
 .portfolio-app .avatar-choices button{flex:none;width:64px;height:64px}
 
  /* One scroll surface for the active tool. Fields keep their own editing space. */

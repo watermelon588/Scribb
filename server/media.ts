@@ -31,7 +31,12 @@ async function toCloudinary(file: Buffer, type: string, folder: string, id: stri
   form.set('signature', createHash('sha1').update(signed + secret).digest('hex'))
   form.set('file', new Blob([new Uint8Array(file)], { type: `image/${type === 'jpg' ? 'jpeg' : type}` }))
   const res = await fetch(`https://api.cloudinary.com/v1_1/${cloud}/image/upload`, { method: 'POST', body: form })
-  if (!res.ok) throw new Error(`Cloudinary answered ${res.status}: ${(await res.text()).slice(0, 200)}`)
+  if (!res.ok) {
+    console.error('Cloudinary image upload rejected', { status: res.status })
+    return { error: res.status === 401 || res.status === 403
+      ? 'Image storage has denied Scribb permission to upload. The site owner needs to update its upload credentials.'
+      : 'Scribb’s image storage could not accept the upload. Please try again later.' }
+  }
   const body = await res.json() as { secure_url: string; public_id: string }
   return { url: body.secure_url, publicId: body.public_id }
 }
@@ -50,7 +55,12 @@ media.post('/media', requireUser, express.raw({ type: ['image/webp', 'image/jpeg
 
   const id = randomUUID()
   let stored: { url: string; publicId: string | null }
-  if (process.env.CLOUDINARY_API_SECRET) stored = await toCloudinary(file, type, `scribb/${user.id}`, id)
+  if (process.env.CLOUDINARY_API_SECRET) {
+    const uploaded = await toCloudinary(file, type, `scribb/${user.id}`, id)
+    if (uploaded.error) return fail(res, 503, 'media_unavailable', uploaded.error)
+    if (!uploaded.url) return fail(res, 502, 'media_unavailable', 'Image storage did not return the uploaded image.')
+    stored = uploaded
+  }
   else if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
     await mkdir(LOCAL_DIR, { recursive: true })
     await writeFile(`${LOCAL_DIR}/${id}.${type}`, file)

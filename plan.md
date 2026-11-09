@@ -120,3 +120,13 @@ Scope: app chrome only. Book pages, covers, journal sheets, stickers and scribbl
 - [x] Empty owner collection create action is phone-only; desktop uses its original empty message.
 - [x] Build and browser sizing check pass. Full npm test started; completion is pending in .data/desktop-journal-test.log.
 
+
+## Phone profile-picture scrolling — 9 November 2026
+- [x] Reset fieldset minimum inline size and constrain the avatar picker to its panel width on phones, preserving native horizontal scrolling.
+- [x] Browser checks at 320px and 390px: picker stays within the viewport and scrollLeft advances. Desktop 1440px retains its original grid. Screenshot reviewed.
+
+
+## Final verification and upload diagnostics — 9 November 2026
+- [x] Full local-only npm test completed: 24 API tests and 77 browser tests passed. Production build passed.
+- [x] Include pending Cloudinary failure handling: report denied upload permission clearly without exposing provider response details; retain the user's draft.
+
