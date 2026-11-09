@@ -114,3 +114,9 @@ Scope: app chrome only. Book pages, covers, journal sheets, stickers and scribbl
 - [x] Keep the cover caption visible and editable within the Details step of the publish panel.
 - [x] Replace the empty owner collection message with a plus action that opens the selected Sketchbook or Journal creation flow.
 
+
+## Desktop journal feed correction — 9 November 2026
+- [x] Desktop ordinary journal previews use one large recent page, matching single artwork previews; continuous spreads retain both halves. Rules are scoped above 600px.
+- [x] Empty owner collection create action is phone-only; desktop uses its original empty message.
+- [x] Build and browser sizing check pass. Full npm test started; completion is pending in .data/desktop-journal-test.log.
+
