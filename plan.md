@@ -120,3 +120,8 @@ Scope: app chrome only. Book pages, covers, journal sheets, stickers and scribbl
 - [x] Empty owner collection create action is phone-only; desktop uses its original empty message.
 - [x] Build and browser sizing check pass. Full npm test started; completion is pending in .data/desktop-journal-test.log.
 
+
+## Phone profile-picture scrolling — 9 November 2026
+- [x] Reset fieldset minimum inline size and constrain the avatar picker to its panel width on phones, preserving native horizontal scrolling.
+- [x] Browser checks at 320px and 390px: picker stays within the viewport and scrollLeft advances. Desktop 1440px retains its original grid. Screenshot reviewed.
+
