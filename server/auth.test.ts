@@ -122,7 +122,10 @@ test('pending verification can be resent and a failed send leaves the previous l
   assert.equal((await call('PUT', '/me/email', { email }, account.cookie)).status, 202)
   const first = tokenFrom(mail.at(-1)!.body)
   assert.equal((await call('GET', '/auth/me', undefined, account.cookie)).body.user.pendingEmail, email)
-  assert.equal((await call('POST', '/auth/login', { username: 'mail.retry', password: 'first password' })).body.user.pendingEmail, email)
+  const login = await call('POST', '/auth/login', { username: 'mail.retry', password: 'first password' })
+  assert.equal(login.body.user.pendingEmail, email)
+  const { rows: logins } = await pg.query('select action from user_activities where user_id = $1 and action = $2', [login.body.user.id, 'login'])
+  assert.equal(logins.length, 1)
   const failure = t.mock.method(mailer, 'send', async () => { throw new Error('delivery unavailable') })
   t.mock.method(console, 'error', () => {})
   const refused = await call('PUT', '/me/email', { email }, account.cookie)
@@ -133,6 +136,8 @@ test('pending verification can be resent and a failed send leaves the previous l
   const fresh = (await call('GET', '/auth/me', undefined, account.cookie)).body.user
   assert.equal(fresh.email, email)
   assert.equal(fresh.pendingEmail, null)
+  const { rows: verifications } = await pg.query('select action from user_activities where user_id = $1 and action = $2', [fresh.id, 'email_verified'])
+  assert.equal(verifications.length, 1)
 })
 
 test('forgot gives the same response for unknown addresses and a refused delivery', async t => {

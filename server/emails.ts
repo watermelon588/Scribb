@@ -41,3 +41,7 @@ export function passwordResetEmail(origin:string,username:string,token:string):A
  const home=homeURL(origin)
  return template(home,{subject:'Reset your Scribb password',label:'BACK TO YOUR SPACE',title:'Let’s get you back in.',greeting:`Hi @${username},`,copy:'Choose a new password for your Scribb account. This link works once and expires in one hour.',action:'Reset my password',url:`${home}#reset/${encodeURIComponent(token)}`,note:'If you didn’t ask to reset your password, ignore this email. Your password will stay the same.',fallback:true})
 }
+export function welcomeEmail(origin:string,username:string):AccountEmail{
+ const home=homeURL(origin)
+ return template(home,{subject:'Welcome to Scribb!',label:'WELCOME TO SCRIBB',title:'Your creative space is ready.',greeting:`Hi @${username},`,copy:'Welcome to Scribb! Settle in, explore the community, sketch your ideas, or start your first journal.',action:'Open Scribb',url:home,note:'You are receiving this welcome email because an account was created for you. Settle in and make yourself at home.'})
+}

@@ -1,5 +1,8 @@
 import { readdirSync, readFileSync } from 'node:fs'
+import dns from 'node:dns'
 import { neon } from '@neondatabase/serverless'
+
+try { dns.setDefaultResultOrder('ipv4first') } catch { /* ignore */ }
 
 /** Tagged-template SQL: values are always sent as parameters, never spliced into the text. */
 export type Row = Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any

@@ -4,6 +4,7 @@ import { createRemoteJWKSet, jwtVerify, SignJWT, type JWTVerifyGetKey } from 'jo
 import { limit, pgCode, sql, type Row } from './db.js'
 import { isCreator, profileAvatar } from './creator.js'
 import { passwordResetEmail, verificationEmail, verifiedEmail } from './emails.js'
+import { recordActivity, sendWelcomeIfNew, touchUserActivity } from './activity.js'
 
 /** Minimal accounts: username + password or Google. Email is optional and only unlocks password reset (and AI). */
 export const auth = Router()
@@ -92,6 +93,7 @@ export async function requireUser(req: Request, res: Response, next: NextFunctio
   const user = await currentUser(req)
   if (!user) return fail(res, 401, 'signed_out', 'Please sign in.')
   res.locals.user = user
+  void touchUserActivity(user.id)
   next()
 }
 
@@ -117,6 +119,13 @@ function origin(req: Request) {
   if (process.env.NODE_ENV === 'production' || process.env.DATABASE_URL) throw new Error('APP_ORIGIN is not set.')
   return `${req.protocol}://${req.headers.host}`
 }
+async function welcomeUser(req: Request, user: Row, email: string) {
+  try {
+    await sendWelcomeIfNew({ userId: user.id, email, username: user.handle, origin: origin(req) })
+  } catch (err) {
+    console.error('Could not prepare the welcome email:', err instanceof Error ? err.message : 'Unknown error')
+  }
+}
 async function issueToken(userId: string, purpose: 'verify' | 'reset', email: string, seconds: number) {
   const token = randomBytes(32).toString('base64url')
   await sql()`insert into email_tokens (token_hash, user_id, purpose, email, expires_at)
@@ -132,6 +141,8 @@ auth.get('/auth/me', async (req, res) => {
 
 auth.post('/auth/register', async (req, res) => {
   const username = text(req.body?.username).toLowerCase(), password = req.body?.password
+  const emailInput = text(req.body?.email).toLowerCase()
+  const email = validEmail(emailInput) ? emailInput : null
   if (!validUsername(username)) return fail(res, 400, 'bad_username', 'Usernames are 3 to 30 lowercase letters, numbers, dots or underscores.')
   if (!validPassword(password)) return fail(res, 400, 'bad_password', 'Passwords are 8 to 128 characters.')
   if (!(await limit(`register:${req.ip}`, 5, 3600))) return tooMany(res)
@@ -140,7 +151,7 @@ auth.post('/auth/register', async (req, res) => {
   try {
     // One statement, so a taken username never leaves an orphaned user row.
     const [row] = await sql()`
-      with u as (insert into users (password_hash) values (${hash}) returning id)
+      with u as (insert into users (password_hash, email) values (${hash}, ${email}) returning id)
       insert into profiles (user_id, handle, display_name) select id, ${username}, ${username} from u returning user_id`
     id = row.user_id
   } catch (err) {
@@ -149,6 +160,8 @@ auth.post('/auth/register', async (req, res) => {
   }
   const user = (await loadUser(id))!
   await startSession(res, user)
+  await recordActivity({ userId: user.id, action: 'register', details: { username: user.handle, email }, ip: req.ip })
+  if (email) await welcomeUser(req, user, email)
   res.status(201).json({ user: publicUser(user) })
 })
 
@@ -162,6 +175,8 @@ auth.post('/auth/login', async (req, res) => {
   if (!(await verifyPassword(password, found?.password_hash ?? null))) return fail(res, 401, 'bad_login', 'Those sign-in details do not match. Use your current username or verified email.')
   const user = (await loadUser(found.id))!
   await startSession(res, user)
+  await recordActivity({ userId: user.id, action: 'login', details: { username: user.handle, method: 'password' }, ip: req.ip })
+  if (user.email && user.email_verified_at) await welcomeUser(req, user, user.email)
   res.json({ user: await accountUser(user) })
 })
 
@@ -188,6 +203,13 @@ auth.post('/auth/google', async (req, res) => {
   if (!account) return fail(res, 409, 'google_already_linked', 'This email is already linked to another Google sign-in. Use the original Google account or reset your Scribb password.')
   const user = (await loadUser(account.id))!
   await startSession(res, user)
+  await recordActivity({
+    userId: user.id,
+    action: account.created ? 'google_signup' : 'google_login',
+    details: { username: user.handle, email },
+    ip: req.ip,
+  })
+  if (email && account.created) await welcomeUser(req, user, email)
   res.status(account.created ? 201 : 200).json({ user: await accountUser(user) })
 })
 async function googleAccount(sub: string, email: string | null, name: string) {
@@ -224,7 +246,11 @@ async function googleAccount(sub: string, email: string | null, name: string) {
 }
 
 export const endSession = (res: Response) => void res.clearCookie(COOKIE, COOKIE_OPTIONS)
-auth.post('/auth/logout', (_req, res) => {
+auth.post('/auth/logout', async (req, res) => {
+  const user = await currentUser(req)
+  if (user) {
+    await recordActivity({ userId: user.id, action: 'logout', details: { username: user.handle }, ip: req.ip })
+  }
   endSession(res)
   res.status(204).end()
 })
@@ -270,7 +296,7 @@ auth.post('/auth/reset', async (req, res) => {
 auth.post('/auth/verify-email', async (req, res) => {
   const token = text(req.body?.token)
   if (!(await limit(`verify-ip:${req.ip}`, 20, 3600))) return tooMany(res)
-  let verifiedAddress: string
+  let verifiedUserId: string, verifiedAddress: string
   try {
     const [row] = await sql()`
       with t as (update email_tokens set used_at = now()
@@ -278,13 +304,15 @@ auth.post('/auth/verify-email', async (req, res) => {
                  returning user_id, email, created_at)
       update users u set email = t.email, email_verified_at = now() from t
       where u.id = t.user_id and (u.email_verified_at is null or u.email_verified_at < t.created_at)
-      returning u.email`
+       returning u.id, u.email`
     if (!row) return fail(res, 400, 'bad_token', 'This link has expired or was already used.')
+    verifiedUserId = row.id
     verifiedAddress = row.email
   } catch (err) {
     if (pgCode(err) === '23505') return fail(res, 409, 'email_in_use', 'That email is already verified on another Scribb account. Sign in to that account or verify a different address.')
     throw err
   }
+  await recordActivity({ userId: verifiedUserId, action: 'email_verified', details: { email: verifiedAddress } })
   // A delivery problem must never undo verification or turn a consumed link into a failed screen.
   try {
     const content = verifiedEmail(origin(req))

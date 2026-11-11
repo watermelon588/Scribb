@@ -1,6 +1,6 @@
 import {PhonePanel,Part} from './components/PhonePanel'
 import {useEffect, useMemo, useRef, useState, useSyncExternalStore} from 'react'
-import {ArrowCounterClockwise, DotsThree, Moon, Sun, BookOpen, Plus, ArrowLeft, X, MagnifyingGlass, Palette, Crop, Check, ArrowRight,  PencilSimple, UploadSimple, Trash, Sticker, Bell, LockSimple, GlobeSimple, Images, Image as ImageIcon, BookBookmark, Scroll, Notebook, SquaresFour, Bookmarks} from '@phosphor-icons/react'
+import {ArrowCounterClockwise, DotsThree, Moon, Sun, BookOpen, Plus, ArrowLeft, X, MagnifyingGlass, Palette, Crop, Check, ArrowRight,  PencilSimple, UploadSimple, Trash, Sticker, Bell, LockSimple, GlobeSimple, Images, Image as ImageIcon, BookBookmark, Scroll, Notebook, SquaresFour, Bookmarks, ShareNetwork} from '@phosphor-icons/react'
 import PhoneTools, {panelOf, type Tool} from './components/PhoneTools'
 import Sketchbook, {artworkPages} from './components/Sketchbook'
 import CreatorBadge from './components/CreatorBadge'
@@ -9,6 +9,7 @@ import Legal, {SiteFooter, PhoneSettings} from './components/Legal'
 import Avatar from './components/Avatar'
 import AskJournal, {JournalCompanion} from './components/AskJournal'
 import Hints from './components/Hints'
+import ShareStudio from './components/ShareStudio'
 import Notice, {useNotice} from './components/Notice'
 import Bookshelf, {BookObject} from './components/Bookshelf'
 import {ingestImage,validateBatch} from './lib/images'
@@ -60,7 +61,7 @@ export default function Profile(){
  const urlFor=(next:string)=>next.startsWith('@')?`/${next}`:next==='feed'?'/explore':next==='portfolio'?'/':`/#${next}`
  function navigate(next:string){setScreen(next.startsWith('@')?'person':next);history.pushState(null,'',urlFor(next));window.scrollTo({top:0,behavior:'instant'})}
  function openPerson(name:string){setHandle(name);navigate(`@${name}`)}
- useEffect(()=>{const sync=()=>{setScreen(route());setHandle(personHandle());window.scrollTo({top:0,behavior:'instant'});if(route()==='new')setDraft(d=>{if(d)return d;const book=fresh();pristine.current=book;return book});setViewing(null)};window.addEventListener('popstate',sync);window.addEventListener('hashchange',sync);return()=>{window.removeEventListener('popstate',sync);window.removeEventListener('hashchange',sync)}},[])
+ useEffect(()=>{const sync=()=>{setScreen(route());setHandle(personHandle());window.scrollTo({top:0,behavior:'instant'});if(route()==='new')setDraft(d=>{if(d)return d;const book=fresh();pristine.current=book;return book});setShareId(null);setViewing(null)};window.addEventListener('popstate',sync);window.addEventListener('hashchange',sync);return()=>{window.removeEventListener('popstate',sync);window.removeEventListener('hashchange',sync)}},[])
  const appRoot=useRef<HTMLDivElement>(null)
  const [theme,setTheme]=useState<'light'|'dark'>(()=>document.documentElement.dataset.theme==='dark'?'dark':'light')
  useEffect(()=>{document.documentElement.dataset.theme=theme;document.documentElement.style.colorScheme=theme;document.querySelector('meta[name="theme-color"]')?.setAttribute('content',theme==='dark'?'#181c1a':'#faf9f6');try{localStorage.setItem('untitled-theme',theme)}catch{/* Keep the chosen appearance for this session. */}},[theme])
@@ -78,6 +79,8 @@ export default function Profile(){
  const sketchPreset=useRef<PresetId>('watercolor')
 const [books,setBooks]=useState<Book[]>([]),[ready,setReady]=useState(false),[query,setQuery]=useState(''),[limit,setLimit]=useState(12)
  const [draft,setDraft]=useState<Book|null>(()=>location.hash==='#studio'||location.hash==='#new'?fresh():null),[viewing,setViewing]=useState<Book|null>(null),[saving,setSaving]=useState(false),[uploading,setUploading]=useState(false)
+ const [shareId,setShareId]=useState<string|null>(null)
+ const shareButton=useRef<HTMLButtonElement>(null)
  const undoStack=useRef<Book[]>([]),previousDraft=useRef(draft)
  const [undoCount,setUndoCount]=useState(0),[undoRevision,setUndoRevision]=useState(0)
  useEffect(()=>{
@@ -118,6 +121,10 @@ const [books,setBooks]=useState<Book[]>([]),[ready,setReady]=useState(false),[qu
  const unsaved=Boolean(draft)&&draft!==pristine.current
  const coverUpload=useRef<HTMLInputElement>(null)
  const file=useRef<HTMLInputElement>(null),dialog=useRef<HTMLDialogElement>(null)
+ const canExport=Boolean(viewing?.visibility==='public'&&viewing.kind!=='journal'&&user&&viewing.owner?.username===user.username)
+ const sharing=canExport&&viewing?.id===shareId
+ function backToBook(){setShareId(null);requestAnimationFrame(()=>shareButton.current?.focus())}
+ function closeDialog(){setShareId(null);setViewing(null);setPanel(null)}
  // A press and release both on the backdrop close the dialog; a drag that ends outside does not.
  const backdropPress=useRef(false)
  const outsideDialog=(e:{target:EventTarget;currentTarget:HTMLElement;clientX:number;clientY:number})=>{if(e.target!==e.currentTarget)return false;const r=e.currentTarget.getBoundingClientRect();return e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom}
@@ -276,7 +283,22 @@ const [books,setBooks]=useState<Book[]>([]),[ready,setReady]=useState(false),[qu
  </Part><div className="artwork-strip">{draft.artworks.map((a,i)=><div className={`artwork-edit-card ${editing===a.id?'selected':''}`} key={a.id}><button className="artwork-edit-preview" data-hint="Position" aria-label={`Position ${a.title}`} onClick={()=>{setEditing(a.id);if(!phone)window.scrollTo({top:90,behavior:'smooth'})}}><img src={a.src} alt={a.title}/><Crop size={19}/></button><Part name="Placement"><div className="artwork-tools"><button className="button-icon" data-hint="One page" aria-label={`Single page for ${a.title}`} aria-pressed={a.layout!=='spread'} onClick={()=>{updateArt(a.id,{layout:'page'});setEditing(a.id)}}><LayoutIcon/></button><button className="button-icon" data-hint="Spread" aria-label={`Across both pages for ${a.title}`} aria-pressed={a.layout==='spread'} onClick={()=>{updateArt(a.id,{layout:'spread'});setEditing(a.id)}}><LayoutIcon spread/></button><button className="button-icon" data-hint="Remove" aria-label={`Remove ${a.title}`} onClick={()=>{change('artworks',draft.artworks.filter(x=>x.id!==a.id));if(editing===a.id)setEditing('book')}}><X size={15}/></button></div></Part><Part name="Order"><div className="art-order"><button className="button-icon" data-hint="Earlier" aria-label={`Move ${a.title} earlier`} disabled={i===0} onClick={()=>{const list=[...draft.artworks];[list[i-1],list[i]]=[list[i],list[i-1]];change('artworks',list)}}><ArrowLeft/></button><button className="button-icon" data-hint="Later" aria-label={`Move ${a.title} later`} disabled={i===draft.artworks.length-1} onClick={()=>{const list=[...draft.artworks];[list[i+1],list[i]]=[list[i],list[i+1]];change('artworks',list)}}><ArrowRight/></button></div></Part></div>)}</div></PhonePanel></section>}{!writing&&<PhoneTools tools={isJournal?JOURNAL_TOOLS:SKETCH_TOOLS} value={tool==='publish'?null:tool} onChange={setTool}/>}</main>:
  portfolio()}
  {!phone&&<SiteFooter/>}
- <nav className="mobile-navigation" aria-label="Main navigation"><button aria-current={screen==='feed'?'page':undefined} onClick={()=>navigate('feed')}><MagnifyingGlass size={22}/><span>Explore</span></button><button aria-current={screen==='new'?'page':undefined} onClick={()=>{if(!user)setPanel('signin');else if(!draft)startBook();else navigate('new')}}><Plus size={24}/><span>Create</span></button><button aria-current={screen==='portfolio'?'page':undefined} onClick={()=>navigate('portfolio')}><BookOpen size={22}/><span>Portfolio</span></button></nav><dialog ref={dialog} className={`portfolio-dialog ${panel?'is-panel':''}`} onCancel={()=>{setViewing(null);setPanel(null)}} onPointerDown={e=>{backdropPress.current=outsideDialog(e)}} onClick={e=>{if(backdropPress.current&&outsideDialog(e)){setViewing(null);setPanel(null)}backdropPress.current=false}}><button className="button-icon dialog-close" aria-label="Close dialog" onClick={()=>{setViewing(null);setPanel(null)}}><X/></button>{viewing&&books.some(b=>b.id===viewing.id)&&<button className="dialog-edit button-secondary" aria-label={`Edit ${viewing.title}`} onClick={()=>{const b=viewing;setViewing(null);void openDraft({...b})}}><PencilSimple size={16}/> Edit</button>}{viewing&&<><h2>{viewing.title}</h2>{renderBook(viewing,undefined,true)}</>}{panel==='signin'||panel==='signup'?<SignIn key={panel} initial={panel} onUser={signedIn} onNotice={setNotice} onLegal={()=>setPanel(null)}/>:panel==='settings'&&user&&me?<Settings user={user} person={me} onUser={setUser} onPerson={setMe} onSignedOut={signedOut} onNotice={setNotice}/>:panel==='notifications'?<Notifications onPerson={name=>{setPanel(null);openPerson(name)}} onBook={id=>{setPanel(null);void view({id} as Book)}} onRead={()=>setUnread(0)}/>:panel&&typeof panel==='object'?<ResetPassword token={panel.reset} onUser={next=>{signedIn(next);setNotice('Password reset successfully. Other devices are signed out.','success')}} onNotice={setNotice}/>:panel==='verified'?<div className="email-verified account-form"><img className="brand-mark account-mark" src="/brand/scribb-mark.png" alt="" width="56" height="56"/><h2>Email verified.</h2><p>Congratulations! Your email is now connected to your Scribb account.</p><p className="form-note">Your space is ready when you are. You may need to sign in on this device.</p><button className="button-primary" onClick={()=>{setPanel(null);navigate('portfolio')}}>Go to homepage</button></div>:null}</dialog>{user&&<JournalCompanion hidden={phone?screen!=='portfolio':screen==='ask'||screen==='new'} onOpen={()=>navigate('ask')}/>}<Hints/><Notice notice={notice} onDismiss={dismissNotice} container={panel||viewing?dialog.current:null}/></div>
+ <nav className="mobile-navigation" aria-label="Main navigation"><button aria-current={screen==='feed'?'page':undefined} onClick={()=>navigate('feed')}><MagnifyingGlass size={22}/><span>Explore</span></button><button aria-current={screen==='new'?'page':undefined} onClick={()=>{if(!user)setPanel('signin');else if(!draft)startBook();else navigate('new')}}><Plus size={24}/><span>Create</span></button><button aria-current={screen==='portfolio'?'page':undefined} onClick={()=>navigate('portfolio')}><BookOpen size={22}/><span>Portfolio</span></button></nav>
+ <dialog ref={dialog} className={`portfolio-dialog ${panel?'is-panel':''} ${sharing?'share-dialog':''}`}
+ aria-labelledby={sharing?'share-heading':viewing?'preview-heading':undefined}
+ onCancel={e=>{if(sharing){e.preventDefault();backToBook()}else closeDialog()}}
+ onPointerDown={e=>{backdropPress.current=outsideDialog(e)}} onClick={e=>{if(backdropPress.current&&outsideDialog(e)){if(sharing)backToBook();else closeDialog()}backdropPress.current=false}}>
+ <button className="button-icon dialog-close" aria-label="Close dialog" data-hint="Close" onClick={closeDialog}><X/></button>
+ {viewing&&(sharing?<ShareStudio key={viewing.id} book={viewing} onBack={backToBook}/>:<>
+  <div className="dialog-book-heading">
+   <h2 id="preview-heading">{viewing.title}</h2>
+   {canExport&&<button ref={shareButton} className={phone?'button-icon':'button-secondary'} aria-label="Share sketchbook" data-hint="Share" onClick={()=>setShareId(viewing.id)}><ShareNetwork size={18}/>{!phone&&'Share'}</button>}
+   {books.some(b=>b.id===viewing.id)&&<button className="dialog-edit button-secondary" aria-label={`Edit ${viewing.title}`} onClick={()=>{const b=viewing;closeDialog();void openDraft({...b})}}><PencilSimple size={16}/> Edit</button>}
+  </div>
+  {renderBook(viewing,undefined,true)}
+ </>)}
+ {panel==='signin'||panel==='signup'?<SignIn key={panel} initial={panel} onUser={signedIn} onNotice={setNotice} onLegal={()=>setPanel(null)}/>:panel==='settings'&&user&&me?<Settings user={user} person={me} onUser={setUser} onPerson={setMe} onSignedOut={signedOut} onNotice={setNotice}/>:panel==='notifications'?<Notifications onPerson={name=>{setPanel(null);openPerson(name)}} onBook={id=>{setPanel(null);void view({id} as Book)}} onRead={()=>setUnread(0)}/>:panel&&typeof panel==='object'?<ResetPassword token={panel.reset} onUser={next=>{signedIn(next);setNotice('Password reset successfully. Other devices are signed out.','success')}} onNotice={setNotice}/>:panel==='verified'?<div className="email-verified account-form"><img className="brand-mark account-mark" src="/brand/scribb-mark.png" alt="" width="56" height="56"/><h2>Email verified.</h2><p>Congratulations! Your email is now connected to your Scribb account.</p><p className="form-note">Your space is ready when you are. You may need to sign in on this device.</p><button className="button-primary" onClick={()=>{setPanel(null);navigate('portfolio')}}>Go to homepage</button></div>:null}
+ </dialog>{user&&<JournalCompanion hidden={phone?screen!=='portfolio':screen==='ask'||screen==='new'} onOpen={()=>navigate('ask')}/>}<Hints/><Notice notice={notice} onDismiss={dismissNotice} container={panel||viewing?dialog.current:null}/></div>
 }
 
 import './variants.css'
