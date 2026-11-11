@@ -15,7 +15,7 @@ export async function api<T=Record<string,never>>(method:string,path:string,body
 }
 export const message=(error:unknown,fallback='Something went wrong. Please try again.')=>error instanceof Error?error.message:fallback
 
-export interface User {id:string;username:string;displayName:string;avatar:string;email:string|null;emailVerified:boolean;hasPassword:boolean;aiConsent:boolean;isCreator?:boolean}
+export interface User {id:string;username:string;displayName:string;avatar:string;email:string|null;emailVerified:boolean;pendingEmail?:string|null;hasPassword:boolean;aiConsent:boolean;isCreator?:boolean}
 // Keep in step with LINKS in server/people.ts.
 export const LINK_KINDS=[['website','Website'],['instagram','Instagram'],['behance','Behance'],['cara','Cara'],['x','X'],['youtube','YouTube'],['pinterest','Pinterest'],['dribbble','Dribbble'],['tiktok','TikTok'],['linkedin','LinkedIn']] as const
 export type LinkKind=typeof LINK_KINDS[number][0]
