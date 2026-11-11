@@ -1,11 +1,11 @@
-import {useRef,useState,type FormEvent,type MouseEvent} from 'react'
+import {useRef,useState,type FormEvent,type MouseEvent,type ReactNode} from 'react'
 import {Star,X} from '@phosphor-icons/react'
 import {api,message} from '../lib/api'
 
 const LABELS=['Poor','Fair','Good','Great','Love it']
 
 /** Footer link plus a small dialog: a 1–5 rating and a note, mailed to the founder (server/feedback.ts). */
-export default function Feedback(){
+export default function Feedback({trigger}:{trigger?:ReactNode}){
  const dialog=useRef<HTMLDialogElement>(null),press=useRef(false)
  const [rating,setRating]=useState(0),[note,setNote]=useState(''),[status,setStatus]=useState<'idle'|'sending'|'sent'|{error:string}>('idle')
  function open(){if(status!=='sending')setStatus('idle');dialog.current?.showModal()}
@@ -19,7 +19,7 @@ export default function Feedback(){
  }
  const outside=(e:MouseEvent)=>{const r=dialog.current!.getBoundingClientRect();return e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom}
  return <>
-  <button type="button" className="button-link footer-feedback" onClick={open}>Feedback</button>
+  <button type="button" className={trigger?'button-quiet':'button-link footer-feedback'} onClick={open}>{trigger??'Feedback'}</button>
   <dialog ref={dialog} className="feedback-dialog" aria-labelledby="feedback-title" onPointerDown={e=>{press.current=outside(e)}} onClick={e=>{if(press.current&&outside(e))close();press.current=false}}>
    <button type="button" className="button-icon dialog-close" aria-label="Close feedback" data-hint="Close" onClick={close}><X size={18}/></button>
    {status==='sent'?<div className="feedback-done" role="status">

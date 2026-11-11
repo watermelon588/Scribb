@@ -1,5 +1,7 @@
 import {test,expect} from './fixtures'
 
+const avatarAsset=(id:string)=>new RegExp(`/avatar-${id}-(128|256|512)(-[\\w-]+)?\\.webp`)
+
 test('public PFP cutouts replace placeholders and save without offering Mine',async({page})=>{
  await page.goto('/')
  await expect(page.locator('.creator-badge')).toHaveCount(0)
@@ -7,13 +9,13 @@ test('public PFP cutouts replace placeholders and save without offering Mine',as
  const choices=page.locator('.avatar-choices button')
  await expect(choices).toHaveCount(12)
  await expect(page.getByRole('button',{name:'Mine, creator profile picture'})).toHaveCount(0)
- await expect.poll(()=>choices.locator('img').evaluateAll(images=>images.every(image=>image instanceof HTMLImageElement&&image.complete&&image.naturalWidth>0&&image.src.endsWith('.png')))).toBe(true)
+ await expect.poll(()=>choices.locator('img').evaluateAll(images=>images.every(image=>image instanceof HTMLImageElement&&image.complete&&image.naturalWidth>0&&new URL(image.currentSrc).pathname.endsWith('.webp')))).toBe(true)
  await page.getByRole('button',{name:'Profile picture 10',exact:true}).click()
  await page.getByRole('button',{name:'Save profile',exact:true}).click()
  await expect(page.getByRole('status')).toContainText('Profile saved')
  await page.getByRole('button',{name:'Close dialog'}).click()
  await page.reload()
- await expect(page.locator('.artist-portrait img')).toHaveAttribute('src','/avatars/a10.png')
+ await expect.poll(()=>page.locator('.artist-portrait img').evaluate(img=>(img as HTMLImageElement).currentSrc)).toMatch(avatarAsset('a10'))
 })
 
 test('creator identity shows its star and reserved PFP in round layouts',async({page,account})=>{
@@ -28,7 +30,7 @@ test('creator identity shows its star and reserved PFP in round layouts',async({
  })
  await page.goto('/')
  await expect(page.getByRole('img',{name:'Creator of this application',exact:true})).toBeVisible()
- await expect(page.locator('.artist-portrait img')).toHaveAttribute('src','/avatars/mine.png')
+ await expect(page.locator('.artist-portrait img')).toHaveAttribute('src',avatarAsset('mine'))
  // Phones have no style switch, so each style is chosen at desktop width and then checked at every width.
  for(const style of ['gallery','editorial']){
   await page.setViewportSize({width:1440,height:1000})
@@ -55,7 +57,7 @@ test('creator identity shows its star and reserved PFP in round layouts',async({
  await page.goto(`/#@${account.username}`)
  await page.reload()
  await expect(page.getByRole('img',{name:'Creator of this application',exact:true})).toBeVisible()
- await expect(page.locator('.artist-portrait img')).toHaveAttribute('src','/avatars/mine.png')
+ await expect(page.locator('.artist-portrait img')).toHaveAttribute('src',avatarAsset('mine'))
  await expect(page.getByRole('button',{name:'Follow',exact:true})).toBeVisible()
  await expect(page.getByRole('button',{name:'Edit artist profile'})).toHaveCount(0)
 })

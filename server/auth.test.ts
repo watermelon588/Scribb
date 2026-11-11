@@ -116,6 +116,43 @@ test('verification stays successful when only the congratulations email cannot b
   assert.equal((await call('POST', '/auth/verify-email', { token })).body.error.code, 'bad_token')
 })
 
+test('pending verification can be resent and a failed send leaves the previous link usable', async t => {
+  const account = await call('POST', '/auth/register', { username: 'mail.retry', password: 'first password' })
+  const email = 'retry@example.com'
+  assert.equal((await call('PUT', '/me/email', { email }, account.cookie)).status, 202)
+  const first = tokenFrom(mail.at(-1)!.body)
+  assert.equal((await call('GET', '/auth/me', undefined, account.cookie)).body.user.pendingEmail, email)
+  const login = await call('POST', '/auth/login', { username: 'mail.retry', password: 'first password' })
+  assert.equal(login.body.user.pendingEmail, email)
+  const { rows: logins } = await pg.query('select action from user_activities where user_id = $1 and action = $2', [login.body.user.id, 'login'])
+  assert.equal(logins.length, 1)
+  const failure = t.mock.method(mailer, 'send', async () => { throw new Error('delivery unavailable') })
+  t.mock.method(console, 'error', () => {})
+  const refused = await call('PUT', '/me/email', { email }, account.cookie)
+  assert.equal(refused.status, 503)
+  assert.equal(refused.body.error.code, 'email_delivery_failed')
+  failure.mock.restore()
+  assert.equal((await call('POST', '/auth/verify-email', { token: first })).status, 200)
+  const fresh = (await call('GET', '/auth/me', undefined, account.cookie)).body.user
+  assert.equal(fresh.email, email)
+  assert.equal(fresh.pendingEmail, null)
+  const { rows: verifications } = await pg.query('select action from user_activities where user_id = $1 and action = $2', [fresh.id, 'email_verified'])
+  assert.equal(verifications.length, 1)
+})
+
+test('forgot gives the same response for unknown addresses and a refused delivery', async t => {
+  const account = await call('POST', '/auth/register', { username: 'reset.retry', password: 'first password' })
+  const email = 'reset-retry@example.com'
+  await call('PUT', '/me/email', { email }, account.cookie)
+  await call('POST', '/auth/verify-email', { token: tokenFrom(mail.at(-1)!.body) })
+  t.mock.method(mailer, 'send', async () => { throw new Error('delivery unavailable') })
+  t.mock.method(console, 'error', () => {})
+  const refused = await call('POST', '/auth/forgot', { email })
+  const unknown = await call('POST', '/auth/forgot', { email: 'unknown@example.com' })
+  assert.equal(refused.status, 202)
+  assert.deepEqual(refused, unknown)
+})
+
 test('Google sign-in: verified tokens only, and linking only to a verified email', async () => {
   const { publicKey, privateKey } = await generateKeyPair('RS256')
   google.keys = createLocalJWKSet({ keys: [{ ...(await exportJWK(publicKey)), kid: 'k1', alg: 'RS256' }] })
@@ -132,6 +169,23 @@ test('Google sign-in: verified tokens only, and linking only to a verified email
   assert.equal(fresh.body.user.hasPassword, false)
   assert.equal((await call('POST', '/auth/google', { credential: await idToken({ sub: 'g-1', email: 'kai.draws@gmail.com', email_verified: true }) })).status, 200, 'same account next time')
 
+  assert.equal((await call('PATCH', '/me/profile', { username: 'kai.renamed' }, fresh.cookie)).status, 200)
+  const added = await call('PUT', '/me/password', { password: 'new password' }, fresh.cookie)
+  assert.equal(added.status, 200)
+  assert.equal(added.body.user.username, 'kai.renamed')
+  for (const username of ['kai.renamed', 'kai.draws@gmail.com']) {
+    const login = await call('POST', '/auth/login', { username, password: 'new password' })
+    assert.equal(login.body.user.id, fresh.body.user.id)
+  }
+  const googleLogin = await call('POST', '/auth/google', { credential: await idToken({ sub: 'g-1', email: 'kai.draws@gmail.com', email_verified: true }) })
+  assert.equal(googleLogin.body.user.id, fresh.body.user.id)
+  assert.equal(googleLogin.body.user.username, 'kai.renamed')
+  const conflicting = await call('POST', '/auth/google', { credential: await idToken({ sub: 'g-other', email: 'kai.draws@gmail.com', email_verified: true }) })
+  assert.equal(conflicting.status, 409, 'an already linked email cannot create a second Google account')
+  await call('POST', '/auth/forgot', { email: 'kai.draws@gmail.com' })
+  const reset = await call('POST', '/auth/reset', { token: tokenFrom(mail.at(-1)!.body), password: 'recovered password' })
+  assert.equal(reset.body.user.id, fresh.body.user.id)
+
   // An account that verified this email is linked; an unverified claim is not.
   const sam = await call('POST', '/auth/register', { username: 'sam', password: 'first password' })
   await call('PUT', '/me/email', { email: 'sam@gmail.com' }, sam.cookie)
@@ -143,6 +197,18 @@ test('Google sign-in: verified tokens only, and linking only to a verified email
   await call('PUT', '/me/email', { email: 'tom@gmail.com' }, tom.cookie) // never verified
   const other = await call('POST', '/auth/google', { credential: await idToken({ sub: 'g-3', email: 'tom@gmail.com', email_verified: true }) })
   assert.notEqual(other.body.user.username, 'tom')
+
+  const credential = await idToken({ sub: 'g-concurrent', email: 'concurrent@gmail.com', email_verified: true })
+  const firstLogins = await Promise.all([
+    call('POST', '/auth/google', { credential }),
+    call('POST', '/auth/google', { credential }),
+  ])
+  assert.deepEqual(firstLogins.map(r => r.status).sort(), [200, 201])
+  assert.equal(firstLogins[0].body.user.id, firstLogins[1].body.user.id)
+
+  const external = await call('POST', '/auth/google', { credential: await idToken({ sub: 'g-external', email: 'artist@example.com', email_verified: true }) })
+  assert.equal(external.status, 201)
+  assert.equal(external.body.user.emailVerified, false, 'non-Google mailboxes require Scribb verification')
 })
 
 test('AI tickets need a verified email, consent, an allowed region and quota', async () => {

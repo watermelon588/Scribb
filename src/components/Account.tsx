@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState,type FormEvent} from 'react'
 import {BehanceLogo,CaretDown,DribbbleLogo,GlobeSimple,InstagramLogo,LinkedinLogo,PaintBrush,PinterestLogo,Plus,TiktokLogo,X,XLogo,YoutubeLogo,type Icon} from '@phosphor-icons/react'
-import {AVATARS,LINK_KINDS,api,avatarSrc,message,type LinkKind,type Person,type User} from '../lib/api'
+import {AVATARS,LINK_KINDS,api,message,type LinkKind,type Person,type User} from '../lib/api'
+import Avatar from './Avatar'
 import type {Notify} from './Notice'
 
 /** Sign-in, password reset, settings and notifications. Each renders inside the portfolio dialog. */
@@ -34,18 +35,20 @@ export function SignIn({initial='signin',onUser,onLegal,onNotice}:{initial?:'sig
  const [mode,setMode]=useState<'signin'|'signup'|'forgot'>(initial),[username,setUsername]=useState(''),[password,setPassword]=useState(''),[email,setEmail]=useState(''),[sent,setSent]=useState(false)
  const {busy,error,run,setError}=useBusy(onNotice)
  function submit(e:FormEvent){e.preventDefault();void run(async()=>{
-  if(mode==='forgot'){await api('POST','/auth/forgot',{email});setSent(true);onNotice?.('If that email is verified on an account, a password reset link is on its way.','success');return}
+  if(mode==='forgot'){await api('POST','/auth/forgot',{email});setSent(true);return}
   onUser((await api<{user:User}>('POST',mode==='signup'?'/auth/register':'/auth/login',{username,password})).user)
   if(mode==='signup')onNotice?.('Account created successfully. Welcome to Scribb!','success')
  })}
- function switchTo(next:typeof mode){setMode(next);setError('');setSent(false)}
+ function switchTo(next:typeof mode){if(next==='forgot'&&username.includes('@'))setEmail(username.trim());setMode(next);setError('');setSent(false)}
  if(mode==='forgot')return <form className="account-form" onSubmit={submit}><img className="brand-mark account-mark" src="/brand/scribb-mark.png" alt="" width="56" height="56"/><h2>Reset your password</h2>
-  {sent?<p className="form-note" role="status">If that email is verified on a Scribb account, a reset link is on its way. It works once, for one hour.</p>:<><p className="form-note">Password resets go to the email you verified in Settings.</p>
-  <label>Email<input type="email" autoComplete="email" required maxLength={254} value={email} onChange={e=>setEmail(e.target.value)}/></label><Problem text={error}/><button className="button-primary" disabled={busy}>{busy?'Sending…':'Send reset link'}</button></>}
+  <p className="form-note">Enter the verified email on the account you want to recover.</p>
+  <label>Email<input type="email" autoComplete="email" required maxLength={254} value={email} onChange={e=>{setEmail(e.target.value);setSent(false)}}/></label>
+  {sent&&<p className="form-note" role="status">If this address is verified on Scribb, check its inbox and Spam for a reset link. The link expires in one hour.</p>}
+  <Problem text={error}/><button className="button-primary" disabled={busy}>{busy?'Sending…':sent?'Resend reset link':'Send reset link'}</button>
   <button type="button" className="button-link" onClick={()=>switchTo('signin')}>Back to sign in</button></form>
  return <form className="account-form" onSubmit={submit}><img className="brand-mark account-mark" src="/brand/scribb-mark.png" alt="" width="56" height="56"/><h2>{mode==='signup'?'Create your account':'Sign in to Scribb'}</h2>
   <GoogleButton onUser={onUser}/>
-  <label>Username<input autoComplete="username" required minLength={3} maxLength={mode==='signup'?30:254} autoCapitalize="none" spellCheck={false} value={username} onChange={e=>setUsername(mode==='signup'?e.target.value.toLowerCase():e.target.value)} pattern={mode==='signup'?'[a-z0-9._]{3,30}':undefined} title={mode==='signup'?'3 to 30 lowercase letters, numbers, dots or underscores':undefined}/></label>
+  <label>{mode==='signup'?'Username':'Username or verified email'}<input autoComplete="username" required minLength={3} maxLength={mode==='signup'?30:254} autoCapitalize="none" spellCheck={false} value={username} onChange={e=>setUsername(mode==='signup'?e.target.value.toLowerCase():e.target.value)} pattern={mode==='signup'?'[a-z0-9._]{3,30}':undefined}/></label>
   <label>Password<input type="password" autoComplete={mode==='signup'?'new-password':'current-password'} required minLength={mode==='signup'?8:1} maxLength={128} value={password} onChange={e=>setPassword(e.target.value)}/></label>
   {mode==='signup'&&<p className="form-note">No email needed. You can add one later in Settings to reset your password.</p>}
   {mode==='signup'&&<p className="account-legal">By creating an account, you agree to the <a href="#terms" onClick={onLegal}>Terms</a> and acknowledge the <a href="#privacy" onClick={onLegal}>Privacy notice</a>.</p>}
@@ -85,27 +88,31 @@ function LinkEditor({rows,onChange}:{rows:LinkRow[];onChange:(rows:LinkRow[])=>v
 export function Settings({user,person,onUser,onPerson,onSignedOut,onNotice}:{user:User;person:Person;onUser:(u:User)=>void;onPerson:(p:Person)=>void;onSignedOut:()=>void;onNotice:Notify}){
  const [form,setForm]=useState({username:person.username,bio:person.bio,avatar:person.avatar})
  const [rows,setRows]=useState<LinkRow[]>(()=>LINK_KINDS.filter(([k])=>person.links[k]).map(([kind])=>({id:kind,kind,url:person.links[kind]!})))
- const [email,setEmail]=useState(user.email??''),[current,setCurrent]=useState(''),[password,setPassword]=useState(''),[confirm,setConfirm]=useState('')
+ const pendingEmail=user.pendingEmail??null
+ const [email,setEmail]=useState(pendingEmail??user.email??''),[current,setCurrent]=useState(''),[password,setPassword]=useState(''),[confirm,setConfirm]=useState('')
  const profile=useBusy(onNotice),mail=useBusy(onNotice),secret=useBusy(onNotice),danger=useBusy(onNotice),session=useBusy(onNotice)
+ const address=email.trim().toLowerCase(),alreadyVerified=user.emailVerified&&address===user.email
  // Profiles show the username only, so the display name follows it.
  const links=Object.fromEntries(rows.filter(r=>r.url.trim()).map(r=>[r.kind,r.url.trim()]))
  return <div className="account-settings"><h2>Settings</h2>
   <form className="account-form profile-form" onSubmit={e=>{e.preventDefault();void profile.run(async()=>{const {profile:p}=await api<{profile:Person}>('PATCH','/me/profile',{...form,displayName:form.username,links});onPerson(p);onUser({...user,username:p.username,displayName:p.displayName,avatar:p.avatar});onNotice('Profile saved successfully.','success')})}}>
    <h3>Profile</h3>
-   <div className="profile-card"><img src={avatarSrc(form.avatar)} alt=""/><div><strong>@{form.username||'username'}</strong><span>{form.bio||'A line about you'}</span></div></div>
-   <fieldset className="avatar-choices"><legend>Profile picture</legend>{[...AVATARS,...(user.isCreator?['mine']:[])].map(id=><button type="button" key={id} aria-label={id==='mine'?'Mine, creator profile picture':`Profile picture ${Number(id.slice(1))}`} aria-pressed={form.avatar===id} onClick={()=>setForm({...form,avatar:id})}><img src={avatarSrc(id)} alt=""/></button>)}</fieldset>
+   <div className="profile-card"><Avatar avatar={form.avatar} sizes="56px"/><div><strong>@{form.username||'username'}</strong><span>{form.bio||'A line about you'}</span></div></div>
+   <fieldset className="avatar-choices"><legend>Profile picture</legend>{[...AVATARS,...(user.isCreator?['mine']:[])].map(id=><button type="button" key={id} aria-label={id==='mine'?'Mine, creator profile picture':`Profile picture ${Number(id.slice(1))}`} aria-pressed={form.avatar===id} onClick={()=>setForm({...form,avatar:id})}><Avatar avatar={id} sizes="64px"/></button>)}</fieldset>
    <label>Username<span className="handle-field"><span aria-hidden="true">@</span><input required minLength={3} maxLength={30} pattern="[a-z0-9._]{3,30}" autoCapitalize="none" spellCheck={false} value={form.username} onChange={e=>setForm({...form,username:e.target.value.toLowerCase()})}/></span></label>
    <label>Bio<input maxLength={300} placeholder="A line about you" value={form.bio} onChange={e=>setForm({...form,bio:e.target.value})}/></label>
    <LinkEditor rows={rows} onChange={setRows}/>
    <Problem text={profile.error}/><button className="button-primary" disabled={profile.busy}>{profile.busy?'Saving…':'Save profile'}</button>
   </form>
-  <form className="account-form" onSubmit={e=>{e.preventDefault();void mail.run(async()=>{const result=await api<{alreadyVerified?:boolean}>('PUT','/me/email',{email});onNotice(result.alreadyVerified?'This email is already verified.':`Verification link sent to ${email.trim().toLowerCase()}. Check your inbox and spam folder.`,result.alreadyVerified?'info':'success')})}}>
-   <h3>Email</h3><p className="form-note">{user.email&&user.emailVerified?`${user.email} is verified.`:user.email?`${user.email} is not verified yet.`:'Optional. A verified email lets you reset your password and use Scribb AI.'}</p>
+  <form className="account-form" onSubmit={e=>{e.preventDefault();void mail.run(async()=>{const result=await api<{alreadyVerified?:boolean}>('PUT','/me/email',{email:address});if(!result.alreadyVerified)onUser({...user,pendingEmail:address});onNotice(result.alreadyVerified?'This email is already verified.':`Verification link sent to ${address}. Check your inbox and spam folder.`,result.alreadyVerified?'info':'success')})}}>
+   <h3>Email</h3><p className="form-note">{user.emailVerified?`Password recovery uses ${user.email}.`:'Verify an email to recover your account and use Scribb AI.'}</p>
+   {pendingEmail&&<p className="form-note" role="status">Verification pending for {pendingEmail}.</p>}
    <label>Email<input type="email" autoComplete="email" required maxLength={254} value={email} onChange={e=>setEmail(e.target.value)}/></label>
-   <Problem text={mail.error}/><button className="button-secondary" disabled={mail.busy||(user.emailVerified&&email.trim().toLowerCase()===user.email)}>{mail.busy?'Sending…':user.emailVerified&&email.trim().toLowerCase()===user.email?'Email verified':'Verify email'}</button>
+   <Problem text={mail.error}/><button className="button-secondary" disabled={mail.busy||alreadyVerified}>{mail.busy?'Sending…':alreadyVerified?'Email verified':address===pendingEmail?'Resend verification link':'Verify email'}</button>
   </form>
   <form className="account-form" onSubmit={e=>{e.preventDefault();void secret.run(async()=>{const {user:u}=await api<{user:User}>('PUT','/me/password',{current,password});onUser(u);setCurrent('');setPassword('');onNotice('Password saved successfully. Other devices are signed out.','success')})}}>
    <h3>{user.hasPassword?'Change password':'Add a password'}</h3>
+   {!user.hasPassword&&<p className="form-note">Add a password to sign in to this account with your username{user.emailVerified?' or verified email':''}. You can keep using Google.</p>}
    {user.hasPassword&&<label>Current password<input type="password" autoComplete="current-password" required maxLength={128} value={current} onChange={e=>setCurrent(e.target.value)}/></label>}
    <label>New password<input type="password" autoComplete="new-password" required minLength={8} maxLength={128} value={password} onChange={e=>setPassword(e.target.value)}/></label>
    <Problem text={secret.error}/><button className="button-secondary" disabled={secret.busy}>{secret.busy?'Saving…':'Save password'}</button>
@@ -125,7 +132,7 @@ export function Notifications({onPerson,onBook,onRead}:{onPerson:(handle:string)
  useEffect(()=>{void run(async()=>{const d=await api<{notifications:Note[];next:string|null}>('GET','/notifications');setNotes(d.notifications);setNext(d.next);if(d.notifications.some(n=>!n.read)){await api('POST','/notifications/read');onRead()}})},[]) // eslint-disable-line react-hooks/exhaustive-deps
  return <div className="notifications"><h2>Notifications</h2><Problem text={error}/>
   {notes&&!notes.length&&<p className="form-note">Likes and new followers show up here.</p>}
-  <ul>{notes?.map(n=><li key={n.id} className={n.read?'':'unread'}><button className="note-actor" onClick={()=>onPerson(n.actor.username)}><img src={avatarSrc(n.actor.avatar)} alt=""/></button>
+  <ul>{notes?.map(n=><li key={n.id} className={n.read?'':'unread'}><button className="note-actor" onClick={()=>onPerson(n.actor.username)}><Avatar avatar={n.actor.avatar} sizes="36px" loading="lazy"/></button>
    <p><button className="button-link" onClick={()=>onPerson(n.actor.username)}>{n.actor.displayName||n.actor.username}</button> {n.type==='follow'?'started following you':<>liked {n.book?<button className="button-link" onClick={()=>onBook(n.book!.id)}>{n.book.title||'your book'}</button>:'your book'}</>}<time dateTime={n.createdAt}>{new Date(n.createdAt).toLocaleDateString(undefined,{day:'numeric',month:'short'})}</time></p></li>)}</ul>
   {next&&<button className="button-secondary" onClick={()=>void run(async()=>{const d=await api<{notifications:Note[];next:string|null}>('GET',`/notifications?cursor=${encodeURIComponent(next)}`);setNotes(n=>[...(n??[]),...d.notifications]);setNext(d.next)})}>Older</button>}
  </div>
