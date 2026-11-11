@@ -4,6 +4,7 @@ import {BookObject} from './Bookshelf'
 import {ArtworkPage,artworkPages} from './Sketchbook'
 import {journalLeaves,useFontReady,type Owner} from './Journal'
 import {api,avatarSrc,bookPage,message,type User} from '../lib/api'
+import Avatar from './Avatar'
 import {formats,papers} from '../data/presets'
 import {sectionOf,sheetSize,typeScale} from '../data/journal'
 import type {Book} from '../Profile'
@@ -60,7 +61,7 @@ export default function Feed({user,onOpen,onPerson,onSignIn,onNotice}:{user:User
  const shown=books.filter(b=>`${b.title} ${b.owner?.displayName} ${b.owner?.username}`.toLowerCase().includes(query.toLowerCase()))
  function toggle(id:string){setClosed(set=>{const next=new Set(set);if(!next.delete(id))next.add(id);return next})}
  function card(book:Book,index:number){const author=book.owner!,noun=book.kind==='journal'?'journal':'sketchbook',post=hasPost(book),open=post&&!closed.has(book.id);return <article className="feed-card" key={book.id}>
- <div className="feed-card-heading"><button className="feed-author" onClick={()=>onPerson(author.username)} aria-label={`View ${author.displayName||author.username}'s portfolio`}><img src={avatarSrc(author.avatar)} alt="" loading="lazy"/><span>{author.displayName||author.username}<small>@{author.username}</small></span></button>{book.category&&<span className="feed-category">{book.category}</span>}</div>
+ <div className="feed-card-heading"><button className="feed-author" onClick={()=>onPerson(author.username)} aria-label={`View ${author.displayName||author.username}'s portfolio`}><Avatar avatar={author.avatar} sizes="35px" loading="lazy"/><span>{author.displayName||author.username}<small>@{author.username}</small></span></button>{book.category&&<span className="feed-category">{book.category}</span>}</div>
  <div className="feed-book-scene"><button className="feed-scene-open" aria-label={`Open ${book.title}`} onClick={()=>onOpen(book)}><span className="feed-edition">{String(index+1).padStart(2,'0')}</span>{open?<OpenSpread book={book}/>:<BookObject book={book}/>}</button>
   {post&&<button className="button-icon feed-cover-toggle" aria-label={open?`Close ${book.title}`:`Open ${book.title} at the newest page`} title={open?'Close the book':'Open at the newest page'} onClick={()=>toggle(book.id)}>{open?<BookIcon size={19} weight="light"/>:<BookOpen size={19} weight="light"/>}</button>}</div>
  <div className="feed-card-caption"><div><h2>{book.title}</h2><span>{noun} <i/> {book.format}</span></div><div className="feed-reactions"><button title={`Like ${noun}`} aria-label={`Like ${book.title}`} aria-pressed={Boolean(book.liked)} onClick={()=>void react(book,'like')}><Heart size={21} weight={book.liked?'fill':'light'}/><span>{book.likeCount??0}</span></button><button title={`Save ${noun}`} aria-label={`Save ${book.title}`} aria-pressed={Boolean(book.saved)} onClick={()=>void react(book,'save')}><BookmarkSimple size={21} weight={book.saved?'fill':'light'}/></button></div></div>
