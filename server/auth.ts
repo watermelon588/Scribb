@@ -4,6 +4,7 @@ import { createRemoteJWKSet, jwtVerify, SignJWT, type JWTVerifyGetKey } from 'jo
 import { limit, pgCode, sql, type Row } from './db.js'
 import { isCreator, profileAvatar } from './creator.js'
 import { passwordResetEmail, verificationEmail, verifiedEmail } from './emails.js'
+import { recordActivity, sendWelcomeIfNew, touchUserActivity } from './activity.js'
 
 /** Minimal accounts: username + password or Google. Email is optional and only unlocks password reset (and AI). */
 export const auth = Router()
@@ -56,6 +57,7 @@ async function startSession(res: Response, user: Row) {
 async function loadUser(id: string, tokenVersion?: number) {
   const [user] = await sql()`
     select u.id, u.email, u.email_verified_at, u.token_version, u.ai_consent_at, u.password_hash is not null as has_password,
+           u.last_login_at, u.last_active_at, u.welcome_sent_at,
            p.handle, p.display_name, p.avatar
     from users u join profiles p on p.user_id = u.id
     where u.id = ${id} and (${tokenVersion ?? null}::int is null or u.token_version = ${tokenVersion ?? null}::int)`
@@ -81,6 +83,7 @@ export async function requireUser(req: Request, res: Response, next: NextFunctio
   const user = await currentUser(req)
   if (!user) return fail(res, 401, 'signed_out', 'Please sign in.')
   res.locals.user = user
+  void touchUserActivity(user.id)
   next()
 }
 
@@ -116,6 +119,8 @@ auth.get('/auth/me', async (req, res) => {
 
 auth.post('/auth/register', async (req, res) => {
   const username = text(req.body?.username).toLowerCase(), password = req.body?.password
+  const emailInput = text(req.body?.email).toLowerCase()
+  const email = emailInput && EMAIL.test(emailInput) ? emailInput : null
   if (!validUsername(username)) return fail(res, 400, 'bad_username', 'Usernames are 3 to 30 lowercase letters, numbers, dots or underscores.')
   if (!validPassword(password)) return fail(res, 400, 'bad_password', 'Passwords are 8 to 128 characters.')
   if (!(await limit(`register:${req.ip}`, 5, 3600))) return tooMany(res)
@@ -124,7 +129,7 @@ auth.post('/auth/register', async (req, res) => {
   try {
     // One statement, so a taken username never leaves an orphaned user row.
     const [row] = await sql()`
-      with u as (insert into users (password_hash) values (${hash}) returning id)
+      with u as (insert into users (password_hash, email) values (${hash}, ${email}) returning id)
       insert into profiles (user_id, handle, display_name) select id, ${username}, ${username} from u returning user_id`
     id = row.user_id
   } catch (err) {
@@ -133,6 +138,10 @@ auth.post('/auth/register', async (req, res) => {
   }
   const user = (await loadUser(id))!
   await startSession(res, user)
+  await recordActivity({ userId: user.id, action: 'register', details: { username: user.handle, email }, ip: req.ip })
+  if (email) {
+    await sendWelcomeIfNew({ userId: user.id, email, username: user.handle, origin: origin(req) })
+  }
   res.status(201).json({ user: publicUser(user) })
 })
 
@@ -141,11 +150,15 @@ auth.post('/auth/login', async (req, res) => {
   if (!login || typeof password !== 'string' || password.length > 128) return fail(res, 400, 'bad_login', 'Enter your username and password.')
   if (!(await limit(`login-ip:${req.ip}`, 30, 900)) || !(await limit(`login:${login}`, 10, 900))) return tooMany(res)
   const [found] = await sql()`
-    select u.id, u.password_hash from users u join profiles p on p.user_id = u.id
+    select u.id, u.password_hash, u.email, u.welcome_sent_at from users u join profiles p on p.user_id = u.id
     where p.handle = ${login} or (u.email = ${login} and u.email_verified_at is not null) limit 1`
   if (!(await verifyPassword(password, found?.password_hash ?? null))) return fail(res, 401, 'bad_login', 'That username and password do not match.')
   const user = (await loadUser(found.id))!
   await startSession(res, user)
+  await recordActivity({ userId: user.id, action: 'login', details: { username: user.handle, method: 'password' }, ip: req.ip })
+  if (user.email && !found.welcome_sent_at) {
+    await sendWelcomeIfNew({ userId: user.id, email: user.email, username: user.handle, origin: origin(req) })
+  }
   res.json({ user: publicUser(user) })
 })
 
@@ -166,9 +179,19 @@ auth.post('/auth/google', async (req, res) => {
   let [row] = await sql()`select id from users where google_sub = ${sub}`
   // Link only to an email the Scribb user has verified, so claiming an address never takes over an account.
   if (!row && email) [row] = await sql()`update users set google_sub = ${sub} where email = ${email} and email_verified_at is not null and google_sub is null returning id`
+  const isNew = !row
   const id = row?.id ?? (await createGoogleUser(sub, email, typeof claims.name === 'string' ? claims.name.slice(0, 60) : ''))
   const user = (await loadUser(id))!
   await startSession(res, user)
+  await recordActivity({
+    userId: user.id,
+    action: isNew ? 'google_signup' : 'google_login',
+    details: { username: user.handle, email },
+    ip: req.ip,
+  })
+  if (email && isNew) {
+    await sendWelcomeIfNew({ userId: user.id, email, username: user.handle, origin: origin(req) })
+  }
   res.status(row ? 200 : 201).json({ user: publicUser(user) })
 })
 async function createGoogleUser(sub: string, email: string | null, name: string) {
@@ -190,7 +213,11 @@ async function createGoogleUser(sub: string, email: string | null, name: string)
 }
 
 export const endSession = (res: Response) => void res.clearCookie(COOKIE, COOKIE_OPTIONS)
-auth.post('/auth/logout', (_req, res) => {
+auth.post('/auth/logout', async (req, res) => {
+  const user = await currentUser(req)
+  if (user) {
+    await recordActivity({ userId: user.id, action: 'logout', details: { username: user.handle }, ip: req.ip })
+  }
   endSession(res)
   res.status(204).end()
 })
@@ -228,13 +255,14 @@ auth.post('/auth/reset', async (req, res) => {
 auth.post('/auth/verify-email', async (req, res) => {
   const token = text(req.body?.token)
   if (!(await limit(`verify-ip:${req.ip}`, 20, 3600))) return tooMany(res)
-  let verifiedAddress: string
+  let verifiedUserId: string, verifiedAddress: string
   try {
     const [row] = await sql()`
       with t as (update email_tokens set used_at = now()
                  where token_hash = ${sha256(token)} and purpose = 'verify' and used_at is null and expires_at > now() returning user_id, email)
       update users u set email = t.email, email_verified_at = now() from t where u.id = t.user_id returning u.id, u.email`
     if (!row) return fail(res, 400, 'bad_token', 'This link has expired or was already used.')
+    verifiedUserId = row.id
     verifiedAddress = row.email
   } catch (err) {
     if (pgCode(err) === '23505') return fail(res, 409, 'email_in_use', 'That email is already linked to another account.')
@@ -244,6 +272,7 @@ auth.post('/auth/verify-email', async (req, res) => {
   try {
     const content = verifiedEmail(origin(req))
     await mailer.send(verifiedAddress, content.subject, content.text, content.html)
+    await recordActivity({ userId: verifiedUserId, action: 'email_verified', details: { email: verifiedAddress } })
   } catch { console.error('Email verified, but the confirmation email could not be delivered.') }
   res.json({ ok: true })
 })

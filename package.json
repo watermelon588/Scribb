@@ -11,7 +11,8 @@
     "postinstall": "node scripts/patch-page-flip.mjs",
     "dev:api": "tsx watch server/dev.ts",
     "test:api": "node --import tsx --test \"server/**/*.test.ts\"",
-    "migrate": "tsx server/migrate.ts"
+    "migrate": "tsx server/migrate.ts",
+    "users": "tsx server/users.ts"
   },
   "dependencies": {
     "@fontsource-variable/caveat": "^5.3.0",

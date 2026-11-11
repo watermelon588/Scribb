@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import {test} from 'node:test'
-import {passwordResetEmail,verificationEmail,verifiedEmail} from './emails.js'
+import {passwordResetEmail,verificationEmail,verifiedEmail,welcomeEmail} from './emails.js'
 import {mailer} from './auth.js'
 
 test('email templates escape text, use absolute app links and keep plain text usable',()=>{
@@ -11,6 +11,11 @@ test('email templates escape text, use absolute app links and keep plain text us
  assert.match(verify.text,/https:\/\/scribb\.example\/#verify-email\/safe-token/)
  assert.match(passwordResetEmail('https://scribb.example/','reset-token').html,/#reset\/reset-token/)
  assert.match(verifiedEmail('https://scribb.example/').html,/href="https:\/\/scribb\.example\/"[^>]*>Go to homepage/)
+ const welcome=welcomeEmail('https://scribb.example/','mira<"&')
+ assert.match(welcome.subject,/Welcome to Scribb!/)
+ assert.match(welcome.html,/Hi @mira&lt;&quot;&amp;,/)
+ assert.match(welcome.html,/Open Scribb/)
+ assert.match(welcome.text,/Welcome to Scribb!/)
  assert.throws(()=>verificationEmail('javascript:alert(1)','mira','token'))
  assert.throws(()=>verifiedEmail('https://user:password@scribb.example/'))
 })

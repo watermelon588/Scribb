@@ -1,5 +1,6 @@
 import app from './app.js'
 import { testDatabase } from './testdb.js'
+import { getUsersSummary } from './activity.js'
 
 // Local development only: Vite on 5173 proxies /api here.
 try { process.loadEnvFile() } catch { /* No .env yet. */ }
@@ -13,4 +14,10 @@ if (!process.env.DATABASE_URL) {
   console.log('No DATABASE_URL: using the local database in .data/pglite')
 }
 const port = Number(process.env.API_PORT ?? 3001)
-app.listen(port, () => console.log(`Scribb API on http://localhost:${port}`))
+app.listen(port, async () => {
+  console.log(`Scribb API on http://localhost:${port}`)
+  try {
+    const summary = await getUsersSummary()
+    console.log(`[users] ${summary.totalUsers} registered user(s) in database`)
+  } catch { /* database may be unconfigured */ }
+})
