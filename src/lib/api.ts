@@ -23,7 +23,14 @@ export type Links=Partial<Record<LinkKind,string>>
 export interface Person {username:string;displayName:string;bio:string;city:string;avatar:string;links:Links;followers:number;following:number;books:number;followed:boolean;own:boolean;isCreator?:boolean}
 export interface BookOwner {username:string;displayName:string;avatar:string}
 export const AVATARS=Array.from({length:12},(_,i)=>`a${String(i+1).padStart(2,'0')}`)
-export const avatarSrc=(id?:string)=>`/avatars/${id==='mine'||AVATARS.includes(id??'')?id:'a01'}.png`
+const avatarFiles=import.meta.glob<string>('../assets/avatars/*.webp',{eager:true,import:'default',query:'?no-inline'})
+const avatarSizes=[128,256,512] as const
+const avatarId=(id?:string)=>id&&(id==='mine'||AVATARS.includes(id))?id:'a01'
+export const avatarSrc=(id?:string,size:typeof avatarSizes[number]=128)=>avatarFiles[`../assets/avatars/avatar-${avatarId(id)}-${size}.webp`]
+export const avatarSrcSet=(id?:string)=>[
+ ...avatarSizes.map(size=>`${avatarSrc(id,size)} ${size}w`),
+ `/avatars/${avatarId(id)}.png 1254w`,
+].join(', ')
 
 // ---- Books: the editor's Book is one record; the API keeps the design, the pages and the entries apart.
 interface BookRow {id:string;kind:BookKind;title:string;visibility:'private'|'public';category:string|null;design:Record<string,unknown>;pages?:Book['artworks'];latest?:EntryRow&{bookId?:string};likeCount:number;saveCount:number;version:number;owner:BookOwner;liked:boolean;saved:boolean}

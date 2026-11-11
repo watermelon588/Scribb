@@ -1,4 +1,5 @@
-import {ArrowLeft,Gear,ArrowUpRight} from '@phosphor-icons/react'
+import {ArrowLeft,CaretRight,ChatCircleText,DownloadSimple,Info,Scroll,ShieldCheck,SignIn,type Icon} from '@phosphor-icons/react'
+import Avatar from './Avatar'
 import InstallApp from './InstallApp'
 import Feedback from './Feedback'
 const geminiTerms='https://ai.google.dev/gemini-api/terms'
@@ -8,10 +9,32 @@ export function SiteFooter(){
  return <footer className="site-footer"><span className="footer-brand"><img className="brand-mark" src="/brand/scribb-mark.png" alt="" width="22" height="22"/><b>Scribb</b> A space of your own.</span>{links}</footer>
 }
 
-export function PhoneSettings({username,onAccount,onBack}:{username?:string;onAccount:()=>void;onBack:()=>void}){
- return <main className="phone-settings"><header><button className="button-icon" data-hint="Back" aria-label="Back to portfolio" onClick={onBack}><ArrowLeft/></button><h1>Settings</h1></header>
- <section><h2>Account</h2><button className="button-quiet" onClick={onAccount}><Gear/>{username?'Profile settings · @'+username:'Sign in'}</button></section>
- <section><h2>Scribb</h2><nav aria-label="Information">{[['About','/about/'],['Terms','#terms'],['Privacy','#privacy']].map(([label,href])=><a key={label} href={href}>{label}<ArrowUpRight size={16}/></a>)}</nav><Feedback/><InstallApp/></section></main>
+const settingsLinks=[
+ {label:'About',href:'/about/',icon:Info},
+ {label:'Terms',href:'#terms',icon:Scroll},
+ {label:'Privacy',href:'#privacy',icon:ShieldCheck},
+]
+
+function SettingsLabel({icon:Glyph,label}:{icon:Icon;label:string}){
+ return <><Glyph size={20} className="settings-row-icon" aria-hidden="true"/><span>{label}</span><CaretRight size={16} aria-hidden="true"/></>
+}
+
+export function PhoneSettings({username,avatar,onAccount,onBack}:{username?:string;avatar?:string;onAccount:()=>void;onBack:()=>void}){
+ return <main className="phone-settings">
+  <header className="phone-settings-header"><button className="button-icon" data-hint="Back" aria-label="Back to portfolio" onClick={onBack}><ArrowLeft size={20}/></button><h1>Settings</h1></header>
+  <section>
+   <h2>Account</h2>
+   <button className="button-quiet settings-account" onClick={onAccount}>{username?<><Avatar avatar={avatar} sizes="48px"/><span>Profile settings<small>@{username}</small></span><CaretRight size={16} aria-hidden="true"/></>:<SettingsLabel icon={SignIn} label="Sign in"/>}</button>
+  </section>
+  <section>
+   <h2>Scribb</h2>
+   <nav className="settings-rows" aria-label="Information">
+    {settingsLinks.map(({label,href,icon})=><a key={label} className="button-quiet" href={href}><SettingsLabel icon={icon} label={label}/></a>)}
+    <Feedback trigger={<SettingsLabel icon={ChatCircleText} label="Feedback"/>}/>
+    <InstallApp trigger={<SettingsLabel icon={DownloadSimple} label="Install app"/>}/>
+   </nav>
+  </section>
+ </main>
 }
 
 export default function Legal({page}:{page:'privacy'|'terms'}){

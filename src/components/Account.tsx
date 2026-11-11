@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState,type FormEvent} from 'react'
 import {BehanceLogo,CaretDown,DribbbleLogo,GlobeSimple,InstagramLogo,LinkedinLogo,PaintBrush,PinterestLogo,Plus,TiktokLogo,X,XLogo,YoutubeLogo,type Icon} from '@phosphor-icons/react'
-import {AVATARS,LINK_KINDS,api,avatarSrc,message,type LinkKind,type Person,type User} from '../lib/api'
+import {AVATARS,LINK_KINDS,api,message,type LinkKind,type Person,type User} from '../lib/api'
+import Avatar from './Avatar'
 import type {Notify} from './Notice'
 
 /** Sign-in, password reset, settings and notifications. Each renders inside the portfolio dialog. */
@@ -96,8 +97,8 @@ export function Settings({user,person,onUser,onPerson,onSignedOut,onNotice}:{use
  return <div className="account-settings"><h2>Settings</h2>
   <form className="account-form profile-form" onSubmit={e=>{e.preventDefault();void profile.run(async()=>{const {profile:p}=await api<{profile:Person}>('PATCH','/me/profile',{...form,displayName:form.username,links});onPerson(p);onUser({...user,username:p.username,displayName:p.displayName,avatar:p.avatar});onNotice('Profile saved successfully.','success')})}}>
    <h3>Profile</h3>
-   <div className="profile-card"><img src={avatarSrc(form.avatar)} alt=""/><div><strong>@{form.username||'username'}</strong><span>{form.bio||'A line about you'}</span></div></div>
-   <fieldset className="avatar-choices"><legend>Profile picture</legend>{[...AVATARS,...(user.isCreator?['mine']:[])].map(id=><button type="button" key={id} aria-label={id==='mine'?'Mine, creator profile picture':`Profile picture ${Number(id.slice(1))}`} aria-pressed={form.avatar===id} onClick={()=>setForm({...form,avatar:id})}><img src={avatarSrc(id)} alt=""/></button>)}</fieldset>
+   <div className="profile-card"><Avatar avatar={form.avatar} sizes="56px"/><div><strong>@{form.username||'username'}</strong><span>{form.bio||'A line about you'}</span></div></div>
+   <fieldset className="avatar-choices"><legend>Profile picture</legend>{[...AVATARS,...(user.isCreator?['mine']:[])].map(id=><button type="button" key={id} aria-label={id==='mine'?'Mine, creator profile picture':`Profile picture ${Number(id.slice(1))}`} aria-pressed={form.avatar===id} onClick={()=>setForm({...form,avatar:id})}><Avatar avatar={id} sizes="64px"/></button>)}</fieldset>
    <label>Username<span className="handle-field"><span aria-hidden="true">@</span><input required minLength={3} maxLength={30} pattern="[a-z0-9._]{3,30}" autoCapitalize="none" spellCheck={false} value={form.username} onChange={e=>setForm({...form,username:e.target.value.toLowerCase()})}/></span></label>
    <label>Bio<input maxLength={300} placeholder="A line about you" value={form.bio} onChange={e=>setForm({...form,bio:e.target.value})}/></label>
    <LinkEditor rows={rows} onChange={setRows}/>
@@ -131,7 +132,7 @@ export function Notifications({onPerson,onBook,onRead}:{onPerson:(handle:string)
  useEffect(()=>{void run(async()=>{const d=await api<{notifications:Note[];next:string|null}>('GET','/notifications');setNotes(d.notifications);setNext(d.next);if(d.notifications.some(n=>!n.read)){await api('POST','/notifications/read');onRead()}})},[]) // eslint-disable-line react-hooks/exhaustive-deps
  return <div className="notifications"><h2>Notifications</h2><Problem text={error}/>
   {notes&&!notes.length&&<p className="form-note">Likes and new followers show up here.</p>}
-  <ul>{notes?.map(n=><li key={n.id} className={n.read?'':'unread'}><button className="note-actor" onClick={()=>onPerson(n.actor.username)}><img src={avatarSrc(n.actor.avatar)} alt=""/></button>
+  <ul>{notes?.map(n=><li key={n.id} className={n.read?'':'unread'}><button className="note-actor" onClick={()=>onPerson(n.actor.username)}><Avatar avatar={n.actor.avatar} sizes="36px" loading="lazy"/></button>
    <p><button className="button-link" onClick={()=>onPerson(n.actor.username)}>{n.actor.displayName||n.actor.username}</button> {n.type==='follow'?'started following you':<>liked {n.book?<button className="button-link" onClick={()=>onBook(n.book!.id)}>{n.book.title||'your book'}</button>:'your book'}</>}<time dateTime={n.createdAt}>{new Date(n.createdAt).toLocaleDateString(undefined,{day:'numeric',month:'short'})}</time></p></li>)}</ul>
   {next&&<button className="button-secondary" onClick={()=>void run(async()=>{const d=await api<{notifications:Note[];next:string|null}>('GET',`/notifications?cursor=${encodeURIComponent(next)}`);setNotes(n=>[...(n??[]),...d.notifications]);setNext(d.next)})}>Older</button>}
  </div>

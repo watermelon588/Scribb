@@ -1,6 +1,8 @@
 # Profile picture cutouts
 
-The default menu uses twelve transparent PNG cutouts, `public/avatars/a01.png` through `a12.png`. `public/avatars/mine.png` is the reserved creator portrait. All eleven original reference images in `journal inspiration/stickers/pfp` are preserved. Multi-character sheets supply individual faces for the twelve public choices.
+The twelve full-resolution transparent PNG cutouts live in `public/avatars/a01.png` through `a12.png`. `public/avatars/mine.png` is the reserved creator portrait. All eleven original reference images in `journal inspiration/stickers/pfp` are preserved. Multi-character sheets supply individual faces for the twelve public choices.
+
+The app serves 128, 256 and 512px lossless RGBA WebP copies from `src/assets/avatars`. The browser selects a copy for the rendered size and pixel density, with the 1254px PNG available for larger displays. Generate the copies with Pillow's Lanczos resize and `lossless=True, exact=True, method=6`. Each decoded WebP matches the resized pixels exactly. Vite hashes the filenames so browsers can cache them between visits.
 
 Prepared with the built-in image_gen editing tool, one edit target per output, requesting faithful background extraction, cleaner detail and true transparency. These are AI-assisted extractions rather than pixel-identical copies. The complete reference-to-output mapping and exact prompts are in [PFP-ASSETS.json](PFP-ASSETS.json). PNG export removes metadata without changing decoded RGBA pixels. No rectangular background, mockup, watermark or sticker border is added. Circular framing is applied in CSS, keeping the assets reusable as cutouts.
 

@@ -37,6 +37,7 @@
         { "key": "Content-Security-Policy", "value": "base-uri 'self'; object-src 'none'; frame-ancestors 'none'" }
       ]
     },
+    { "source": "/assets/(avatar-.*\\.webp)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
     { "source": "/(api|ai)/(.*)", "headers": [{ "key": "Cache-Control", "value": "private, no-store" }] }
   ]
 }

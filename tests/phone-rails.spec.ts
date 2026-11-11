@@ -41,6 +41,23 @@ test('phone Explore gives a single post a full page and keeps both halves of a s
  await page.getByRole('navigation',{name:'Main navigation'}).getByRole('button',{name:'Portfolio'}).click()
  await page.getByRole('button',{name:'Portfolio settings'}).click()
  await expect(page.getByRole('link',{name:'Privacy',exact:true})).toBeVisible()
+ const settings=page.locator('.phone-settings')
+ for(const width of [390,320]){
+  await page.setViewportSize({width,height:844})
+  const rows=settings.getByRole('navigation',{name:'Information'}).locator('.button-quiet')
+  await expect(rows).toHaveCount(5)
+  expect(await rows.evaluateAll(items=>items.every(item=>{
+   const rect=item.getBoundingClientRect(),first=items[0].getBoundingClientRect()
+   return rect.left===first.left&&rect.right===first.right&&rect.right<=innerWidth&&rect.height>=44
+  }))).toBe(true)
+  expect(await settings.locator('.settings-account').evaluate(item=>item.querySelector('img')!.getBoundingClientRect().right<item.querySelector('span')!.getBoundingClientRect().left)).toBe(true)
+ }
+ await settings.getByRole('button',{name:/Profile settings/}).click()
+ const picker=page.locator('.avatar-choices')
+ await expect(picker.getByRole('button')).toHaveCount(12)
+ expect(await picker.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true)
+ await picker.getByRole('button',{name:'Profile picture 12',exact:true}).click()
+ await expect(picker.getByRole('button',{name:'Profile picture 12',exact:true})).toHaveAttribute('aria-pressed','true')
 })
 test('phone writing exposes formatting and dictation and saves with the checkmark',async({page})=>{
  await page.addInitScript(()=>{
