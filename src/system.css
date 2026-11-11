@@ -5,6 +5,37 @@
  --weight-light:350;--weight-regular:400;--weight-medium:500;
  --radius:0;--control:40px;--gutter:5%
 }
+
+.dialog-book-heading{display:flex;align-items:center;gap:var(--space-2);min-height:var(--control);margin:0 var(--space-7) var(--space-4) 0}
+.dialog-book-heading h2{min-width:0;margin:0 auto 0 0;font-size:var(--text-2xl);font-weight:var(--weight-regular);letter-spacing:-.02em;line-height:1.2;overflow-wrap:anywhere}
+.dialog-book-heading .dialog-edit{position:static}
+.portfolio-app .share-dialog{width:min(1080px,95vw);padding:var(--space-6)}
+.share-header{display:flex;align-items:flex-start;gap:var(--space-3);padding-right:var(--space-7);margin-bottom:var(--space-5)}
+.share-header h2{font-size:var(--text-2xl);font-weight:var(--weight-regular);line-height:1.18;letter-spacing:-.02em;margin:0}
+.share-header p{color:var(--app-muted);font-size:var(--text-sm);margin:var(--space-1) 0 0;overflow-wrap:anywhere}
+.share-workspace{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);gap:var(--space-6);align-items:start}
+.share-stage{display:grid;place-items:center;min-height:486px;padding:var(--space-5);background:var(--app-panel)}
+.share-stage :is(canvas,video){display:block;width:auto;height:auto;max-width:100%;max-height:60dvh;aspect-ratio:var(--share-ratio);object-fit:contain}
+.share-controls,.share-group,.share-output{display:grid;min-width:0}
+.share-controls{gap:var(--space-5)}
+.share-group,.share-output{gap:var(--space-2)}
+.share-label{color:var(--app-muted);font-size:var(--text-xs)}
+.share-options,.share-link{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
+.share-format small{font-size:var(--text-xs);color:var(--app-muted);font-variant-numeric:tabular-nums}
+.share-layouts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--space-1)}
+.share-layouts .share-layout{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:var(--space-1);gap:var(--space-1);white-space:normal;text-align:left;font-size:var(--text-xs)}
+.share-layout canvas{display:block;width:100%;height:auto}
+.share-note,.share-error{margin:0;font-size:var(--text-xs);line-height:1.5;color:var(--app-muted)}
+.share-error{color:var(--app-danger)}
+.share-link{gap:0}
+.share-link .button-quiet{padding-inline:0 var(--space-2)}
+.share-output progress{width:min(210px,60%);accent-color:var(--app-accent)}
+
+@media(min-width:601px) and (max-width:860px){
+ .share-workspace{gap:var(--space-4);grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}
+ .share-stage{min-height:390px;padding:var(--space-3)}
+ .share-format{padding-inline:var(--space-2)}
+}
 @media(max-width:600px),(pointer:coarse){:root{--control:44px}}
 @media(max-width:600px){:root{--gutter:20px}}
 

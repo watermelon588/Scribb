@@ -221,3 +221,16 @@
  .portfolio-app .empty-create{display:flex;align-items:center;justify-content:center;gap:10px;min-height:48px;margin:36px auto;padding:12px 18px;border:0;background:var(--app-soft);color:var(--app-ink);font:inherit}
  .portfolio-app .empty-create svg{color:var(--app-accent)}
 }
+@media(max-width:600px){
+ .portfolio-app .share-dialog{width:100vw;padding:calc(var(--space-4) + env(safe-area-inset-top)) var(--space-4) calc(var(--space-5) + env(safe-area-inset-bottom))}
+ .share-dialog .dialog-close{top:calc(var(--space-3) + env(safe-area-inset-top))}
+ .dialog-book-heading{margin-right:0}
+ .dialog-book-heading h2,.share-header h2{font-size:var(--text-xl)}
+ .share-header{gap:var(--space-2);margin-bottom:var(--space-4)}
+ .share-workspace{display:flex;flex-direction:column;gap:var(--space-4)}
+ .share-stage{width:100%;min-height:0;padding:var(--space-3)}
+ .share-stage :is(canvas,video){max-height:31dvh}
+ .share-controls{width:100%;gap:var(--space-4)}
+ .share-format{flex:1;flex-direction:column;gap:0;padding-inline:var(--space-2)}
+ .share-layouts .share-layout{padding:var(--space-1) 2px}
+}
