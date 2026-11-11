@@ -42,6 +42,8 @@ export interface SketchbookProps {
   overlay?: ReactNode
   /** Page to open on, e.g. a journal's latest entry. Overrides initiallyClosed. */
   startPage?: number
+  /** Enable the optional 3D control in a desktop sketchbook preview. */
+  enableOrbit?: boolean
 }
 
 /** Cover text color that stays readable on the chosen cover color. */
@@ -97,7 +99,7 @@ export function artworkPages(artworks: Artwork[]) {
 
 /** The only book renderer. PageFlip owns cloned DOM; React owns the source pages.
  * Keeping those trees separate makes cleanup safe under StrictMode and resizing. */
-export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle, title, caption, artworks, texture = true, paper = "/paper.svg", coverImage, coverPlacement, bandColor = '#2464ed', initiallyClosed = false, pages, sheetWidth, maxPage = 370, kicker, front, back, overlay, show, startPage }: SketchbookProps) {
+export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle, title, caption, artworks, texture = true, paper = "/paper.svg", coverImage, coverPlacement, bandColor = '#2464ed', initiallyClosed = false, pages, sheetWidth, maxPage = 370, kicker, front, back, overlay, show, startPage, enableOrbit = false }: SketchbookProps) {
   const stage = useRef<HTMLDivElement>(null)
   const area = useRef<HTMLDivElement>(null)
   const pose = useRef<HTMLDivElement>(null)
@@ -105,7 +107,9 @@ export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle,
   const angle = useRef({ x: 0, y: 0, z: 0 })
   const turnTo = useRef<((next: { x: number; y: number; z: number }) => void) | null>(null)
   const pointers = useRef(new Map<number, { x: number; y: number }>())
-  const [orbit, setOrbit] = useState(false)
+  const [orbitOn, setOrbit] = useState(false)
+  const orbitEnabled = Boolean(pages) || enableOrbit
+  const orbit = orbitEnabled && orbitOn
   const center = useRef<HTMLDivElement>(null)
   const mount = useRef<HTMLDivElement>(null)
   const source = useRef<HTMLDivElement>(null)
@@ -267,25 +271,35 @@ export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle,
     gsap.set(pose.current, { rotation: 0, rotationX: 0, rotationY: 0, y: 0 })
   }, { scope: stage, dependencies: [page, pageWidth, portrait, turning, turnStyle, preset.id, reduced] })
 
-  // Journals only: the 3D view turns the whole book as one object. Short eased follow-through makes drags feel weighted.
-  useGSAP(() => {
-    if (!orbitBox.current) return
+  // The 3D view turns the whole book as one object. Revert its transforms when the control becomes unavailable.
+  const { contextSafe: orbitAnimation } = useGSAP(() => {
+    const box = orbitBox.current
+    if (!box || !orbitEnabled) return
+    if (orbit) {
+      const { x, y, z } = angle.current
+      gsap.set(box, { rotationX: x, rotationY: y, rotation: z, scale: .84 })
+    }
     const options = { duration: reduced ? 0 : .5, ease: 'power3.out' }
-    const rx = gsap.quickTo(orbitBox.current, 'rotationX', options), ry = gsap.quickTo(orbitBox.current, 'rotationY', options), rz = gsap.quickTo(orbitBox.current, 'rotation', options)
+    const rx = gsap.quickTo(box, 'rotationX', options), ry = gsap.quickTo(box, 'rotationY', options), rz = gsap.quickTo(box, 'rotation', options)
     turnTo.current = next => {
       angle.current = { x: Math.max(-65, Math.min(65, next.x)), y: next.y, z: Math.max(-40, Math.min(40, next.z)) }
       rx(angle.current.x); ry(angle.current.y); rz(angle.current.z)
     }
-  }, { scope: stage, dependencies: [reduced, Boolean(pages)] })
+    return () => { turnTo.current = null; pointers.current.clear() }
+  }, { scope: stage, dependencies: [reduced, orbitEnabled], revertOnUpdate: true })
 
-  function toggleOrbit() {
+  useEffect(() => {
+    if (!orbitEnabled) setOrbit(false)
+  }, [orbitEnabled])
+
+  const toggleOrbit = orbitAnimation(() => {
     const next = !orbit
     setOrbit(next)
     pointers.current.clear()
     turnTo.current?.(next ? { x: 16, y: -28, z: 0 } : { x: 0, y: 0, z: 0 })
     // Flat again: drop the transform so the page-turn engine measures an untransformed book.
     gsap.to(orbitBox.current, { scale: next ? .84 : 1, duration: reduced ? 0 : .6, ease: 'power3.inOut', overwrite: 'auto', onComplete: () => { if (!next) gsap.set(orbitBox.current, { clearProps: 'transform' }) } })
-  }
+  })
   function orbitDown(event: React.PointerEvent<HTMLDivElement>) {
     if (!orbit || (event.target as HTMLElement).closest('button')) return
     event.currentTarget.setPointerCapture(event.pointerId)
@@ -374,11 +388,11 @@ export default function Sketchbook({ preset, coverColor, aspectRatio, turnStyle,
   const visibleEnd = Math.min(page + 1, leafCount)
   return <div ref={stage} className={`book-stage preset-${preset.id} ${pages ? 'is-journal' : ''} ${portrait ? 'is-portrait' : ''} ${texture ? 'textured' : ''} ${closed ? 'is-closed' : ''} ${page === lastPage ? 'is-back' : ''} ${bandLocked ? 'band-locked' : ''} ${orbit ? 'is-orbit' : ''} ${rail ? 'has-rail' : ''}`}
     style={{ '--band-color': bandColor, '--paper-image': `url("${paper}")`, '--cover': coverColor, '--cover-ink': coverInk, '--page-width': `${pageWidth}px`, '--sheet-scale': sheetWidth ? pageWidth / sheetWidth : undefined, '--title-scale': Math.max(.58, Math.min(1, 20 / title.length)) } as CSSProperties}>
-    <div className="stage-topline"><button className="button-icon" aria-label="Pages" aria-pressed={rail} data-hint={rail ? 'Hide pages' : 'Pages'} onClick={() => setRail(!rail)}><SidebarSimple weight="light" size={18} /></button>{pages && <button className="button-icon orbit-toggle" aria-label="3D view" aria-pressed={orbit} data-hint={orbit ? 'Flat view' : '3D view'} onClick={toggleOrbit}><Cube weight="light" size={18} /></button>}<button className="button-icon" aria-label="Enter fullscreen preview" data-hint="Fullscreen" onClick={() => {
+    <div className="stage-topline"><button className="button-icon" aria-label="Pages" aria-pressed={rail} data-hint={rail ? 'Hide pages' : 'Pages'} onClick={() => setRail(!rail)}><SidebarSimple weight="light" size={18} /></button>{orbitEnabled && <button className="button-icon orbit-toggle" aria-label="3D view" aria-pressed={orbit} data-hint={orbit ? 'Flat view' : '3D view'} onClick={toggleOrbit}><Cube weight="light" size={18} /></button>}<button className="button-icon" aria-label="Enter fullscreen preview" data-hint="Fullscreen" onClick={() => {
       if (document.fullscreenElement) void document.exitFullscreen()
       else void stage.current?.requestFullscreen().catch(() => {})
     }}><CornersOut weight="light" size={18} /></button></div>
-    <div className="book-area" ref={area} tabIndex={0} data-hint={orbit ? 'Drag to tilt' : bandLocked ? 'Pull the band' : closed ? 'Drag to open' : 'Drag a corner'} role="region" aria-label={orbit ? 'Journal in 3D. Use arrow keys to turn it and Shift with left or right to twist it. Turn pages with the buttons.' : `Interactive ${pages ? 'journal' : 'sketchbook'}. Use left and right arrow keys to turn pages.`} onKeyDown={onKeyDown}
+    <div className="book-area" ref={area} tabIndex={0} data-hint={orbit ? 'Drag to tilt' : bandLocked ? 'Pull the band' : closed ? 'Drag to open' : 'Drag a corner'} role="region" aria-label={orbit ? `${pages ? 'Journal' : 'Sketchbook'} in 3D. Use arrow keys to turn it and Shift with left or right to twist it. Turn pages with the buttons.` : `Interactive ${pages ? 'journal' : 'sketchbook'}. Use left and right arrow keys to turn pages.`} onKeyDown={onKeyDown}
       // While locked or turned in 3D, the page-turn engine never sees the gesture; its maths assume a flat page.
       onMouseDownCapture={e=>{if(bandLocked||orbit)e.stopPropagation()}} onMouseMoveCapture={e=>{if(bandLocked||orbit)e.stopPropagation()}} onTouchStartCapture={e=>{if(orbit)e.stopPropagation()}} onTouchMoveCapture={e=>{if(orbit)e.stopPropagation()}}
       // A native image drag would cancel the pointer and stop the turn.

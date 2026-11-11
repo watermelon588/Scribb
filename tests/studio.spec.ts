@@ -1,4 +1,4 @@
-import {test,expect} from './fixtures'
+import {test,expect,seedBook} from './fixtures'
 
 test('new studio uses visual controls, prepared covers and plain backs',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
@@ -57,3 +57,34 @@ test('back cover stays plain, shows only the elastic anchors and turns back to t
  await page.getByRole('button',{name:'Back to start'}).click();await expect(page.locator('.book-stage')).not.toHaveClass(/is-back/);
  await expect(page.locator('.book-stage .elastic-anchors')).toHaveCount(0);await expect(page.getByRole('button',{name:'Release band',exact:true})).toBeVisible();
 });
+
+test('the desktop sketchbook preview tilts and returns flat on phones',async({page})=>{
+ await seedBook(page.request,{title:'Sketchbook in 3D',visibility:'private',pages:['roses','irises','venice','cypresses'].map(id=>({id,src:`/artworks/${id}.jpg`,layout:'page'}))})
+ await page.emulateMedia({reducedMotion:'reduce'})
+ await page.goto('/')
+ await page.getByRole('button',{name:'Open Sketchbook in 3D',exact:true}).click()
+ const stage=page.locator('.portfolio-dialog .book-stage')
+ const toggle=stage.getByRole('button',{name:'3D view',exact:true})
+ const position=stage.locator('.page-navigation [aria-live]')
+ await expect(position).toContainText('03—04')
+ await expect(toggle).toHaveAttribute('aria-pressed','false')
+ await toggle.click()
+ await expect(toggle).toHaveAttribute('aria-pressed','true')
+ await expect(stage.locator('.book-slab')).toBeAttached()
+ const area=stage.getByRole('region',{name:/Sketchbook in 3D/})
+ await area.focus()
+ await page.keyboard.press('ArrowRight')
+ await expect(stage.locator('.book-orbit')).toHaveAttribute('style',/rotateY/)
+ await expect(position).toContainText('03—04')
+ await stage.getByRole('button',{name:'Previous pages',exact:true}).click()
+ await expect(position).toContainText('01—02')
+ for(const width of [390,320]){
+  await page.setViewportSize({width,height:844})
+  await expect(toggle).toHaveCount(0)
+  await expect(stage.locator('.book-slab')).toHaveCount(0)
+  await expect.poll(()=>stage.locator('.book-orbit').evaluate(node=>node.style.transform)).toBe('')
+  await expect(stage.getByRole('region',{name:/Interactive sketchbook/})).toBeVisible()
+ }
+ await page.setViewportSize({width:1440,height:1100})
+ await expect(toggle).toHaveAttribute('aria-pressed','false')
+})
