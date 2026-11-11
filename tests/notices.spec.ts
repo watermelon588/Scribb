@@ -17,7 +17,7 @@ test('profile and email confirmations are visible and dismissible above Settings
  await toast.getByRole('button',{name:'Dismiss notification'}).click()
  await expect(toast).toHaveCount(0)
  // Repeating an identical action must create a fresh notification.
- await page.getByRole('button',{name:'Verify email',exact:true}).click()
+ await page.getByRole('button',{name:'Resend verification link',exact:true}).click()
  await expect(toast).toContainText('Verification link sent')
  await page.screenshot({path:'.reference-analysis/notices/settings-email-desktop.png'})
  await page.setViewportSize({width:320,height:844})
@@ -34,7 +34,7 @@ test('profile and email confirmations are visible and dismissible above Settings
  await page.getByRole('button',{name:'Settings',exact:true}).click()
  await page.getByRole('button',{name:/Profile settings/}).click()
  await page.getByRole('textbox',{name:'Email',exact:true}).fill('artist@example.com')
- await page.getByRole('button',{name:'Verify email',exact:true}).click()
+ await page.getByRole('button',{name:'Resend verification link',exact:true}).click()
  await expect(toast).toContainText('Verification link sent')
  await expect(toast.getByRole('button',{name:'Dismiss notification'})).toBeInViewport()
  await page.screenshot({path:'.reference-analysis/notices/settings-email-editorial-dark-390.png'})

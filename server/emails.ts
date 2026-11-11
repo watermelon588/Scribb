@@ -37,7 +37,7 @@ export function verifiedEmail(origin:string):AccountEmail{
  const home=homeURL(origin)
  return template(home,{subject:'Your Scribb email is verified',label:'YOU’RE ALL SET',title:'A little welcome to your creative space.',greeting:'Congratulations — your email is verified!',copy:'Your email is now connected to your Scribb account. Settle in, save a few thoughts, or turn the page on something new.',action:'Go to homepage',url:home,note:'You can manage your email in Settings. Scribb may ask you to sign in when you return.'})
 }
-export function passwordResetEmail(origin:string,token:string):AccountEmail{
+export function passwordResetEmail(origin:string,username:string,token:string):AccountEmail{
  const home=homeURL(origin)
- return template(home,{subject:'Reset your Scribb password',label:'BACK TO YOUR SPACE',title:'Let’s get you back in.',greeting:'Hello again,',copy:'Choose a new password for your Scribb account. This link works once and expires in one hour.',action:'Reset my password',url:`${home}#reset/${encodeURIComponent(token)}`,note:'If you didn’t ask to reset your password, ignore this email. Your password will stay the same.',fallback:true})
+ return template(home,{subject:'Reset your Scribb password',label:'BACK TO YOUR SPACE',title:'Let’s get you back in.',greeting:`Hi @${username},`,copy:'Choose a new password for your Scribb account. This link works once and expires in one hour.',action:'Reset my password',url:`${home}#reset/${encodeURIComponent(token)}`,note:'If you didn’t ask to reset your password, ignore this email. Your password will stay the same.',fallback:true})
 }

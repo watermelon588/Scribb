@@ -131,11 +131,13 @@ const [books,setBooks]=useState<Book[]>([]),[ready,setReady]=useState(false),[qu
  useEffect(()=>{
   if(user===undefined)return
   if(!user){setMe(null);setBooks([]);setReady(true);return}
+  let live=true
   setReady(false)
   Promise.all([api<{profile:Person}>('GET',`/users/${encodeURIComponent(user.username)}`),allBooks(user.username),loadRecord<Book|null>(`draft:${user.id}`).catch(()=>null)])
-   .then(([p,list,stored])=>{setMe(p.profile);setBooks(list.map(asJournal));if(stored)setDraft(asJournal(stored))})
-   .catch(e=>showError(message(e,'Your books could not be loaded.'))).finally(()=>setReady(true))
-  api<{unread:number}>('GET','/notifications').then(r=>setUnread(r.unread)).catch(()=>{})
+   .then(([p,list,stored])=>{if(live){setMe(p.profile);setBooks(list.map(asJournal));if(stored)setDraft(asJournal(stored))}})
+   .catch(e=>{if(live)showError(message(e,'Your books could not be loaded.'))}).finally(()=>{if(live)setReady(true)})
+  api<{unread:number}>('GET','/notifications').then(r=>{if(live)setUnread(r.unread)}).catch(()=>{})
+  return()=>{live=false}
  },[user?.id,user?.isCreator]) // eslint-disable-line react-hooks/exhaustive-deps
  useEffect(()=>{
   if(screen!=='person'||!handle||handle===user?.username)return
@@ -147,7 +149,15 @@ const [books,setBooks]=useState<Book[]>([]),[ready,setReady]=useState(false),[qu
  useEffect(()=>{if(user===null&&screen==='new')setPanel('signin')},[user,screen])
  useEffect(()=>{if(!ready||!user||!draft||draft===pristine.current)return;const timer=setTimeout(()=>{saveRecord(`draft:${user.id}`,draft).catch(()=>showError('Autosave failed. Your draft stays open here until you save it.'))},600);return()=>clearTimeout(timer)},[draft,ready,user])
  useEffect(()=>{if(viewing||panel)dialog.current?.showModal();else dialog.current?.close()},[viewing,panel])
- function signedIn(next:User){setUser(next);setPanel(null);setNotice(`Signed in as @${next.username}.`,'success')}
+ function signedIn(next:User){
+  if(user&&user.id!==next.id){
+   setReady(false);setMe(null);setBooks([]);setUnread(0);setViewing(null)
+   setDraft(null);pristine.current=null;serverCopy.current=null
+   previousDraft.current=null;undoStack.current=[];setUndoCount(0)
+   if(screen==='new')navigate('portfolio')
+  }
+  setUser(next);setPanel(null);setNotice(`Signed in as @${next.username}.`,'success')
+ }
  function signedOut(){setUser(null);setPanel(null);setDraft(null);pristine.current=null;serverCopy.current=null;if(screen==='new')navigate('portfolio')}
  async function follow(who:Person){
   if(!user){setPanel('signin');return}
