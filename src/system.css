@@ -47,6 +47,7 @@
 .feed-reactions{gap:0;flex:none}
 .portfolio-app .feed-reactions button{min-width:var(--control);min-height:var(--control);padding:0}
 .portfolio-app .feed-reactions .button-quiet{padding-inline:var(--space-1)}
+.portfolio-app .feed-reactions .button-quiet[aria-pressed=true]{background:transparent}
 
 @media(min-width:601px) and (max-width:860px){
  .share-workspace{gap:var(--space-4);grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}
