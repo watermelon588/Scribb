@@ -236,6 +236,13 @@
 @media(max-width:600px){
  .portfolio-app .creation-controls .creator-identity .caption-field{display:grid;gap:6px;flex:0 0 min(68vw,260px);min-width:0;color:var(--app-muted);font-size:12px}
  .portfolio-app .creation-controls .creator-identity .caption-field input{width:100%;font-size:16px}
+ .portfolio-app .creation-controls:has(.sketchbook-details[data-on]){max-height:40dvh}
+ .creation-page .feature-options:has(>.sketchbook-details[data-on]){overflow:visible}
+ .portfolio-app .creation-controls .sketchbook-details[data-on]{display:grid;flex:0 0 100%;grid-template-columns:minmax(0,1fr);gap:var(--space-1)}
+ .portfolio-app .creation-controls .sketchbook-details :is(.sketchbook-name-label,.caption-field){margin:0;color:var(--app-muted);font-size:var(--text-xs)}
+ .portfolio-app .creation-controls .sketchbook-details .caption-field{gap:var(--space-1)}
+ .portfolio-app .creation-controls .sketchbook-details input{min-height:var(--control);padding-block:var(--space-2)}
+ .portfolio-app .creation-controls .sketchbook-details .book-name-input{margin:0 0 var(--space-2);font-size:var(--text-lg)}
  .portfolio-app .empty-create{display:flex;align-items:center;justify-content:center;gap:10px;min-height:48px;margin:36px auto;padding:12px 18px;border:0;background:var(--app-soft);color:var(--app-ink);font:inherit}
  .portfolio-app .empty-create svg{color:var(--app-accent)}
 }
