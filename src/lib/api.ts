@@ -33,16 +33,16 @@ export const avatarSrcSet=(id?:string)=>[
 ].join(', ')
 
 // ---- Books: the editor's Book is one record; the API keeps the design, the pages and the entries apart.
-interface BookRow {id:string;kind:BookKind;title:string;visibility:'private'|'public';category:string|null;design:Record<string,unknown>;pages?:Book['artworks'];latest?:EntryRow&{bookId?:string};likeCount:number;saveCount:number;version:number;owner:BookOwner;liked:boolean;saved:boolean}
+interface BookRow {id:string;kind:BookKind;title:string;visibility:'private'|'public';category:string|null;design:Record<string,unknown>;pages?:Book['artworks'];latest?:EntryRow&{bookId?:string};likeCount:number;saveCount:number;version:number;owner:BookOwner;liked:boolean;saved:boolean;weeklyTop?:boolean}
 type EntryRow=JournalEntry&{version:number}
 export function toBook(row:BookRow):Book{
  const {journal,...design}=row.design as Partial<Book>
  return {...design,id:row.id,kind:row.kind,title:row.title,visibility:row.visibility,category:row.category??undefined,version:row.version,owner:row.owner,likeCount:row.likeCount,saveCount:row.saveCount,liked:row.liked,saved:row.saved,
   presetId:design.presetId??'linen',color:design.color??'#232429',format:design.format??'3:4',paper:design.paper??'plain',
-  artworks:row.pages??[],journal:journal?{...journal,entries:[]}:undefined,latest:row.latest&&entryOf(row.latest),complete:Boolean(row.pages)&&row.kind!=='journal'} as Book
+  artworks:row.pages??[],journal:journal?{...journal,entries:[]}:undefined,latest:row.latest&&entryOf(row.latest),complete:Boolean(row.pages)&&row.kind!=='journal',weeklyTop:row.weeklyTop} as Book
 }
 function designOf(book:Book){
- const {id:_id,kind:_kind,title:_title,visibility:_visibility,category:_category,version:_version,owner:_owner,likeCount:_likes,saveCount:_saves,liked:_liked,saved:_saved,complete:_complete,latest:_latest,artworks:_artworks,journal,...design}=book
+ const {id:_id,kind:_kind,title:_title,visibility:_visibility,category:_category,version:_version,owner:_owner,likeCount:_likes,saveCount:_saves,liked:_liked,saved:_saved,complete:_complete,latest:_latest,weeklyTop:_weeklyTop,artworks:_artworks,journal,...design}=book
  return {...design,journal:journal?{...journal,entries:undefined}:undefined}
 }
 export interface Page<T> {items:T[];next:string|null}

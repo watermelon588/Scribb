@@ -33,6 +33,7 @@ const bookJson = (b: Row, withPages: boolean) => ({
   id: b.id, kind: b.kind, title: b.title, visibility: b.visibility, category: b.category, design: b.design,
   ...(withPages || b.pages ? { pages: b.pages } : {}), ...(b.latest ? { latest: entryJson(b.latest) } : {}),
   likeCount: b.like_count, saveCount: b.save_count, version: b.version, publishedAt: b.published_at, updatedAt: b.updated_at,
+  ...(b.weekly_top ? { weeklyTop: true } : {}),
   owner: { username: b.handle, displayName: b.display_name, avatar: b.avatar }, liked: b.liked, saved: b.saved,
 })
 /** One page of book cards plus the cursor for the next page. Rows must carry `at` (the sort value as text). */
@@ -103,14 +104,33 @@ books.delete('/books/:id', requireUser, async (req, res) => {
 
 books.get('/feed', async (req, res) => {
   const user = await me(req), tab = req.query.tab ?? 'explore', cursor = decodeCursor(req.query.cursor)
+  const sort = req.query.sort ?? (tab === 'following' ? 'recent' : 'weekly')
   const kind = req.query.kind ? String(req.query.kind) : null, category = req.query.category ? String(req.query.category) : null
   if (tab !== 'explore' && tab !== 'following') return fail(res, 400, 'bad_tab', 'Unknown feed.')
+  if (sort !== 'weekly' && sort !== 'recent') return fail(res, 400, 'bad_sort', 'Unknown feed sort.')
   if (cursor === undefined) return fail(res, 400, 'bad_cursor', 'That page link is broken.')
   if (tab === 'following' && !user) return fail(res, 401, 'signed_out', 'Please sign in.')
-  const [at, after] = cursor ?? [null, null]
+  const weekly = sort === 'weekly'
+  const [key, after] = cursor ?? [null, null]
+  const rankedKey = weekly && key ? /^(\d{1,10})\|(.+)$/.exec(key) : null
+  const at = weekly ? rankedKey?.[2] ?? null : key
+  if (cursor && (!at || !Number.isFinite(Date.parse(at)) || (weekly && (!rankedKey || Number(rankedKey[1]) > 2147483647)))) {
+    return fail(res, 400, 'bad_cursor', 'That page link is broken.')
+  }
+  const score = Number(rankedKey?.[1] ?? 0)
   const rows = await sql()`
+    with weekly_likes as (
+      select l.book_id, count(*)::int as score
+      from likes l join books b on b.id = l.book_id
+      where l.created_at >= now() - interval '7 days' and b.visibility = 'public'
+      group by l.book_id
+    ), leader as (
+      select b.id from weekly_likes w join books b on b.id = w.book_id
+      order by w.score desc, b.published_at desc, b.id desc limit 1
+    )
     select b.id, b.kind, b.title, b.visibility, b.category, b.design, b.like_count, b.save_count, b.version, b.published_at, b.updated_at,
-           b.published_at::text as at, p.handle, p.display_name, p.avatar,
+           case when ${weekly} then coalesce(w.score, 0)::text || '|' else '' end || b.published_at::text as at,
+           b.id = (select id from leader) as weekly_top, p.handle, p.display_name, p.avatar,
            -- Cards open on the newest post: all of a sketchbook's pages, or a journal's newest entry with something on it (the one the book opens at).
            case when b.kind = 'sketchbook' then b.pages end as pages,
            (select to_jsonb(e) from (select id, book_id, entry_date::text as date, layout, texts, images, extras, version from journal_entries j
@@ -119,12 +139,13 @@ books.get('/feed', async (req, res) => {
               order by entry_date desc, id desc limit 1) e) as latest,
            exists (select 1 from likes where user_id = ${user}::uuid and book_id = b.id) as liked,
            exists (select 1 from saves where user_id = ${user}::uuid and book_id = b.id) as saved
-    from books b join profiles p on p.user_id = b.user_id
+    from books b join profiles p on p.user_id = b.user_id left join weekly_likes w on w.book_id = b.id
     where b.visibility = 'public'
       and (${tab} = 'explore' or b.user_id in (select followee_id from follows where follower_id = ${user}::uuid))
       and (${kind}::text is null or b.kind = ${kind}) and (${category}::text is null or b.category = ${category})
-      and (${at}::timestamptz is null or (b.published_at, b.id) < (${at}::timestamptz, ${after}::uuid))
-    order by b.published_at desc, b.id desc
+      and (${at}::timestamptz is null or (case when ${weekly} then coalesce(w.score, 0) else 0 end, b.published_at, b.id)
+        < (${score}::int, ${at}::timestamptz, ${after}::uuid))
+    order by case when ${weekly} then coalesce(w.score, 0) else 0 end desc, b.published_at desc, b.id desc
     limit ${FEED_PAGE + 1}`
   res.json(bookPage(rows, FEED_PAGE))
 })
