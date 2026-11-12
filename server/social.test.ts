@@ -186,6 +186,40 @@ test('feed, likes, saves, follows and notifications', async () => {
   assert.equal((await call('GET', '/users/ivy/books', undefined, ivy)).body.books.length, 4, 'the owner sees private ones too')
 })
 
+test('Explore ranks the last seven days of likes and keeps recent sorting and paging deterministic', async () => {
+  const owner = await signup('weekly.artist')
+  const { id: ownerId } = (await call('GET', '/auth/me', undefined, owner)).body.user
+  const ids = Array.from({ length: 27 }, () => randomUUID())
+  const [old, winner, tied, hidden] = ids
+  const voters = (await pg.query<{id:string}>(`insert into users (id) select gen_random_uuid() from generate_series(1, 6) returning id`)).rows.map(row => row.id)
+  await pg.query(`insert into books (id, user_id, kind, visibility, category, published_at)
+    select id, $1, 'sketchbook', case when id = $2 then 'private' else 'public' end, 'Weekly test',
+      now() - interval '1 hour' * (28 - i)
+    from unnest($3::uuid[]) with ordinality ids(id, i)`, [ownerId, hidden, ids])
+  await pg.query(`insert into likes (user_id, book_id, created_at)
+    select voter, $1::uuid, now() - interval '8 days' from unnest($5::uuid[]) voters(voter)
+    union all select voter, $2::uuid, now() from unnest(($5::uuid[])[1:3]) voters(voter)
+    union all select voter, $3::uuid, now() from unnest(($5::uuid[])[1:3]) voters(voter)
+    union all select voter, $4::uuid, now() from unnest($5::uuid[]) voters(voter)`, [old, winner, tied, hidden, voters])
+  const path = '/feed?category=Weekly%20test'
+  const weekly = await call('GET', path)
+  assert.equal(weekly.status, 200)
+  assert.deepEqual(weekly.body.books.slice(0, 2).map((b: {id:string}) => b.id), [tied, winner], 'newer post wins the tie')
+  assert.deepEqual(weekly.body.books.filter((b: {weeklyTop?:boolean}) => b.weeklyTop).map((b: {id:string}) => b.id), [tied])
+  const more = await call('GET', `${path}&cursor=${weekly.body.next}`)
+  const seen = [...weekly.body.books, ...more.body.books].map((b: {id:string}) => b.id)
+  assert.equal(seen.length, 26)
+  assert.equal(new Set(seen).size, 26)
+  assert.ok(!seen.includes(hidden))
+  assert.equal(seen.at(-1), old, 'older likes do not affect the weekly rank')
+  const recent = await call('GET', `${path}&sort=recent`)
+  assert.equal(recent.body.books[0].id, ids.at(-1))
+  assert.equal(recent.body.books.find((b: {id:string}) => b.id === tied)?.weeklyTop, true)
+  assert.equal((await call('GET', `${path}&sort=recent&cursor=${weekly.body.next}`)).body.error.code, 'bad_cursor')
+  assert.equal((await call('GET', `${path}&sort=invalid`)).body.error.code, 'bad_sort')
+  await pg.query('delete from users where id = any($1::uuid[])', [[ownerId, ...voters]])
+})
+
 test('keyset paging walks every public book exactly once', async () => {
   const zoe = await signup('zoe')
   for (let i = 0; i < 30; i++) await call('PUT', `/books/${randomUUID()}`, sketchbook({ visibility: 'public' }), zoe)

@@ -1,6 +1,73 @@
 import {test,expect,seedBook,seedJournal,signUp} from './fixtures'
 import type {Browser} from '@playwright/test'
 
+test('weekly ranking, recent sorting and journal sharing work on desktop and phones', async ({page,context,account,browser}, testInfo)=>{
+ test.setTimeout(90_000)
+ const ranked=await seedBook(context.request,{title:'Weekly studies'})
+ const recent=await seedJournal(context.request,'Today’s journal',[{texts:{p0:'A page for today.'}}],{},'public')
+ const fan=await browser.newContext({baseURL:'http://127.0.0.1:5174'})
+ try{
+  await signUp(fan,'fan')
+  for(const client of [context,fan])expect((await client.request.put(`/api/books/${ranked}/like`)).ok()).toBe(true)
+ }finally{await fan.close()}
+ await context.grantPermissions(['clipboard-read','clipboard-write'])
+ await page.goto('/explore')
+ const cards=page.locator('.feed-card'), sort=page.getByRole('group',{name:'Sort posts'})
+ await expect(sort.getByRole('button',{name:'Top this week'})).toHaveAttribute('aria-pressed','true')
+ await expect(cards.first().getByRole('heading')).toHaveText('Weekly studies')
+ await expect(cards.first().locator('.feed-weekly-badge')).toHaveText('Top this week')
+ await expect(page.locator('.feed-weekly-badge')).toHaveCount(1)
+ await page.screenshot({path:testInfo.outputPath('weekly-desktop.png')})
+ await page.getByRole('button',{name:'Like Weekly studies'}).click()
+ await page.getByRole('button',{name:'Like Today’s journal'}).click()
+ await expect(cards.first().getByRole('heading')).toHaveText('Today’s journal')
+ await expect(cards.first().locator('.feed-weekly-badge')).toBeVisible()
+ await page.getByRole('button',{name:'Like Today’s journal'}).click()
+ await expect(cards.first().getByRole('heading')).toHaveText('Weekly studies')
+ await sort.getByRole('button',{name:'Recent'}).click()
+ await expect(cards.first().getByRole('heading')).toHaveText('Today’s journal')
+ const url=new URL(`/@${account.username}/${recent}`,page.url()).href
+ await cards.first().getByRole('button',{name:'Share Today’s journal'}).click()
+ await expect(page.getByRole('heading',{name:'Share journal'})).toBeVisible()
+ await page.getByRole('button',{name:'Copy book link'}).click()
+ await expect(page.getByRole('status')).toHaveText('Book link copied.')
+ expect(await page.evaluate(()=>navigator.clipboard.readText())).toBe(url)
+ await expect(page).toHaveURL(/\/explore$/)
+ await page.getByRole('button',{name:'Close dialog'}).click()
+ await cards.first().getByRole('button',{name:'Open Today’s journal'}).click()
+ await page.getByRole('button',{name:'Share journal',exact:true}).click()
+ await expect(page.getByLabel('Public link')).toHaveValue(url)
+ await page.getByRole('button',{name:'Back to book'}).click()
+ await expect(page.getByRole('button',{name:'Share journal',exact:true})).toBeFocused()
+ await page.getByRole('button',{name:'Close dialog'}).click()
+
+ for(const width of [320,390]){
+  await page.setViewportSize({width,height:844})
+  await page.getByRole('button',{name:'Showing For you. Change view'}).click()
+  await expect(sort.getByRole('button',{name:'Recent'})).toHaveAttribute('aria-pressed','true')
+  await page.screenshot({path:testInfo.outputPath(`sort-phone-${width}.png`)})
+  await sort.getByRole('button',{name:'Top this week'}).click()
+  await expect(cards.first().getByRole('heading')).toHaveText('Weekly studies')
+  await expect(cards.first().getByRole('button',{name:'Share Weekly studies'})).toBeVisible()
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)
+  await page.screenshot({path:testInfo.outputPath(`weekly-phone-${width}.png`)})
+  await page.getByRole('button',{name:'Showing For you. Change view'}).click()
+  await sort.getByRole('button',{name:'Recent'}).click()
+  await expect(cards.first().getByRole('heading')).toHaveText('Today’s journal')
+ }
+
+ await page.setViewportSize({width:1440,height:1000})
+ await page.goto('/')
+ await page.getByRole('button',{name:'Bookshelf',exact:true}).click()
+ const volume=page.getByRole('button',{name:'Select Weekly studies'})
+ await volume.hover()
+ await expect(volume.locator('.shelf-front')).toHaveCSS('translate','0px -6px')
+ await expect(volume).toHaveAttribute('aria-pressed','true')
+ await page.screenshot({path:testInfo.outputPath('bookshelf-hover.png')})
+ await page.emulateMedia({reducedMotion:'reduce'})
+ await expect(volume.locator('.shelf-front')).toHaveCSS('translate','none')
+})
+
 /** Another artist with published books, newest first in the order given. Titles share a tag so the feed search finds only them. */
 async function artist(browser:Browser,books:{title:string;format?:string}[]){
  const context=await browser.newContext({baseURL:'http://127.0.0.1:5174'}),account=await signUp(context,'a')

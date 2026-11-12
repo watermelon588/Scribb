@@ -83,7 +83,9 @@ test('only offers artwork export to the owner of a published sketchbook', async 
     const reader = await guest.newPage()
     await reader.goto(`/@${account.username}/${publicId}`)
     await expect(reader.locator('dialog').getByRole('heading', { name: 'Published studies' })).toBeVisible()
-    await expect(reader.getByRole('button', { name: 'Share sketchbook' })).toHaveCount(0)
+    await reader.getByRole('button', { name: 'Share sketchbook' }).click()
+    await expect(reader.getByLabel('Public link')).toHaveValue(new URL(`/@${account.username}/${publicId}`, page.url()).href)
+    await expect(reader.getByRole('button', { name: 'Download image' })).toHaveCount(0)
   } finally {
     await guest.close()
   }

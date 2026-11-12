@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { ArrowLeft, ArrowSquareOut, DownloadSimple, FilmStrip, Image, LinkSimple, ShareNetwork } from '@phosphor-icons/react'
 import type { Book } from '../Profile'
+import { BookObject } from './Bookshelf'
 import { message } from '../lib/api'
 import { canvasFile, drawShareBoard, loadShareAssets, shareBookUrl, shareFormats, shareLayouts, type ShareAssets, type ShareFormat, type ShareLayout } from '../lib/shareArtwork'
 
@@ -34,7 +35,55 @@ function canShare(file: File | null) {
   return Boolean(file && typeof navigator.share === 'function' && navigator.canShare?.({ files: [file] }))
 }
 
-export default function ShareStudio({ book, onBack }: { book: Book; onBack: () => void }) {
+export function ShareBookLink({ book, onBack }: { book: Book; onBack?: () => void }) {
+  const [status, setStatus] = useState('')
+  const [error, setError] = useState('')
+  const field = useRef<HTMLInputElement>(null)
+  const back = useRef<HTMLButtonElement>(null)
+  const url = shareBookUrl(book)
+  const noun = book.kind === 'journal' ? 'journal' : 'sketchbook'
+  const data = { url, title: book.title }
+  const nativeShare = typeof navigator.share === 'function' && (navigator.canShare?.(data) ?? true)
+  useEffect(() => { back.current?.focus() }, [])
+
+  async function copy() {
+    setError('')
+    try {
+      await navigator.clipboard.writeText(url)
+      setStatus('Book link copied.')
+    } catch {
+      field.current?.focus()
+      field.current?.select()
+      setError('Copy the selected link to share this book.')
+    }
+  }
+
+  async function share() {
+    setError('')
+    try {
+      await navigator.share(data)
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === 'AbortError')) setError('Sharing did not open. Copy the link to share it.')
+    }
+  }
+
+  return <section className="share-book-link" aria-labelledby="share-heading">
+    <header className="share-header">
+      {onBack && <button ref={back} className="button-icon" onClick={onBack} aria-label="Back to book" data-hint="Back to book"><ArrowLeft size={20} /></button>}
+      <div><h2 id="share-heading">Share {noun}</h2><p>{book.title}</p></div>
+    </header>
+    <div className="share-link-preview"><BookObject book={book} /></div>
+    <label className="caption-field">Public link<input ref={field} readOnly value={url} onFocus={event => event.currentTarget.select()} /></label>
+    <div className="share-options">
+      {nativeShare && <button className="button-primary" onClick={() => void share()}><ShareNetwork size={17} /> Share link</button>}
+      <button className={nativeShare ? 'button-secondary' : 'button-primary'} onClick={() => void copy()}><LinkSimple size={17} /> Copy book link</button>
+    </div>
+    {error && <p className="share-error" role="alert">{error}</p>}
+    {status && <p className="share-note" role="status">{status}</p>}
+  </section>
+}
+
+export default function ShareStudio({ book, onBack }: { book: Book; onBack?: () => void }) {
   const [mode, setMode] = useState<'image' | 'video'>('image')
   const [format, setFormat] = useState<ShareFormat>(shareFormats[0])
   const [layout, setLayout] = useState<ShareLayout>(shareLayouts[0])
@@ -144,7 +193,7 @@ export default function ShareStudio({ book, onBack }: { book: Book; onBack: () =
 
   return <section className="share-studio" aria-labelledby="share-heading">
     <header className="share-header">
-      <button ref={back} className="button-icon" onClick={onBack} aria-label="Back to book" data-hint="Back to book"><ArrowLeft size={20} /></button>
+      {onBack && <button ref={back} className="button-icon" onClick={onBack} aria-label="Back to book" data-hint="Back to book"><ArrowLeft size={20} /></button>}
       <div><h2 id="share-heading">Share sketchbook</h2><p>{book.title}</p></div>
     </header>
 
